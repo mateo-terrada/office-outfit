@@ -87,119 +87,6 @@
             font-size: 0.85em;
         }
 
-        .weather-manual-overlay {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            animation: fadeIn 0.2s ease;
-        }
-
-        .weather-manual-dialog {
-            background: white;
-            border-radius: 16px;
-            padding: 28px;
-            max-width: 400px;
-            width: 92%;
-            text-align: center;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            animation: slideUp 0.2s ease;
-        }
-
-        .weather-manual-dialog h3 {
-            color: #1a3a52;
-            margin-bottom: 8px;
-            font-size: 1.1em;
-        }
-
-        .weather-manual-dialog p {
-            color: #888;
-            font-size: 0.85em;
-            margin-bottom: 20px;
-            line-height: 1.5;
-        }
-
-        .weather-manual-options {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-bottom: 16px;
-        }
-
-        .weather-manual-btn {
-            padding: 13px 16px;
-            border: 2px solid #e0e0e0;
-            background: white;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 0.95em;
-            font-weight: 600;
-            color: #333;
-            transition: all 0.2s;
-            text-align: left;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .weather-manual-btn:hover {
-            border-color: #1a3a52;
-            color: #1a3a52;
-            background: #f0f4f7;
-        }
-
-        .weather-manual-btn .wm-sub {
-            font-weight: 400;
-            font-size: 0.82em;
-            color: #888;
-            display: block;
-            margin-top: 2px;
-        }
-
-        .weather-manual-temp {
-            margin-bottom: 16px;
-        }
-
-        .weather-manual-temp label {
-            display: block;
-            font-size: 0.85em;
-            color: #666;
-            font-weight: 600;
-            margin-bottom: 8px;
-            text-align: left;
-        }
-
-        .weather-manual-temp input[type=range] {
-            width: 100%;
-        }
-
-        .weather-manual-temp .temp-display {
-            text-align: center;
-            font-size: 1.3em;
-            font-weight: 700;
-            color: #1a3a52;
-            margin-top: 6px;
-        }
-
-        .btn-wm-cancel {
-            width: 100%;
-            padding: 11px;
-            background: #f5f5f5;
-            color: #666;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.9em;
-            transition: background 0.2s;
-        }
-
-        .btn-wm-cancel:hover { background: #e0e0e0; }
-
         h1 {
             color: #1a3a52;
             font-size: 2.5em;
@@ -1130,6 +1017,25 @@
             transform: scale(1.03);
         }
 
+        .weather-btn {
+            padding: 12px 24px;
+            border: none;
+            background: linear-gradient(135deg, #4FC3F7 0%, #0288D1 100%);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95em;
+            font-weight: 600;
+            color: white;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(2, 136, 209, 0.35);
+        }
+
+        .weather-btn:hover {
+            background: linear-gradient(135deg, #29B6F6 0%, #0277BD 100%);
+            box-shadow: 0 4px 14px rgba(2, 136, 209, 0.5);
+            transform: scale(1.03);
+        }
+
         .random-overlay {
             position: fixed;
             top: 0;
@@ -1377,7 +1283,7 @@
             <button class="tab-btn" onclick="switchTab('crear')">Crear Outfit</button>
             <button class="tab-btn" onclick="switchTab('mios')">Mis Outfits</button>
             <button class="random-btn" onclick="openRandomOutfit()">🎲 Outfit al Azar</button>
-            <button class="random-btn" onclick="showWeatherRecommendations()" style="background: #ff9800;">🌤️ Por Clima</button>
+            <button class="weather-btn" onclick="showWeatherRecommendations()">🌤️ Por Clima</button>
         </div>
 
         <!-- TAB: SUGERIDOS -->
@@ -1402,43 +1308,43 @@
                             <label>Pantalón</label>
                             <select id="searchPantalon">
                                 <option value="">Cualquiera</option>
-                                <option value="Azul Zara por altura del tobillo">Azul Zara tobillo</option>
-                                <option value="Negro Zara por altura del tobilo">Negro Zara tobillo</option>
-                                <option value="Gris medio de traje">Gris medio de traje</option>
-                                <option value="Gris medio-oscuro nuevo">Gris medio-oscuro nuevo</option>
+                                <option value="Pantalón azul (tobillo)">Azul Zara tobillo</option>
+                                <option value="Pantalón negro (tobillo)">Negro Zara tobillo</option>
+                                <option value="Pantalón gris claro">Pantalón gris claro</option>
+                                <option value="Pantalón gris oscuro">Pantalón gris oscuro</option>
                             </select>
                         </div>
                         <div class="prenda-search-group">
                             <label>Camisa</label>
                             <select id="searchCamisa">
                                 <option value="">Cualquiera</option>
-                                <option value="Blanca lisa">Blanca lisa</option>
-                                <option value="Celeste lisa (claro)">Celeste lisa (claro)</option>
-                                <option value="Celeste medio-oscuro con pequeños detalles en blanco (Brooksfield)">Celeste detalles Brooksfield</option>
-                                <option value="Gris haspeado">Gris haspeado</option>
-                                <option value="Rayas celeste claro y blanco (Polo)">Rayas celeste/blanco Polo</option>
-                                <option value="Rayas finitas azul y blanco">Rayas finitas azul/blanco</option>
-                                <option value="Azul oscuro">Azul oscuro</option>
-                                <option value="Celeste medio-oscuro con lineas pequeñas blancas y rojas (Brooksfield)">Celeste líneas Brooksfield</option>
+                                <option value="Camisa blanca">Camisa blanca</option>
+                                <option value="Camisa celeste clara">Camisa celeste clara</option>
+                                <option value="Camisa celeste Brooksfield">Celeste detalles Brooksfield</option>
+                                <option value="Camisa gris jaspeada">Camisa gris jaspeada</option>
+                                <option value="Camisa rayas celeste/blanco">Rayas celeste/blanco Polo</option>
+                                <option value="Camisa rayas azul/blanco">Rayas finitas azul/blanco</option>
+                                <option value="Camisa azul oscura">Camisa azul oscura</option>
+                                <option value="Camisa celeste líneas Brooksfield">Celeste líneas Brooksfield</option>
                             </select>
                         </div>
                         <div class="prenda-search-group">
                             <label>Abrigo / Sweater</label>
                             <select id="searchAbrigo">
                                 <option value="">Cualquiera</option>
-                                <option value="Sweater patagonia gris haspeado (quarter-zip)">Patagonia gris haspeado</option>
-                                <option value="Campera Patagonia roja/bordeau">Patagonia roja/bordeau</option>
+                                <option value="Quarter-zip Patagonia gris">Patagonia gris haspeado</option>
+                                <option value="Campera Patagonia bordeau">Patagonia roja/bordeau</option>
                                 <option value="Sweater UNIQLO azul">UNIQLO azul</option>
-                                <option value="Sweater UNIQLO celeste oscuro">UNIQLO celeste oscuro</option>
-                                <option value="Quarter-zip gris oscuro Springfield">Quarter-zip gris Springfield</option>
-                                <option value="Quarter-zip gris claro (Polo)">Quarter-zip gris claro Polo</option>
-                                <option value="Quarter-zip azul Polo (estilo lana)">Quarter-zip azul Polo</option>
-                                <option value="Quarter-zip bordeau Polo (estilo lana)">Quarter-zip bordeau Polo</option>
-                                <option value="Campera Brooksfield negra (tipo polar)">Brooksfield negra polar</option>
-                                <option value="Campera Brooksfield bordeau (tipo polar)">Brooksfield bordeau polar</option>
-                                <option value="Sweater finito Brooksfield azul con rayas blancas">Brooksfield azul rayas</option>
-                                <option value="Chaleco Patagonia gris haspeado">Chaleco Patagonia gris</option>
-                                <option value="Chaleco Patagonia azul haspeado">Chaleco Patagonia azul</option>
+                                <option value="Sweater UNIQLO celeste">UNIQLO celeste oscuro</option>
+                                <option value="Quarter-zip Springfield gris">Quarter-zip gris Springfield</option>
+                                <option value="Quarter-zip Polo gris claro">Quarter-zip gris claro Polo</option>
+                                <option value="Quarter-zip Polo azul">Quarter-zip azul Polo</option>
+                                <option value="Quarter-zip Polo bordeau">Quarter-zip bordeau Polo</option>
+                                <option value="Polar Brooksfield negro">Brooksfield negra polar</option>
+                                <option value="Polar Brooksfield bordeau">Brooksfield bordeau polar</option>
+                                <option value="Sweater Brooksfield azul">Brooksfield azul rayas</option>
+                                <option value="Chaleco Patagonia gris">Chaleco Patagonia gris</option>
+                                <option value="Chaleco Patagonia azul">Chaleco Patagonia azul</option>
                             </select>
                         </div>
                         <div class="prenda-search-group">
@@ -1446,9 +1352,9 @@
                             <select id="searchZapatos">
                                 <option value="">Cualquiera</option>
                                 <option value="Vans negras">Vans negras</option>
-                                <option value="Adidas Spezial beige y negro">Adidas Spezial beige/negro</option>
-                                <option value="Tiger blancas con líneas negras">Tiger blancas</option>
-                                <option value="Levis azules con marrón">Levis azules/marrón</option>
+                                <option value="Adidas Spezial beige">Adidas Spezial beige/negro</option>
+                                <option value="Tiger blancas">Tiger blancas</option>
+                                <option value="Levis azules">Levis azules/marrón</option>
                                 <option value="Zapatos marrones">Zapatos marrones</option>
                                 <option value="Zapatos negros">Zapatos negros</option>
                             </select>
@@ -1497,10 +1403,10 @@
                         <label>Pantalón</label>
                         <select id="outfitPantalon" required>
                             <option value="">Selecciona un pantalón...</option>
-                            <option value="Azul Zara por altura del tobillo">Azul Zara por altura del tobillo</option>
-                            <option value="Negro Zara por altura del tobilo">Negro Zara por altura del tobilo</option>
-                            <option value="Gris medio de traje">Gris medio de traje</option>
-                            <option value="Gris medio-oscuro nuevo">Gris medio-oscuro nuevo</option>
+                            <option value="Pantalón azul (tobillo)">Pantalón azul (tobillo)</option>
+                            <option value="Pantalón negro (tobillo)">Pantalón negro (tobillo)</option>
+                            <option value="Pantalón gris claro">Pantalón gris claro</option>
+                            <option value="Pantalón gris oscuro">Pantalón gris oscuro</option>
                         </select>
                     </div>
 
@@ -1508,14 +1414,14 @@
                         <label>Camisa</label>
                         <select id="outfitCamisa" required>
                             <option value="">Selecciona una camisa...</option>
-                            <option value="Blanca lisa">Blanca lisa</option>
-                            <option value="Celeste lisa (claro)">Celeste lisa (claro)</option>
-                            <option value="Celeste medio-oscuro con pequeños detalles en blanco (Brooksfield)">Celeste medio-oscuro con detalles (Brooksfield)</option>
-                            <option value="Gris haspeado">Gris haspeado</option>
-                            <option value="Rayas celeste claro y blanco (Polo)">Rayas celeste claro y blanco (Polo)</option>
-                            <option value="Rayas finitas azul y blanco">Rayas finitas azul y blanco</option>
-                            <option value="Azul oscuro">Azul oscuro</option>
-                            <option value="Celeste medio-oscuro con lineas pequeñas blancas y rojas (Brooksfield)">Celeste con líneas blancas y rojas (Brooksfield)</option>
+                            <option value="Camisa blanca">Camisa blanca</option>
+                            <option value="Camisa celeste clara">Camisa celeste clara</option>
+                            <option value="Camisa celeste Brooksfield">Celeste medio-oscuro con detalles (Brooksfield)</option>
+                            <option value="Camisa gris jaspeada">Camisa gris jaspeada</option>
+                            <option value="Camisa rayas celeste/blanco">Camisa rayas celeste/blanco</option>
+                            <option value="Camisa rayas azul/blanco">Camisa rayas azul/blanco</option>
+                            <option value="Camisa azul oscura">Camisa azul oscura</option>
+                            <option value="Camisa celeste líneas Brooksfield">Celeste con líneas blancas y rojas (Brooksfield)</option>
                         </select>
                     </div>
 
@@ -1523,19 +1429,19 @@
                         <label>Abrigo/Sweater</label>
                         <select id="outfitAbrigo" required>
                             <option value="">Selecciona un abrigo...</option>
-                            <option value="Sweater patagonia gris haspeado (quarter-zip)">Sweater Patagonia gris haspeado (quarter-zip)</option>
-                            <option value="Campera Patagonia roja/bordeau">Campera Patagonia roja/bordeau</option>
+                            <option value="Quarter-zip Patagonia gris">Sweater Patagonia gris haspeado (quarter-zip)</option>
+                            <option value="Campera Patagonia bordeau">Campera Patagonia bordeau</option>
                             <option value="Sweater UNIQLO azul">Sweater UNIQLO azul</option>
-                            <option value="Sweater UNIQLO celeste oscuro">Sweater UNIQLO celeste oscuro</option>
-                            <option value="Quarter-zip gris oscuro Springfield">Quarter-zip gris oscuro Springfield</option>
-                            <option value="Quarter-zip gris claro (Polo)">Quarter-zip gris claro (Polo)</option>
-                            <option value="Quarter-zip azul Polo (estilo lana)">Quarter-zip azul Polo (estilo lana)</option>
-                            <option value="Quarter-zip bordeau Polo (estilo lana)">Quarter-zip bordeau Polo (estilo lana)</option>
-                            <option value="Campera Brooksfield negra (tipo polar)">Campera Brooksfield negra (tipo polar)</option>
-                            <option value="Campera Brooksfield bordeau (tipo polar)">Campera Brooksfield bordeau (tipo polar)</option>
-                            <option value="Sweater finito Brooksfield azul con rayas blancas">Sweater finito Brooksfield azul con rayas blancas</option>
-                            <option value="Chaleco Patagonia gris haspeado">Chaleco Patagonia gris haspeado</option>
-                            <option value="Chaleco Patagonia azul haspeado">Chaleco Patagonia azul haspeado</option>
+                            <option value="Sweater UNIQLO celeste">Sweater UNIQLO celeste</option>
+                            <option value="Quarter-zip Springfield gris">Quarter-zip Springfield gris</option>
+                            <option value="Quarter-zip Polo gris claro">Quarter-zip Polo gris claro</option>
+                            <option value="Quarter-zip Polo azul">Quarter-zip Polo azul</option>
+                            <option value="Quarter-zip Polo bordeau">Quarter-zip Polo bordeau</option>
+                            <option value="Polar Brooksfield negro">Polar Brooksfield negro</option>
+                            <option value="Polar Brooksfield bordeau">Polar Brooksfield bordeau</option>
+                            <option value="Sweater Brooksfield azul">Sweater Brooksfield azul</option>
+                            <option value="Chaleco Patagonia gris">Chaleco Patagonia gris</option>
+                            <option value="Chaleco Patagonia azul">Chaleco Patagonia azul</option>
                         </select>
                     </div>
 
@@ -1544,9 +1450,9 @@
                         <select id="outfitZapatos" required>
                             <option value="">Selecciona zapatos...</option>
                             <option value="Vans negras">Vans negras</option>
-                            <option value="Adidas Spezial beige y negro">Adidas Spezial beige y negro</option>
-                            <option value="Tiger blancas con líneas negras">Tiger blancas con líneas negras</option>
-                            <option value="Levis azules con marrón">Levis azules con marrón</option>
+                            <option value="Adidas Spezial beige">Adidas Spezial beige</option>
+                            <option value="Tiger blancas">Tiger blancas</option>
+                            <option value="Levis azules">Levis azules</option>
                             <option value="Zapatos marrones">Zapatos marrones</option>
                             <option value="Zapatos negros">Zapatos negros</option>
                         </select>
@@ -1613,9 +1519,9 @@
                 formalidad: "formal",
                 contexto: "Presentaciones, meetings importantes, primeros días",
                 prendas: {
-                    pantalon: "Gris medio de traje",
-                    camisa: "Blanca lisa",
-                    abrigo: "Chaleco Patagonia gris haspeado",
+                    pantalon: "Pantalón gris claro",
+                    camisa: "Camisa blanca",
+                    abrigo: "Chaleco Patagonia gris",
                     zapatos: "Zapatos negros"
                 },
                 notas: "El outfit más formal y seguro. El chaleco suma elegancia sin ser agobiante.",
@@ -1628,9 +1534,9 @@
                 formalidad: "formal",
                 contexto: "Reuniones con clientes, networking, eventos",
                 prendas: {
-                    pantalon: "Gris medio-oscuro nuevo",
-                    camisa: "Celeste medio-oscuro con lineas pequeñas blancas y rojas (Brooksfield)",
-                    abrigo: "Quarter-zip gris claro (Polo)",
+                    pantalon: "Pantalón gris oscuro",
+                    camisa: "Camisa celeste líneas Brooksfield",
+                    abrigo: "Quarter-zip Polo gris claro",
                     zapatos: "Zapatos marrones"
                 },
                 notas: "Elegante pero con más personalidad. La camisa Brooksfield es statement.",
@@ -1643,9 +1549,9 @@
                 formalidad: "formal",
                 contexto: "Días normales en oficina, sin eventos especiales",
                 prendas: {
-                    pantalon: "Gris medio-oscuro nuevo",
-                    camisa: "Rayas finitas azul y blanco",
-                    abrigo: "Sweater patagonia gris haspeado (quarter-zip)",
+                    pantalon: "Pantalón gris oscuro",
+                    camisa: "Camisa rayas azul/blanco",
+                    abrigo: "Quarter-zip Patagonia gris",
                     zapatos: "Zapatos negros"
                 },
                 notas: "El combo típico de finance. Cómodo pero profesional.",
@@ -1657,9 +1563,9 @@
                 formalidad: "formal",
                 contexto: "Cuando quieres hacer un statement visual profesional",
                 prendas: {
-                    pantalon: "Gris medio de traje",
-                    camisa: "Azul oscuro",
-                    abrigo: "Quarter-zip azul Polo (estilo lana)",
+                    pantalon: "Pantalón gris claro",
+                    camisa: "Camisa azul oscura",
+                    abrigo: "Quarter-zip Polo azul",
                     zapatos: "Zapatos negros"
                 },
                 notas: "Monochrome en azul. Sofisticado y memorable. Impacta sin ser agresivo.",
@@ -1671,8 +1577,8 @@
                 formalidad: "elegante-sport",
                 contexto: "Días más relajados, actividades en grupo, team building",
                 prendas: {
-                    pantalon: "Azul Zara por altura del tobillo",
-                    camisa: "Celeste lisa (claro)",
+                    pantalon: "Pantalón azul (tobillo)",
+                    camisa: "Camisa celeste clara",
                     abrigo: "Sweater UNIQLO azul",
                     zapatos: "Vans negras"
                 },
@@ -1685,9 +1591,9 @@
                 formalidad: "elegante-sport",
                 contexto: "Casual Friday, eventos after-work, presentaciones internas relajadas",
                 prendas: {
-                    pantalon: "Gris medio-oscuro nuevo",
-                    camisa: "Rayas celeste claro y blanco (Polo)",
-                    abrigo: "Quarter-zip gris oscuro Springfield",
+                    pantalon: "Pantalón gris oscuro",
+                    camisa: "Camisa rayas celeste/blanco",
+                    abrigo: "Quarter-zip Springfield gris",
                     zapatos: "Zapatos marrones"
                 },
                 notas: "Elegante sport peak. Zapatos formales elevan los pantalones casuales.",
@@ -1699,10 +1605,10 @@
                 formalidad: "elegante-sport",
                 contexto: "Días con actividades variadas, sin meetings importantes",
                 prendas: {
-                    pantalon: "Negro Zara por altura del tobilo",
-                    camisa: "Celeste medio-oscuro con pequeños detalles en blanco (Brooksfield)",
-                    abrigo: "Chaleco Patagonia azul haspeado",
-                    zapatos: "Adidas Spezial beige y negro"
+                    pantalon: "Pantalón negro (tobillo)",
+                    camisa: "Camisa celeste Brooksfield",
+                    abrigo: "Chaleco Patagonia azul",
+                    zapatos: "Adidas Spezial beige"
                 },
                 notas: "Las texturas hacen el look. El chaleco sobre pantalón negro es chef's kiss.",
                 custom: false
@@ -1713,9 +1619,9 @@
                 formalidad: "elegante-sport",
                 contexto: "Cuando querés agregar color sin perder profesionalismo",
                 prendas: {
-                    pantalon: "Gris medio-oscuro nuevo",
-                    camisa: "Blanca lisa",
-                    abrigo: "Quarter-zip bordeau Polo (estilo lana)",
+                    pantalon: "Pantalón gris oscuro",
+                    camisa: "Camisa blanca",
+                    abrigo: "Quarter-zip Polo bordeau",
                     zapatos: "Zapatos marrones"
                 },
                 notas: "El bordeaux es el new navy. Sofisticado y financiero without trying.",
@@ -1727,10 +1633,10 @@
                 formalidad: "elegante-sport",
                 contexto: "Team building, eventos informales, días con energía",
                 prendas: {
-                    pantalon: "Azul Zara por altura del tobillo",
-                    camisa: "Blanca lisa",
-                    abrigo: "Campera Patagonia roja/bordeau",
-                    zapatos: "Adidas Spezial beige y negro"
+                    pantalon: "Pantalón azul (tobillo)",
+                    camisa: "Camisa blanca",
+                    abrigo: "Campera Patagonia bordeau",
+                    zapatos: "Adidas Spezial beige"
                 },
                 notas: "Casual pero con un punto de sofisticación. La campera Patagonia es iconic.",
                 custom: false
@@ -1741,10 +1647,10 @@
                 formalidad: "casual",
                 contexto: "Workdays relajados, entrenamientos internos, networking casual",
                 prendas: {
-                    pantalon: "Negro Zara por altura del tobilo",
-                    camisa: "Gris haspeado",
-                    abrigo: "Sweater finito Brooksfield azul con rayas blancas",
-                    zapatos: "Tiger blancas con líneas negras"
+                    pantalon: "Pantalón negro (tobillo)",
+                    camisa: "Camisa gris jaspeada",
+                    abrigo: "Sweater Brooksfield azul",
+                    zapatos: "Tiger blancas"
                 },
                 notas: "Juega con texturas en la gama neutral. Las zapatillas blancas lo hacen accessible.",
                 custom: false
@@ -1755,9 +1661,9 @@
                 formalidad: "casual",
                 contexto: "Días ultra-casuales, actividades deportivas del traineeship",
                 prendas: {
-                    pantalon: "Azul Zara por altura del tobillo",
-                    camisa: "Celeste lisa (claro)",
-                    abrigo: "Campera Brooksfield negra (tipo polar)",
+                    pantalon: "Pantalón azul (tobillo)",
+                    camisa: "Camisa celeste clara",
+                    abrigo: "Polar Brooksfield negro",
                     zapatos: "Vans negras"
                 },
                 notas: "Lo máximo casual que deberías ir. Todavía se ve put-together y profesional.",
@@ -1769,8 +1675,8 @@
                 formalidad: "formal",
                 contexto: "Reuniones formales, presentaciones con autoridad, días statement",
                 prendas: {
-                    pantalon: "Gris medio de traje",
-                    camisa: "Celeste lisa (claro)",
+                    pantalon: "Pantalón gris claro",
+                    camisa: "Camisa celeste clara",
                     abrigo: "Sweater UNIQLO azul",
                     zapatos: "Zapatos marrones"
                 },
@@ -1783,9 +1689,9 @@
                 formalidad: "formal",
                 contexto: "Días de mucho trabajo, focus meetings, cuando querés blending profesional",
                 prendas: {
-                    pantalon: "Gris medio-oscuro nuevo",
-                    camisa: "Gris haspeado",
-                    abrigo: "Quarter-zip gris oscuro Springfield",
+                    pantalon: "Pantalón gris oscuro",
+                    camisa: "Camisa gris jaspeada",
+                    abrigo: "Quarter-zip Springfield gris",
                     zapatos: "Zapatos negros"
                 },
                 notas: "Monochrome en grises oscuros. Sutil, sofisticado, 100% profesional sin intentarlo.",
@@ -1797,9 +1703,9 @@
                 formalidad: "elegante-sport",
                 contexto: "Días de balance entre casual y formal, reuniones sin estar ultra-dressed",
                 prendas: {
-                    pantalon: "Gris medio-oscuro nuevo",
-                    camisa: "Blanca lisa",
-                    abrigo: "Quarter-zip azul Polo (estilo lana)",
+                    pantalon: "Pantalón gris oscuro",
+                    camisa: "Camisa blanca",
+                    abrigo: "Quarter-zip Polo azul",
                     zapatos: "Zapatos marrones"
                 },
                 notas: "El azul del quarter-zip eleva todo sin hacer que sea formal. European vibes.",
@@ -1811,10 +1717,10 @@
                 formalidad: "casual",
                 contexto: "Días relajados pero cool, cuando querés algo limpio y minimalista",
                 prendas: {
-                    pantalon: "Negro Zara por altura del tobilo",
-                    camisa: "Celeste lisa (claro)",
+                    pantalon: "Pantalón negro (tobillo)",
+                    camisa: "Camisa celeste clara",
                     abrigo: "Sin abrigo",
-                    zapatos: "Tiger blancas con líneas negras"
+                    zapatos: "Tiger blancas"
                 },
                 notas: "Minimal y europeo. Negro + celeste + blanco. Limpio, sin complicaciones.",
                 custom: false
@@ -1825,9 +1731,9 @@
                 formalidad: "casual",
                 contexto: "Días con vibe relajada pero texturada, sin being too casual",
                 prendas: {
-                    pantalon: "Azul Zara por altura del tobillo",
-                    camisa: "Gris haspeado",
-                    abrigo: "Quarter-zip gris oscuro Springfield",
+                    pantalon: "Pantalón azul (tobillo)",
+                    camisa: "Camisa gris jaspeada",
+                    abrigo: "Quarter-zip Springfield gris",
                     zapatos: "Vans negras"
                 },
                 notas: "Las texturas (haspeado + quarter-zip) dan sofisticación a un outfit casual. Smart.",
@@ -1839,10 +1745,10 @@
                 formalidad: "casual",
                 contexto: "Días con color pero sin ser agresivo, personal pero elegante",
                 prendas: {
-                    pantalon: "Gris medio de traje",
-                    camisa: "Blanca lisa",
-                    abrigo: "Quarter-zip bordeau Polo (estilo lana)",
-                    zapatos: "Adidas Spezial beige y negro"
+                    pantalon: "Pantalón gris claro",
+                    camisa: "Camisa blanca",
+                    abrigo: "Quarter-zip Polo bordeau",
+                    zapatos: "Adidas Spezial beige"
                 },
                 notas: "El bordeau + Adidas Spezial es una combo europea sofisticada. Diferente sin ser riesgoso.",
                 custom: false
@@ -1851,35 +1757,43 @@
 
         // ============ COLOR DOTS ============
         // Ordered from most specific to most general to avoid false matches
-        const colorMap = [
-            { keywords: ['roja/bordeau', 'rojo/bordeau'],            color: '#C0392B' },
-            { keywords: ['bordeau', 'bordeaux', 'bordo'],             color: '#7B2D42' },
-            { keywords: ['azul oscuro'],                              color: '#1a3a6e' },
-            { keywords: ['azul haspeado', 'azul polo', 'azul uniqlo', 'azul con rayas', 'azul zara', 'azules con marrón', 'azul y blanco', 'finitas azul'], color: '#2E6DAD' },
-            { keywords: ['azul'],                                     color: '#4a90d9' },
-            { keywords: ['celeste oscuro', 'celeste medio-oscuro'],   color: '#5B9AB5' },
-            { keywords: ['celeste claro', 'celeste lisa', 'celeste y blanco', 'celeste claro y blanco'], color: '#87CEEB' },
-            { keywords: ['celeste'],                                   color: '#87CEEB' },
-            { keywords: ['gris oscuro', 'gris medio-oscuro'],         color: '#555555' },
-            { keywords: ['gris medio', 'gris haspeado', 'gris claro'], color: '#9E9E9E' },
-            { keywords: ['gris'],                                      color: '#9E9E9E' },
-            { keywords: ['blanca lisa', 'blanco', 'blanca', 'blancas', 'tiger blancas'], color: '#E8E8E8' },
-            { keywords: ['negro zara', 'negra (tipo polar)', 'negras', 'negro', 'negros'], color: '#222222' },
-            { keywords: ['marrón', 'marrones'],                        color: '#8B5E3C' },
-            { keywords: ['beige y negro', 'beige'],                    color: '#D4B896' },
-            { keywords: ['roja', 'rojo'],                              color: '#C0392B' },
-            { keywords: ['rojas'],                                     color: '#C0392B' },
+        // Each prenda is evaluated independently so colors can't double-up
+        // within a single garment. Max 4 dots total.
+        const colorRules = [
+            { keywords: ['bordeau', 'bordeaux', 'bordo'],                       color: '#7B2D42' },
+            { keywords: ['camisa azul oscura'],                                  color: '#1a3a6e' },
+            { keywords: ['pantalón azul', 'levis azules', 'azul/blanco',
+                          'uniqlo azul', 'patagonia azul', 'polo azul',
+                          'brooksfield azul', 'spezial azul'],                   color: '#2E6DAD' },
+            { keywords: ['azul'],                                                color: '#2E6DAD' },
+            { keywords: ['celeste/blanco', 'celeste clara', 'celeste líneas',
+                          'celeste brooksfield', 'uniqlo celeste'],              color: '#87CEEB' },
+            { keywords: ['celeste'],                                             color: '#87CEEB' },
+            { keywords: ['pantalón gris oscuro', 'springfield gris',
+                          'polo gris claro', 'patagonia gris'],                  color: '#6B6B6B' },
+            { keywords: ['gris jaspeada', 'gris'],                              color: '#6B6B6B' },
+            { keywords: ['camisa blanca', 'tiger blancas', 'blanco', 'blancas'],'color': '#E0E0E0' },
+            { keywords: ['pantalón negro', 'polar brooksfield negro',
+                          'vans negras', 'zapatos negros', 'negro', 'negras'],   color: '#2C2C2C' },
+            { keywords: ['zapatos marrones'],                                    color: '#8B5E3C' },
+            { keywords: ['beige'],                                               color: '#D4B896' },
+            { keywords: ['campera patagonia bordeau'],                           color: '#7B2D42' },
         ];
 
         function extractColors(outfit) {
-            const allText = Object.values(outfit.prendas).join(' ').toLowerCase();
+            // Evaluate each prenda separately so one item can't trigger two color rules
+            const prendas = Object.values(outfit.prendas);
             const found = [];
-            for (const entry of colorMap) {
-                if (found.length >= 5) break;
-                const matched = entry.keywords.some(kw => allText.includes(kw));
-                if (matched && !found.includes(entry.color)) {
-                    found.push(entry.color);
+            for (const prenda of prendas) {
+                const text = prenda.toLowerCase();
+                for (const rule of colorRules) {
+                    if (found.length >= 4) break;
+                    if (rule.keywords.some(kw => text.includes(kw)) && !found.includes(rule.color)) {
+                        found.push(rule.color);
+                        break; // only one color per prenda
+                    }
                 }
+                if (found.length >= 4) break;
             }
             return found;
         }
@@ -2476,43 +2390,43 @@
                     <div class="form-group">
                         <label>Pantalón</label>
                         <select id="editPantalon">
-                            <option value="Azul Zara por altura del tobillo" ${outfit.prendas.pantalon === 'Azul Zara por altura del tobillo' ? 'selected' : ''}>Azul Zara por altura del tobillo</option>
-                            <option value="Negro Zara por altura del tobilo" ${outfit.prendas.pantalon === 'Negro Zara por altura del tobilo' ? 'selected' : ''}>Negro Zara por altura del tobilo</option>
-                            <option value="Gris medio de traje" ${outfit.prendas.pantalon === 'Gris medio de traje' ? 'selected' : ''}>Gris medio de traje</option>
-                            <option value="Gris medio-oscuro nuevo" ${outfit.prendas.pantalon === 'Gris medio-oscuro nuevo' ? 'selected' : ''}>Gris medio-oscuro nuevo</option>
+                            <option value="Pantalón azul (tobillo)" ${outfit.prendas.pantalon === 'Pantalón azul (tobillo)' ? 'selected' : ''}>Pantalón azul (tobillo)</option>
+                            <option value="Pantalón negro (tobillo)" ${outfit.prendas.pantalon === 'Pantalón negro (tobillo)' ? 'selected' : ''}>Pantalón negro (tobillo)</option>
+                            <option value="Pantalón gris claro" ${outfit.prendas.pantalon === 'Pantalón gris claro' ? 'selected' : ''}>Pantalón gris claro</option>
+                            <option value="Pantalón gris oscuro" ${outfit.prendas.pantalon === 'Pantalón gris oscuro' ? 'selected' : ''}>Pantalón gris oscuro</option>
                         </select>
                     </div>
 
                     <div class="form-group">
                         <label>Camisa</label>
                         <select id="editCamisa">
-                            <option value="Blanca lisa" ${outfit.prendas.camisa === 'Blanca lisa' ? 'selected' : ''}>Blanca lisa</option>
-                            <option value="Celeste lisa (claro)" ${outfit.prendas.camisa === 'Celeste lisa (claro)' ? 'selected' : ''}>Celeste lisa (claro)</option>
-                            <option value="Celeste medio-oscuro con pequeños detalles en blanco (Brooksfield)" ${outfit.prendas.camisa === 'Celeste medio-oscuro con pequeños detalles en blanco (Brooksfield)' ? 'selected' : ''}>Celeste medio-oscuro con detalles (Brooksfield)</option>
-                            <option value="Gris haspeado" ${outfit.prendas.camisa === 'Gris haspeado' ? 'selected' : ''}>Gris haspeado</option>
-                            <option value="Rayas celeste claro y blanco (Polo)" ${outfit.prendas.camisa === 'Rayas celeste claro y blanco (Polo)' ? 'selected' : ''}>Rayas celeste claro y blanco (Polo)</option>
-                            <option value="Rayas finitas azul y blanco" ${outfit.prendas.camisa === 'Rayas finitas azul y blanco' ? 'selected' : ''}>Rayas finitas azul y blanco</option>
-                            <option value="Azul oscuro" ${outfit.prendas.camisa === 'Azul oscuro' ? 'selected' : ''}>Azul oscuro</option>
-                            <option value="Celeste medio-oscuro con lineas pequeñas blancas y rojas (Brooksfield)" ${outfit.prendas.camisa === 'Celeste medio-oscuro con lineas pequeñas blancas y rojas (Brooksfield)' ? 'selected' : ''}>Celeste con líneas blancas y rojas (Brooksfield)</option>
+                            <option value="Camisa blanca" ${outfit.prendas.camisa === 'Camisa blanca' ? 'selected' : ''}>Camisa blanca</option>
+                            <option value="Camisa celeste clara" ${outfit.prendas.camisa === 'Camisa celeste clara' ? 'selected' : ''}>Camisa celeste clara</option>
+                            <option value="Camisa celeste Brooksfield" ${outfit.prendas.camisa === 'Camisa celeste Brooksfield' ? 'selected' : ''}>Celeste medio-oscuro con detalles (Brooksfield)</option>
+                            <option value="Camisa gris jaspeada" ${outfit.prendas.camisa === 'Camisa gris jaspeada' ? 'selected' : ''}>Camisa gris jaspeada</option>
+                            <option value="Camisa rayas celeste/blanco" ${outfit.prendas.camisa === 'Camisa rayas celeste/blanco' ? 'selected' : ''}>Camisa rayas celeste/blanco</option>
+                            <option value="Camisa rayas azul/blanco" ${outfit.prendas.camisa === 'Camisa rayas azul/blanco' ? 'selected' : ''}>Camisa rayas azul/blanco</option>
+                            <option value="Camisa azul oscura" ${outfit.prendas.camisa === 'Camisa azul oscura' ? 'selected' : ''}>Camisa azul oscura</option>
+                            <option value="Camisa celeste líneas Brooksfield" ${outfit.prendas.camisa === 'Camisa celeste líneas Brooksfield' ? 'selected' : ''}>Celeste con líneas blancas y rojas (Brooksfield)</option>
                         </select>
                     </div>
 
                     <div class="form-group">
                         <label>Abrigo / Sweater</label>
                         <select id="editAbrigo">
-                            <option value="Sweater patagonia gris haspeado (quarter-zip)" ${outfit.prendas.abrigo === 'Sweater patagonia gris haspeado (quarter-zip)' ? 'selected' : ''}>Sweater Patagonia gris haspeado (quarter-zip)</option>
-                            <option value="Campera Patagonia roja/bordeau" ${outfit.prendas.abrigo === 'Campera Patagonia roja/bordeau' ? 'selected' : ''}>Campera Patagonia roja/bordeau</option>
+                            <option value="Quarter-zip Patagonia gris" ${outfit.prendas.abrigo === 'Quarter-zip Patagonia gris' ? 'selected' : ''}>Sweater Patagonia gris haspeado (quarter-zip)</option>
+                            <option value="Campera Patagonia bordeau" ${outfit.prendas.abrigo === 'Campera Patagonia bordeau' ? 'selected' : ''}>Campera Patagonia bordeau</option>
                             <option value="Sweater UNIQLO azul" ${outfit.prendas.abrigo === 'Sweater UNIQLO azul' ? 'selected' : ''}>Sweater UNIQLO azul</option>
-                            <option value="Sweater UNIQLO celeste oscuro" ${outfit.prendas.abrigo === 'Sweater UNIQLO celeste oscuro' ? 'selected' : ''}>Sweater UNIQLO celeste oscuro</option>
-                            <option value="Quarter-zip gris oscuro Springfield" ${outfit.prendas.abrigo === 'Quarter-zip gris oscuro Springfield' ? 'selected' : ''}>Quarter-zip gris oscuro Springfield</option>
-                            <option value="Quarter-zip gris claro (Polo)" ${outfit.prendas.abrigo === 'Quarter-zip gris claro (Polo)' ? 'selected' : ''}>Quarter-zip gris claro (Polo)</option>
-                            <option value="Quarter-zip azul Polo (estilo lana)" ${outfit.prendas.abrigo === 'Quarter-zip azul Polo (estilo lana)' ? 'selected' : ''}>Quarter-zip azul Polo (estilo lana)</option>
-                            <option value="Quarter-zip bordeau Polo (estilo lana)" ${outfit.prendas.abrigo === 'Quarter-zip bordeau Polo (estilo lana)' ? 'selected' : ''}>Quarter-zip bordeau Polo (estilo lana)</option>
-                            <option value="Campera Brooksfield negra (tipo polar)" ${outfit.prendas.abrigo === 'Campera Brooksfield negra (tipo polar)' ? 'selected' : ''}>Campera Brooksfield negra (tipo polar)</option>
-                            <option value="Campera Brooksfield bordeau (tipo polar)" ${outfit.prendas.abrigo === 'Campera Brooksfield bordeau (tipo polar)' ? 'selected' : ''}>Campera Brooksfield bordeau (tipo polar)</option>
-                            <option value="Sweater finito Brooksfield azul con rayas blancas" ${outfit.prendas.abrigo === 'Sweater finito Brooksfield azul con rayas blancas' ? 'selected' : ''}>Sweater finito Brooksfield azul con rayas blancas</option>
-                            <option value="Chaleco Patagonia gris haspeado" ${outfit.prendas.abrigo === 'Chaleco Patagonia gris haspeado' ? 'selected' : ''}>Chaleco Patagonia gris haspeado</option>
-                            <option value="Chaleco Patagonia azul haspeado" ${outfit.prendas.abrigo === 'Chaleco Patagonia azul haspeado' ? 'selected' : ''}>Chaleco Patagonia azul haspeado</option>
+                            <option value="Sweater UNIQLO celeste" ${outfit.prendas.abrigo === 'Sweater UNIQLO celeste' ? 'selected' : ''}>Sweater UNIQLO celeste</option>
+                            <option value="Quarter-zip Springfield gris" ${outfit.prendas.abrigo === 'Quarter-zip Springfield gris' ? 'selected' : ''}>Quarter-zip Springfield gris</option>
+                            <option value="Quarter-zip Polo gris claro" ${outfit.prendas.abrigo === 'Quarter-zip Polo gris claro' ? 'selected' : ''}>Quarter-zip Polo gris claro</option>
+                            <option value="Quarter-zip Polo azul" ${outfit.prendas.abrigo === 'Quarter-zip Polo azul' ? 'selected' : ''}>Quarter-zip Polo azul</option>
+                            <option value="Quarter-zip Polo bordeau" ${outfit.prendas.abrigo === 'Quarter-zip Polo bordeau' ? 'selected' : ''}>Quarter-zip Polo bordeau</option>
+                            <option value="Polar Brooksfield negro" ${outfit.prendas.abrigo === 'Polar Brooksfield negro' ? 'selected' : ''}>Polar Brooksfield negro</option>
+                            <option value="Polar Brooksfield bordeau" ${outfit.prendas.abrigo === 'Polar Brooksfield bordeau' ? 'selected' : ''}>Polar Brooksfield bordeau</option>
+                            <option value="Sweater Brooksfield azul" ${outfit.prendas.abrigo === 'Sweater Brooksfield azul' ? 'selected' : ''}>Sweater Brooksfield azul</option>
+                            <option value="Chaleco Patagonia gris" ${outfit.prendas.abrigo === 'Chaleco Patagonia gris' ? 'selected' : ''}>Chaleco Patagonia gris</option>
+                            <option value="Chaleco Patagonia azul" ${outfit.prendas.abrigo === 'Chaleco Patagonia azul' ? 'selected' : ''}>Chaleco Patagonia azul</option>
                         </select>
                     </div>
 
@@ -2520,9 +2434,9 @@
                         <label>Zapatos</label>
                         <select id="editZapatos">
                             <option value="Vans negras" ${outfit.prendas.zapatos === 'Vans negras' ? 'selected' : ''}>Vans negras</option>
-                            <option value="Adidas Spezial beige y negro" ${outfit.prendas.zapatos === 'Adidas Spezial beige y negro' ? 'selected' : ''}>Adidas Spezial beige y negro</option>
-                            <option value="Tiger blancas con líneas negras" ${outfit.prendas.zapatos === 'Tiger blancas con líneas negras' ? 'selected' : ''}>Tiger blancas con líneas negras</option>
-                            <option value="Levis azules con marrón" ${outfit.prendas.zapatos === 'Levis azules con marrón' ? 'selected' : ''}>Levis azules con marrón</option>
+                            <option value="Adidas Spezial beige" ${outfit.prendas.zapatos === 'Adidas Spezial beige' ? 'selected' : ''}>Adidas Spezial beige</option>
+                            <option value="Tiger blancas" ${outfit.prendas.zapatos === 'Tiger blancas' ? 'selected' : ''}>Tiger blancas</option>
+                            <option value="Levis azules" ${outfit.prendas.zapatos === 'Levis azules' ? 'selected' : ''}>Levis azules</option>
                             <option value="Zapatos marrones" ${outfit.prendas.zapatos === 'Zapatos marrones' ? 'selected' : ''}>Zapatos marrones</option>
                             <option value="Zapatos negros" ${outfit.prendas.zapatos === 'Zapatos negros' ? 'selected' : ''}>Zapatos negros</option>
                         </select>
@@ -2781,14 +2695,11 @@
             const emoji = getWeatherEmoji(description);
             const tempText = maxTemp !== null ? `${maxTemp}°` : '--°';
             
-            // Solo actualizar la condición si el fetch fue exitoso
-            if (description && description !== 'error') {
-                currentWeatherCondition = description;
-            }
+            currentWeatherCondition = description; // Guardar condición para recomendaciones
             
             document.getElementById('weatherEmoji').textContent = emoji;
             document.getElementById('weatherTemp').textContent = tempText;
-            document.getElementById('weatherLocation').textContent = description === 'error' ? '⚠️ Sin datos' : location;
+            document.getElementById('weatherLocation').textContent = location;
         }
 
         function getWeatherEmoji(description) {
@@ -2918,80 +2829,11 @@
             });
         }
 
-        function openManualWeatherPicker() {
-            const overlay = document.createElement('div');
-            overlay.className = 'weather-manual-overlay';
-            overlay.id = 'weatherManualOverlay';
-
-            let manualTemp = 12;
-
-            overlay.innerHTML = `
-                <div class="weather-manual-dialog">
-                    <div style="font-size:2em; margin-bottom:8px;">🌤️</div>
-                    <h3>¿Cómo está el clima hoy?</h3>
-                    <p>No se pudo obtener el clima automáticamente.<br>Seleccioná las condiciones manualmente.</p>
-                    <div class="weather-manual-options">
-                        <button class="weather-manual-btn" onclick="applyManualWeather('sunny', parseInt(document.getElementById('manualTempSlider').value))">
-                            ☀️ Soleado / Despejado
-                            <span class="wm-sub">Sin nubes, cielo limpio</span>
-                        </button>
-                        <button class="weather-manual-btn" onclick="applyManualWeather('cloud', parseInt(document.getElementById('manualTempSlider').value))">
-                            ⛅ Nublado / Parcialmente nublado
-                            <span class="wm-sub">Nubes pero sin lluvia</span>
-                        </button>
-                        <button class="weather-manual-btn" onclick="applyManualWeather('drizzle', parseInt(document.getElementById('manualTempSlider').value))">
-                            🌦️ Llovizna
-                            <span class="wm-sub">Lluvia leve o intermitente</span>
-                        </button>
-                        <button class="weather-manual-btn" onclick="applyManualWeather('rain', parseInt(document.getElementById('manualTempSlider').value))">
-                            🌧️ Lluvia
-                            <span class="wm-sub">Lluvia moderada o fuerte</span>
-                        </button>
-                        <button class="weather-manual-btn" onclick="applyManualWeather('snow', parseInt(document.getElementById('manualTempSlider').value))">
-                            ❄️ Nieve
-                            <span class="wm-sub">Frío extremo</span>
-                        </button>
-                    </div>
-                    <div class="weather-manual-temp">
-                        <label>Temperatura máxima del día</label>
-                        <input type="range" id="manualTempSlider" min="-5" max="35" value="12" step="1"
-                            oninput="document.getElementById('manualTempDisplay').textContent = this.value + '°'">
-                        <div class="temp-display" id="manualTempDisplay">12°</div>
-                    </div>
-                    <button class="btn-wm-cancel" onclick="closeManualWeatherPicker()">Cancelar</button>
-                </div>
-            `;
-
-            document.body.appendChild(overlay);
-            overlay.addEventListener('click', e => { if (e.target === overlay) closeManualWeatherPicker(); });
-        }
-
-        function applyManualWeather(condition, temp) {
-            currentWeatherCondition = condition;
-            currentMaxTemp = temp;
-            // Update the widget display too
-            const emoji = getWeatherEmoji(condition);
-            document.getElementById('weatherEmoji').textContent = emoji;
-            document.getElementById('weatherTemp').textContent = temp + '°';
-            document.getElementById('weatherLocation').textContent = 'Manual';
-            closeManualWeatherPicker();
-            _doShowWeatherRecommendations();
-        }
-
-        function closeManualWeatherPicker() {
-            const el = document.getElementById('weatherManualOverlay');
-            if (el) el.remove();
-        }
-
         function showWeatherRecommendations() {
-            if (!currentWeatherCondition || currentWeatherCondition === 'error') {
-                openManualWeatherPicker();
+            if (!currentWeatherCondition) {
+                alert('Esperando clima... clickeá en el widget ☀️ arriba a la derecha');
                 return;
             }
-            _doShowWeatherRecommendations();
-        }
-
-        function _doShowWeatherRecommendations() {
 
             switchTab('sugeridos');
 
