@@ -31,6 +31,60 @@
         header {
             text-align: center;
             margin-bottom: 40px;
+            position: relative;
+        }
+
+        .weather-widget {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: white;
+            border-radius: 12px;
+            padding: 12px 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.95em;
+            min-width: 180px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .weather-widget:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .weather-emoji {
+            font-size: 1.8em;
+        }
+
+        .weather-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .weather-temp {
+            font-weight: 700;
+            color: #1a3a52;
+            font-size: 1.1em;
+        }
+
+        .weather-location {
+            font-size: 0.8em;
+            color: #999;
+        }
+
+        .weather-loading {
+            color: #999;
+            font-style: italic;
+        }
+
+        .weather-error {
+            color: #c62828;
+            font-size: 0.85em;
         }
 
         h1 {
@@ -182,6 +236,36 @@
             filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.7));
         }
 
+        .usage-counter {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            padding: 4px 10px;
+            font-size: 0.8em;
+            font-weight: 600;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .usage-counter:hover {
+            background: #e0e0e0;
+            border-color: #999;
+            transform: scale(1.05);
+        }
+
+        .usage-counter.used {
+            background: #c8e6c9;
+            border-color: #2e7d32;
+            color: #2e7d32;
+        }
+
         .outfit-header {
             padding: 15px 20px;
             border-bottom: 2px solid #f0f0f0;
@@ -331,6 +415,122 @@
             border-color: #1565c0;
         }
 
+        /* STATS PANEL */
+        .stats-panel {
+            margin-top: 40px;
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .stats-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .stats-header h3 {
+            color: #1a3a52;
+            font-size: 1.1em;
+            margin: 0;
+        }
+
+        .stats-toggle {
+            font-size: 1.2em;
+            transition: transform 0.3s;
+        }
+
+        .stats-toggle.open {
+            transform: rotate(180deg);
+        }
+
+        .stats-content {
+            display: none;
+            margin-top: 20px;
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .stats-content.open {
+            display: block;
+            max-height: 500px;
+            opacity: 1;
+        }
+
+        .stats-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 0.95em;
+        }
+
+        .stats-item:last-child {
+            border-bottom: none;
+        }
+
+        .stats-label {
+            color: #666;
+            font-weight: 500;
+        }
+
+        .stats-value {
+            color: #1a3a52;
+            font-weight: 700;
+        }
+
+        .stats-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn-reset {
+            flex: 1;
+            padding: 12px;
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #ffcdd2;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+
+        .btn-reset:hover {
+            background: #ef5350;
+            color: white;
+            border-color: #ef5350;
+        }
+
+        .btn-export {
+            flex: 1;
+            padding: 12px;
+            background: #e3f2fd;
+            color: #1565c0;
+            border: 1px solid #bbdefb;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+
+        .btn-export:hover {
+            background: #1565c0;
+            color: white;
+            border-color: #1565c0;
+        }
+
         /* EDIT MODAL */
         .edit-overlay {
             position: fixed;
@@ -438,16 +638,57 @@
         .prenda-search-section {
             background: white;
             border-radius: 12px;
-            padding: 20px 24px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.08);
             margin-bottom: 24px;
+            overflow: hidden;
         }
 
-        .prenda-search-section h3 {
+        .prenda-search-header {
+            padding: 16px 24px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+            transition: background 0.2s;
+        }
+
+        .prenda-search-header:hover {
+            background: #f9fafb;
+        }
+
+        .prenda-search-header h3 {
             color: #1a3a52;
             font-size: 1em;
             font-weight: 600;
-            margin-bottom: 14px;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .prenda-toggle-icon {
+            font-size: 1.2em;
+            transition: transform 0.3s ease;
+            display: inline-block;
+        }
+
+        .prenda-toggle-icon.open {
+            transform: rotate(180deg);
+        }
+
+        .prenda-search-content {
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .prenda-search-content.open {
+            max-height: 500px;
+            opacity: 1;
+            padding: 20px 24px;
+            border-top: 1px solid #f0f0f0;
         }
 
         .prenda-search-grid {
@@ -1007,6 +1248,13 @@
 <body>
     <div class="container">
         <header>
+            <div class="weather-widget" id="weatherWidget" onclick="toggleWeatherLocation()">
+                <span class="weather-emoji" id="weatherEmoji">⛅</span>
+                <div class="weather-info">
+                    <div class="weather-temp" id="weatherTemp">--°</div>
+                    <div class="weather-location" id="weatherLocation">Cargando...</div>
+                </div>
+            </div>
             <h1>🏦 Rabobank Outfits</h1>
             <p class="subtitle">Tu guardarropas profesional para el traineeship</p>
         </header>
@@ -1026,72 +1274,77 @@
                 <button class="filter-btn" onclick="filterOutfits('elegante-sport')">Elegante Sport (6)</button>
                 <button class="filter-btn" onclick="filterOutfits('casual')">Casual (5)</button>
                 <button class="filter-btn" onclick="filterOutfits('favoritos')">⭐ Favoritos</button>
+                <button class="filter-btn" onclick="filterOutfits('masusado')">🔥 Más usado</button>
             </div>
 
-            <!-- FILTRO POR PRENDA -->
+            <!-- FILTRO POR PRENDA (DESPLEGABLE) -->
             <div class="prenda-search-section">
-                <h3>🔍 Filtrar por prenda específica</h3>
-                <div class="prenda-search-grid">
-                    <div class="prenda-search-group">
-                        <label>Pantalón</label>
-                        <select id="searchPantalon">
-                            <option value="">Cualquiera</option>
-                            <option value="Azul Zara por altura del tobillo">Azul Zara tobillo</option>
-                            <option value="Negro Zara por altura del tobilo">Negro Zara tobillo</option>
-                            <option value="Gris medio de traje">Gris medio de traje</option>
-                            <option value="Gris medio-oscuro nuevo">Gris medio-oscuro nuevo</option>
-                        </select>
-                    </div>
-                    <div class="prenda-search-group">
-                        <label>Camisa</label>
-                        <select id="searchCamisa">
-                            <option value="">Cualquiera</option>
-                            <option value="Blanca lisa">Blanca lisa</option>
-                            <option value="Celeste lisa (claro)">Celeste lisa (claro)</option>
-                            <option value="Celeste medio-oscuro con pequeños detalles en blanco (Brooksfield)">Celeste detalles Brooksfield</option>
-                            <option value="Gris haspeado">Gris haspeado</option>
-                            <option value="Rayas celeste claro y blanco (Polo)">Rayas celeste/blanco Polo</option>
-                            <option value="Rayas finitas azul y blanco">Rayas finitas azul/blanco</option>
-                            <option value="Azul oscuro">Azul oscuro</option>
-                            <option value="Celeste medio-oscuro con lineas pequeñas blancas y rojas (Brooksfield)">Celeste líneas Brooksfield</option>
-                        </select>
-                    </div>
-                    <div class="prenda-search-group">
-                        <label>Abrigo / Sweater</label>
-                        <select id="searchAbrigo">
-                            <option value="">Cualquiera</option>
-                            <option value="Sweater patagonia gris haspeado (quarter-zip)">Patagonia gris haspeado</option>
-                            <option value="Campera Patagonia roja/bordeau">Patagonia roja/bordeau</option>
-                            <option value="Sweater UNIQLO azul">UNIQLO azul</option>
-                            <option value="Sweater UNIQLO celeste oscuro">UNIQLO celeste oscuro</option>
-                            <option value="Quarter-zip gris oscuro Springfield">Quarter-zip gris Springfield</option>
-                            <option value="Quarter-zip gris claro (Polo)">Quarter-zip gris claro Polo</option>
-                            <option value="Quarter-zip azul Polo (estilo lana)">Quarter-zip azul Polo</option>
-                            <option value="Quarter-zip bordeau Polo (estilo lana)">Quarter-zip bordeau Polo</option>
-                            <option value="Campera Brooksfield negra (tipo polar)">Brooksfield negra polar</option>
-                            <option value="Campera Brooksfield bordeau (tipo polar)">Brooksfield bordeau polar</option>
-                            <option value="Sweater finito Brooksfield azul con rayas blancas">Brooksfield azul rayas</option>
-                            <option value="Chaleco Patagonia gris haspeado">Chaleco Patagonia gris</option>
-                            <option value="Chaleco Patagonia azul haspeado">Chaleco Patagonia azul</option>
-                        </select>
-                    </div>
-                    <div class="prenda-search-group">
-                        <label>Zapatos</label>
-                        <select id="searchZapatos">
-                            <option value="">Cualquiera</option>
-                            <option value="Vans negras">Vans negras</option>
-                            <option value="Adidas Spezial beige y negro">Adidas Spezial beige/negro</option>
-                            <option value="Tiger blancas con líneas negras">Tiger blancas</option>
-                            <option value="Levis azules con marrón">Levis azules/marrón</option>
-                            <option value="Zapatos marrones">Zapatos marrones</option>
-                            <option value="Zapatos negros">Zapatos negros</option>
-                        </select>
-                    </div>
+                <div class="prenda-search-header" onclick="togglePrendaFilter()">
+                    <h3>🔍 Filtrar por prenda <span class="prenda-toggle-icon" id="prendaToggle">▼</span></h3>
                 </div>
-                <div class="prenda-search-actions">
-                    <button class="btn-prenda-search" onclick="applyPrendaFilter()">Buscar outfits</button>
-                    <button class="btn-prenda-clear" onclick="clearPrendaFilter()">Limpiar</button>
-                    <span class="prenda-search-results-label" id="prendaResultsLabel"></span>
+                <div class="prenda-search-content" id="prendaSearchContent">
+                    <div class="prenda-search-grid">
+                        <div class="prenda-search-group">
+                            <label>Pantalón</label>
+                            <select id="searchPantalon">
+                                <option value="">Cualquiera</option>
+                                <option value="Azul Zara por altura del tobillo">Azul Zara tobillo</option>
+                                <option value="Negro Zara por altura del tobilo">Negro Zara tobillo</option>
+                                <option value="Gris medio de traje">Gris medio de traje</option>
+                                <option value="Gris medio-oscuro nuevo">Gris medio-oscuro nuevo</option>
+                            </select>
+                        </div>
+                        <div class="prenda-search-group">
+                            <label>Camisa</label>
+                            <select id="searchCamisa">
+                                <option value="">Cualquiera</option>
+                                <option value="Blanca lisa">Blanca lisa</option>
+                                <option value="Celeste lisa (claro)">Celeste lisa (claro)</option>
+                                <option value="Celeste medio-oscuro con pequeños detalles en blanco (Brooksfield)">Celeste detalles Brooksfield</option>
+                                <option value="Gris haspeado">Gris haspeado</option>
+                                <option value="Rayas celeste claro y blanco (Polo)">Rayas celeste/blanco Polo</option>
+                                <option value="Rayas finitas azul y blanco">Rayas finitas azul/blanco</option>
+                                <option value="Azul oscuro">Azul oscuro</option>
+                                <option value="Celeste medio-oscuro con lineas pequeñas blancas y rojas (Brooksfield)">Celeste líneas Brooksfield</option>
+                            </select>
+                        </div>
+                        <div class="prenda-search-group">
+                            <label>Abrigo / Sweater</label>
+                            <select id="searchAbrigo">
+                                <option value="">Cualquiera</option>
+                                <option value="Sweater patagonia gris haspeado (quarter-zip)">Patagonia gris haspeado</option>
+                                <option value="Campera Patagonia roja/bordeau">Patagonia roja/bordeau</option>
+                                <option value="Sweater UNIQLO azul">UNIQLO azul</option>
+                                <option value="Sweater UNIQLO celeste oscuro">UNIQLO celeste oscuro</option>
+                                <option value="Quarter-zip gris oscuro Springfield">Quarter-zip gris Springfield</option>
+                                <option value="Quarter-zip gris claro (Polo)">Quarter-zip gris claro Polo</option>
+                                <option value="Quarter-zip azul Polo (estilo lana)">Quarter-zip azul Polo</option>
+                                <option value="Quarter-zip bordeau Polo (estilo lana)">Quarter-zip bordeau Polo</option>
+                                <option value="Campera Brooksfield negra (tipo polar)">Brooksfield negra polar</option>
+                                <option value="Campera Brooksfield bordeau (tipo polar)">Brooksfield bordeau polar</option>
+                                <option value="Sweater finito Brooksfield azul con rayas blancas">Brooksfield azul rayas</option>
+                                <option value="Chaleco Patagonia gris haspeado">Chaleco Patagonia gris</option>
+                                <option value="Chaleco Patagonia azul haspeado">Chaleco Patagonia azul</option>
+                            </select>
+                        </div>
+                        <div class="prenda-search-group">
+                            <label>Zapatos</label>
+                            <select id="searchZapatos">
+                                <option value="">Cualquiera</option>
+                                <option value="Vans negras">Vans negras</option>
+                                <option value="Adidas Spezial beige y negro">Adidas Spezial beige/negro</option>
+                                <option value="Tiger blancas con líneas negras">Tiger blancas</option>
+                                <option value="Levis azules con marrón">Levis azules/marrón</option>
+                                <option value="Zapatos marrones">Zapatos marrones</option>
+                                <option value="Zapatos negros">Zapatos negros</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="prenda-search-actions">
+                        <button class="btn-prenda-search" onclick="applyPrendaFilter()">Buscar outfits</button>
+                        <button class="btn-prenda-clear" onclick="clearPrendaFilter()">Limpiar</button>
+                        <span class="prenda-search-results-label" id="prendaResultsLabel"></span>
+                    </div>
                 </div>
             </div>
 
@@ -1198,6 +1451,40 @@
         <!-- TAB: MIS OUTFITS -->
         <div class="tab-content" id="tab-mios">
             <div id="customOutfitsContainer"></div>
+        </div>
+
+        <!-- STATS PANEL -->
+        <div class="stats-panel">
+            <div class="stats-header" onclick="toggleStats()">
+                <h3>📊 Estadísticas de uso</h3>
+                <span class="stats-toggle" id="statsToggle">▼</span>
+            </div>
+            <div class="stats-content" id="statsContent">
+                <div class="stats-item">
+                    <span class="stats-label">Total de outfits usados</span>
+                    <span class="stats-value" id="totalUsed">0</span>
+                </div>
+                <div class="stats-item">
+                    <span class="stats-label">Outfit más usado</span>
+                    <span class="stats-value" id="mostUsed">N/A</span>
+                </div>
+                <div class="stats-item">
+                    <span class="stats-label">Outfit menos usado</span>
+                    <span class="stats-value" id="leastUsed">N/A</span>
+                </div>
+                <div class="stats-item">
+                    <span class="stats-label">Promedio de usos por outfit</span>
+                    <span class="stats-value" id="avgUsed">0</span>
+                </div>
+                <div class="stats-item">
+                    <span class="stats-label">Favoritos marcados</span>
+                    <span class="stats-value" id="favCount">0</span>
+                </div>
+                <div class="stats-buttons">
+                    <button class="btn-export" onclick="exportStats()">📥 Exportar datos</button>
+                    <button class="btn-reset" onclick="resetAllStats()">🔄 Resetear contadores</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -1504,20 +1791,40 @@
             const grid = document.getElementById('outfitsGrid');
             grid.innerHTML = '';
 
+            // Combinar outfits sugeridos con custom
+            const allOutfits = [...outfits];
+            const customOutfits = JSON.parse(localStorage.getItem('customOutfits')) || [];
+            allOutfits.push(...customOutfits);
+
             let outfitsFiltrados;
             
             if (filtro === 'favoritos') {
                 const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
-                outfitsFiltrados = outfits.filter(o => !o.custom && favorites.includes(o.id));
+                outfitsFiltrados = allOutfits.filter(o => favorites.includes(o.id));
                 
                 if (outfitsFiltrados.length === 0) {
                     grid.innerHTML = '<div class="empty-state"><h2>Todavía no agregaste favoritos</h2><p>Haz click en la estrella para marcar tus outfits favoritos ⭐</p></div>';
                     return;
                 }
+            } else if (filtro === 'masusado') {
+                const usageStats = JSON.parse(localStorage.getItem('usageStats')) || {};
+                outfitsFiltrados = allOutfits.filter(o => usageStats[o.id] > 0);
+                
+                if (outfitsFiltrados.length === 0) {
+                    grid.innerHTML = '<div class="empty-state"><h2>Todavía no usaste ningún outfit</h2><p>Haz click en el contador 👕 para registrar un uso</p></div>';
+                    return;
+                }
+                
+                // Ordenar por uso descendente
+                outfitsFiltrados.sort((a, b) => {
+                    const countA = usageStats[a.id] || 0;
+                    const countB = usageStats[b.id] || 0;
+                    return countB - countA;
+                });
             } else if (filtro === 'todos') {
-                outfitsFiltrados = outfits.filter(o => !o.custom);
+                outfitsFiltrados = allOutfits;
             } else {
-                outfitsFiltrados = outfits.filter(o => o.formalidad === filtro && !o.custom);
+                outfitsFiltrados = allOutfits.filter(o => o.formalidad === filtro);
             }
 
             // Ordenar por formalidad cuando filtro es 'todos'
@@ -1598,10 +1905,17 @@
             const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
             const isFavorite = favorites.includes(outfit.id);
 
+            // Cargar contadores de uso
+            const usageStats = JSON.parse(localStorage.getItem('usageStats')) || {};
+            const usageCount = usageStats[outfit.id] || 0;
+
             card.innerHTML = `
                 <button class="favorite-btn ${isFavorite ? 'active' : ''}" onclick="toggleFavorite(event, ${outfit.id})" title="Agregar a favoritos">
                     ${isFavorite ? '⭐' : '☆'}
                 </button>
+                <div class="usage-counter ${usageCount > 0 ? 'used' : ''}" onclick="incrementUsage(event, ${outfit.id})" title="Clickea para marcar como usado">
+                    👕 ${usageCount}
+                </div>
                 <div class="outfit-header">
                     <div class="outfit-title">${outfit.nombre}</div>
                     <div class="outfit-context">${outfit.contexto}</div>
@@ -1629,6 +1943,24 @@
                 </div>
             `;
             return card;
+        }
+
+        function incrementUsage(event, outfitId) {
+            event.stopPropagation();
+            const usageStats = JSON.parse(localStorage.getItem('usageStats')) || {};
+            usageStats[outfitId] = (usageStats[outfitId] || 0) + 1;
+            localStorage.setItem('usageStats', JSON.stringify(usageStats));
+            
+            // Re-renderizar
+            const currentFilter = document.querySelector('#tab-sugeridos .filter-btn.active')?.textContent || 'Todos';
+            const filterType = currentFilter.includes('Todos') ? 'todos' : 
+                              currentFilter.includes('Formal') ? 'formal' : 
+                              currentFilter.includes('Elegante') ? 'elegante-sport' : 
+                              currentFilter.includes('Casual') ? 'casual' : 'favoritos';
+            renderOutfits(filterType);
+            
+            // Actualizar estadísticas
+            updateStats();
         }
 
         function toggleFavorite(event, outfitId) {
@@ -1681,10 +2013,36 @@
             savedOutfits.push(newOutfit);
             localStorage.setItem('customOutfits', JSON.stringify(savedOutfits));
 
+            // Actualizar contadores de los botones de filtro
+            updateFilterCounts();
+
             const successMsg = document.getElementById('successMessage');
             successMsg.classList.add('show');
             setTimeout(() => successMsg.classList.remove('show'), 3000);
             event.target.reset();
+            
+            // Re-renderizar los outfits sugeridos para mostrar el nuevo outfit
+            renderOutfits('todos');
+        }
+
+        function updateFilterCounts() {
+            const allOutfits = [...outfits];
+            const customOutfits = JSON.parse(localStorage.getItem('customOutfits')) || [];
+            allOutfits.push(...customOutfits);
+
+            const formalCount = allOutfits.filter(o => o.formalidad === 'formal').length;
+            const eleganteSportCount = allOutfits.filter(o => o.formalidad === 'elegante-sport').length;
+            const casualCount = allOutfits.filter(o => o.formalidad === 'casual').length;
+            const totalCount = allOutfits.length;
+
+            // Actualizar textos de los botones
+            document.querySelectorAll('#tab-sugeridos .filter-btn').forEach(btn => {
+                const text = btn.textContent;
+                if (text.includes('Todos')) btn.textContent = `Todos (${totalCount})`;
+                else if (text.includes('Formal ')) btn.textContent = `Formal (${formalCount})`;
+                else if (text.includes('Elegante')) btn.textContent = `Elegante Sport (${eleganteSportCount})`;
+                else if (text.includes('Casual')) btn.textContent = `Casual (${casualCount})`;
+            });
         }
 
         // ============ CUSTOM OUTFITS ============
@@ -1904,6 +2262,14 @@
         // ============ PRENDA FILTER ============
         let prendaFilterActive = false;
 
+        function togglePrendaFilter() {
+            const content = document.getElementById('prendaSearchContent');
+            const toggle = document.getElementById('prendaToggle');
+            
+            content.classList.toggle('open');
+            toggle.classList.toggle('open');
+        }
+
         function applyPrendaFilter() {
             const pantalon = document.getElementById('searchPantalon').value;
             const camisa = document.getElementById('searchCamisa').value;
@@ -2106,8 +2472,233 @@
             }, 2500);
         }
 
+        // ============ STATS ============
+        function updateStats() {
+            const usageStats = JSON.parse(localStorage.getItem('usageStats')) || {};
+            const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+            
+            // Calcular totales
+            const totalUsed = Object.values(usageStats).reduce((a, b) => a + b, 0);
+            
+            // Encontrar outfit más usado
+            let mostUsedOutfit = null;
+            let mostUsedCount = 0;
+            for (const [id, count] of Object.entries(usageStats)) {
+                if (count > mostUsedCount) {
+                    mostUsedCount = count;
+                    const outfit = outfits.find(o => o.id == id);
+                    if (outfit) mostUsedOutfit = outfit.nombre;
+                }
+            }
+            
+            // Encontrar outfit menos usado (pero con al menos 1 uso)
+            let leastUsedOutfit = null;
+            let leastUsedCount = Infinity;
+            for (const [id, count] of Object.entries(usageStats)) {
+                if (count > 0 && count < leastUsedCount) {
+                    leastUsedCount = count;
+                    const outfit = outfits.find(o => o.id == id);
+                    if (outfit) leastUsedOutfit = outfit.nombre;
+                }
+            }
+            
+            // Calcular promedio
+            const usedOutfits = Object.values(usageStats).filter(c => c > 0).length;
+            const avgUsed = usedOutfits > 0 ? (totalUsed / usedOutfits).toFixed(1) : 0;
+            
+            // Actualizar DOM
+            document.getElementById('totalUsed').textContent = totalUsed;
+            document.getElementById('mostUsed').textContent = mostUsedOutfit ? `${mostUsedOutfit} (${mostUsedCount}x)` : 'N/A';
+            document.getElementById('leastUsed').textContent = leastUsedOutfit ? `${leastUsedOutfit} (${leastUsedCount}x)` : 'N/A';
+            document.getElementById('avgUsed').textContent = avgUsed;
+            document.getElementById('favCount').textContent = favorites.length;
+        }
+
+        function toggleStats() {
+            const statsContent = document.getElementById('statsContent');
+            const statsToggle = document.getElementById('statsToggle');
+            
+            statsContent.classList.toggle('open');
+            statsToggle.classList.toggle('open');
+            
+            // Actualizar stats cuando se abre
+            if (statsContent.classList.contains('open')) {
+                updateStats();
+            }
+        }
+
+        function resetAllStats() {
+            if (confirm('⚠️ ¿Estás seguro? Esto eliminará TODOS los contadores de uso. Los favoritos se mantienen.')) {
+                localStorage.removeItem('usageStats');
+                updateStats();
+                
+                // Re-renderizar para actualizar los contadores visuales
+                const currentFilter = document.querySelector('#tab-sugeridos .filter-btn.active')?.textContent || 'Todos';
+                const filterType = currentFilter.includes('Todos') ? 'todos' : 
+                                  currentFilter.includes('Formal') ? 'formal' : 
+                                  currentFilter.includes('Elegante') ? 'elegante-sport' : 
+                                  currentFilter.includes('Casual') ? 'casual' : 'favoritos';
+                renderOutfits(filterType);
+                
+                // Toast de confirmación
+                const toast = document.getElementById('deleteSuccessToast');
+                toast.textContent = '🔄 Contadores reseteados';
+                toast.style.background = '#2e7d32';
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 2500);
+            }
+        }
+
+        function exportStats() {
+            const usageStats = JSON.parse(localStorage.getItem('usageStats')) || {};
+            const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+            
+            // Crear objeto con datos para exportar
+            const exportData = {
+                fecha: new Date().toLocaleString('es-AR'),
+                resumen: {
+                    totalUsos: Object.values(usageStats).reduce((a, b) => a + b, 0),
+                    favoritosCount: favorites.length
+                },
+                outfitsUsados: {}
+            };
+            
+            // Agregar detalles de cada outfit usado
+            for (const [id, count] of Object.entries(usageStats)) {
+                const outfit = outfits.find(o => o.id == id);
+                if (outfit) {
+                    exportData.outfitsUsados[outfit.nombre] = {
+                        usos: count,
+                        formalidad: outfit.formalidad,
+                        essFavorito: favorites.includes(parseInt(id))
+                    };
+                }
+            }
+            
+            // Crear archivo JSON
+            const dataStr = JSON.stringify(exportData, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `rabobank-outfits-stats-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            
+            // Toast de confirmación
+            const toast = document.getElementById('deleteSuccessToast');
+            toast.textContent = '📥 Estadísticas exportadas';
+            toast.style.background = '#1565c0';
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2500);
+        }
+
+        // ============ WEATHER ============
+        let currentLocation = null;
+        const weatherLocations = {
+            'Haarlem': { lat: 52.3910, lng: 4.6346 },
+            'Amsterdam': { lat: 52.3676, lng: 4.9041 },
+            'Buenos Aires': { lat: -34.6037, lng: -58.3816 },
+            'Madrid': { lat: 40.4168, lng: -3.7038 },
+            'Barcelona': { lat: 41.3874, lng: 2.1686 },
+            'Nueva York': { lat: 40.7128, lng: -74.0060 },
+            'Londres': { lat: 51.5074, lng: -0.1278 }
+        };
+
+        function fetchWeather(location = 'Amsterdam') {
+            const coords = weatherLocations[location];
+            
+            if (!coords) {
+                updateWeatherDisplay(null, null, 'error', location);
+                return;
+            }
+
+            // Usar Open-Meteo API (sin autenticación, sin CORS)
+            const url = `https://api.open-meteo.com/v1/forecast?latitude=${coords.lat}&longitude=${coords.lng}&daily=weathercode,temperature_2m_max,temperature_2m_min&temperature_unit=celsius&timezone=auto`;
+            
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const maxTemp = Math.round(data.daily.temperature_2m_max[0]);
+                    const minTemp = Math.round(data.daily.temperature_2m_min[0]);
+                    const weatherCode = data.daily.weathercode[0];
+                    const description = getWeatherDescription(weatherCode);
+                    
+                    currentLocation = location;
+                    updateWeatherDisplay(maxTemp, minTemp, description, location);
+                })
+                .catch(error => {
+                    console.log('Error fetching weather:', error);
+                    updateWeatherDisplay(null, null, 'error', location);
+                });
+        }
+
+        function getWeatherDescription(code) {
+            // WMO Weather interpretation codes
+            // 0 = Clear sky
+            // 1, 2, 3 = Mainly clear, partly cloudy, overcast
+            // 45, 48 = Foggy
+            // 51-67 = Drizzle
+            // 71-77, 80, 81, 82 = Rain and showers
+            // 85, 86 = Snow showers
+            // 95, 96, 99 = Thunderstorm
+            
+            if (code === 0) return 'sunny';
+            if (code === 1 || code === 2) return 'cloud';
+            if (code === 3) return 'overcast';
+            if (code === 45 || code === 48) return 'fog';
+            if ((code >= 51 && code <= 67) || code === 80) return 'drizzle';
+            if ((code >= 71 && code <= 77) || code === 81 || code === 82) return 'rain';
+            if (code === 85 || code === 86) return 'snow';
+            if (code >= 95 && code <= 99) return 'thunderstorm';
+            return 'cloud';
+        }
+
+        function updateWeatherDisplay(maxTemp, minTemp, description, location) {
+            const emoji = getWeatherEmoji(description);
+            const tempText = maxTemp !== null ? `${maxTemp}°` : '--°';
+            
+            document.getElementById('weatherEmoji').textContent = emoji;
+            document.getElementById('weatherTemp').textContent = tempText;
+            document.getElementById('weatherLocation').textContent = location;
+        }
+
+        function getWeatherEmoji(description) {
+            if (!description || description === 'error') return '⛅';
+            
+            if (description === 'sunny') return '☀️';
+            if (description === 'cloud' || description === 'overcast') return '☁️';
+            if (description === 'drizzle' || description === 'rain') return '🌧️';
+            if (description === 'snow') return '❄️';
+            if (description === 'thunderstorm') return '⛈️';
+            if (description === 'fog') return '🌫️';
+            
+            return '⛅';
+        }
+
+        function toggleWeatherLocation() {
+            const locations = Object.keys(weatherLocations);
+            let message = 'Elige una ciudad:\n\n' + locations.join('\n');
+            const newLocation = prompt(message, currentLocation || 'Amsterdam');
+            
+            if (newLocation && newLocation.trim()) {
+                const trimmed = newLocation.trim();
+                // Capitalizar primera letra
+                const formatted = trimmed.charAt(0).toUpperCase() + trimmed.slice(1).toLowerCase();
+                if (weatherLocations[formatted]) {
+                    fetchWeather(formatted);
+                } else {
+                    alert('Ciudad no disponible. Opciones: ' + locations.join(', '));
+                }
+            }
+        }
+
         // ============ INIT ============
         renderOutfits();
+        updateStats();
+        fetchWeather('Haarlem');
     </script>
 </body>
 </html>
