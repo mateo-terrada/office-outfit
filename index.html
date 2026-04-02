@@ -308,6 +308,227 @@
             border-color: #ef5350;
         }
 
+        .edit-btn {
+            flex: 1;
+            padding: 10px 14px;
+            background: #e3f2fd;
+            color: #1565c0;
+            border: 1px solid #bbdefb;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85em;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .edit-btn:hover {
+            background: #1565c0;
+            color: white;
+            border-color: #1565c0;
+        }
+
+        /* EDIT MODAL */
+        .edit-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .edit-dialog {
+            background: white;
+            border-radius: 16px;
+            padding: 28px;
+            max-width: 540px;
+            width: 93%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: slideUp 0.2s ease;
+        }
+
+        .edit-dialog h3 {
+            color: #1a3a52;
+            margin-bottom: 20px;
+            font-size: 1.15em;
+        }
+
+        .edit-dialog .form-group {
+            margin-bottom: 16px;
+        }
+
+        .edit-dialog .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #1a3a52;
+            font-size: 0.9em;
+        }
+
+        .edit-dialog .form-group input,
+        .edit-dialog .form-group select,
+        .edit-dialog .form-group textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 0.92em;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+
+        .edit-dialog .form-group input:focus,
+        .edit-dialog .form-group select:focus,
+        .edit-dialog .form-group textarea:focus {
+            outline: none;
+            border-color: #1a3a52;
+        }
+
+        .edit-dialog .form-group textarea {
+            resize: vertical;
+            min-height: 70px;
+        }
+
+        .edit-dialog .dialog-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .edit-dialog .btn-cancel {
+            flex: 1;
+            padding: 12px;
+            background: #f5f5f5;
+            color: #333;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            transition: background 0.2s;
+        }
+
+        .edit-dialog .btn-cancel:hover { background: #e0e0e0; }
+
+        .edit-dialog .btn-save-edit {
+            flex: 2;
+            padding: 12px;
+            background: #1a3a52;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            transition: background 0.2s;
+        }
+
+        .edit-dialog .btn-save-edit:hover { background: #0f2438; }
+
+        /* PRENDA SEARCH */
+        .prenda-search-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            margin-bottom: 24px;
+        }
+
+        .prenda-search-section h3 {
+            color: #1a3a52;
+            font-size: 1em;
+            font-weight: 600;
+            margin-bottom: 14px;
+        }
+
+        .prenda-search-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .prenda-search-group label {
+            display: block;
+            font-size: 0.75em;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .prenda-search-group select {
+            width: 100%;
+            padding: 9px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 0.88em;
+            font-family: inherit;
+            color: #333;
+            cursor: pointer;
+            transition: border-color 0.2s;
+            background: white;
+        }
+
+        .prenda-search-group select:focus {
+            outline: none;
+            border-color: #1a3a52;
+        }
+
+        .prenda-search-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 14px;
+            align-items: center;
+        }
+
+        .btn-prenda-search {
+            padding: 9px 20px;
+            background: #1a3a52;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.88em;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-prenda-search:hover { background: #0f2438; }
+
+        .btn-prenda-clear {
+            padding: 9px 16px;
+            background: #f5f5f5;
+            color: #666;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.88em;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-prenda-clear:hover { background: #e0e0e0; }
+
+        .prenda-search-results-label {
+            font-size: 0.85em;
+            color: #666;
+            font-style: italic;
+        }
+
+        @media (max-width: 600px) {
+            .prenda-search-grid { grid-template-columns: 1fr; }
+        }
+
         /* COLOR DOTS */
         .color-dots {
             display: flex;
@@ -806,6 +1027,74 @@
                 <button class="filter-btn" onclick="filterOutfits('casual')">Casual (5)</button>
                 <button class="filter-btn" onclick="filterOutfits('favoritos')">⭐ Favoritos</button>
             </div>
+
+            <!-- FILTRO POR PRENDA -->
+            <div class="prenda-search-section">
+                <h3>🔍 Filtrar por prenda específica</h3>
+                <div class="prenda-search-grid">
+                    <div class="prenda-search-group">
+                        <label>Pantalón</label>
+                        <select id="searchPantalon">
+                            <option value="">Cualquiera</option>
+                            <option value="Azul Zara por altura del tobillo">Azul Zara tobillo</option>
+                            <option value="Negro Zara por altura del tobilo">Negro Zara tobillo</option>
+                            <option value="Gris medio de traje">Gris medio de traje</option>
+                            <option value="Gris medio-oscuro nuevo">Gris medio-oscuro nuevo</option>
+                        </select>
+                    </div>
+                    <div class="prenda-search-group">
+                        <label>Camisa</label>
+                        <select id="searchCamisa">
+                            <option value="">Cualquiera</option>
+                            <option value="Blanca lisa">Blanca lisa</option>
+                            <option value="Celeste lisa (claro)">Celeste lisa (claro)</option>
+                            <option value="Celeste medio-oscuro con pequeños detalles en blanco (Brooksfield)">Celeste detalles Brooksfield</option>
+                            <option value="Gris haspeado">Gris haspeado</option>
+                            <option value="Rayas celeste claro y blanco (Polo)">Rayas celeste/blanco Polo</option>
+                            <option value="Rayas finitas azul y blanco">Rayas finitas azul/blanco</option>
+                            <option value="Azul oscuro">Azul oscuro</option>
+                            <option value="Celeste medio-oscuro con lineas pequeñas blancas y rojas (Brooksfield)">Celeste líneas Brooksfield</option>
+                        </select>
+                    </div>
+                    <div class="prenda-search-group">
+                        <label>Abrigo / Sweater</label>
+                        <select id="searchAbrigo">
+                            <option value="">Cualquiera</option>
+                            <option value="Sweater patagonia gris haspeado (quarter-zip)">Patagonia gris haspeado</option>
+                            <option value="Campera Patagonia roja/bordeau">Patagonia roja/bordeau</option>
+                            <option value="Sweater UNIQLO azul">UNIQLO azul</option>
+                            <option value="Sweater UNIQLO celeste oscuro">UNIQLO celeste oscuro</option>
+                            <option value="Quarter-zip gris oscuro Springfield">Quarter-zip gris Springfield</option>
+                            <option value="Quarter-zip gris claro (Polo)">Quarter-zip gris claro Polo</option>
+                            <option value="Quarter-zip azul Polo (estilo lana)">Quarter-zip azul Polo</option>
+                            <option value="Quarter-zip bordeau Polo (estilo lana)">Quarter-zip bordeau Polo</option>
+                            <option value="Campera Brooksfield negra (tipo polar)">Brooksfield negra polar</option>
+                            <option value="Campera Brooksfield bordeau (tipo polar)">Brooksfield bordeau polar</option>
+                            <option value="Sweater finito Brooksfield azul con rayas blancas">Brooksfield azul rayas</option>
+                            <option value="Chaleco Patagonia gris haspeado">Chaleco Patagonia gris</option>
+                            <option value="Chaleco Patagonia azul haspeado">Chaleco Patagonia azul</option>
+                        </select>
+                    </div>
+                    <div class="prenda-search-group">
+                        <label>Zapatos</label>
+                        <select id="searchZapatos">
+                            <option value="">Cualquiera</option>
+                            <option value="Vans negras">Vans negras</option>
+                            <option value="Adidas Spezial beige y negro">Adidas Spezial beige/negro</option>
+                            <option value="Tiger blancas con líneas negras">Tiger blancas</option>
+                            <option value="Levis azules con marrón">Levis azules/marrón</option>
+                            <option value="Zapatos marrones">Zapatos marrones</option>
+                            <option value="Zapatos negros">Zapatos negros</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="prenda-search-actions">
+                    <button class="btn-prenda-search" onclick="applyPrendaFilter()">Buscar outfits</button>
+                    <button class="btn-prenda-clear" onclick="clearPrendaFilter()">Limpiar</button>
+                    <span class="prenda-search-results-label" id="prendaResultsLabel"></span>
+                </div>
+            </div>
+
             <div class="outfits-grid" id="outfitsGrid"></div>
         </div>
 
@@ -1446,6 +1735,7 @@
                         </div>
                         <div class="outfit-notes">${outfit.notas}</div>
                         <div class="outfit-actions">
+                            <button class="edit-btn" onclick="openEditOutfit(${outfit.id})">✏️ Editar</button>
                             <button class="delete-btn" onclick="deleteOutfit(${outfit.id}, '${outfit.nombre.replace(/'/g, "\\'")}')">🗑 Eliminar</button>
                         </div>
                     </div>
@@ -1609,6 +1899,211 @@
         function closeRandomDialog() {
             const overlay = document.getElementById('randomOverlay');
             if (overlay) overlay.remove();
+        }
+
+        // ============ PRENDA FILTER ============
+        let prendaFilterActive = false;
+
+        function applyPrendaFilter() {
+            const pantalon = document.getElementById('searchPantalon').value;
+            const camisa = document.getElementById('searchCamisa').value;
+            const abrigo = document.getElementById('searchAbrigo').value;
+            const zapatos = document.getElementById('searchZapatos').value;
+
+            if (!pantalon && !camisa && !abrigo && !zapatos) {
+                document.getElementById('prendaResultsLabel').textContent = 'Seleccioná al menos una prenda.';
+                return;
+            }
+
+            prendaFilterActive = true;
+
+            // Deactivate category filter buttons visually
+            document.querySelectorAll('#tab-sugeridos .filter-btn').forEach(btn => btn.classList.remove('active'));
+
+            const allOutfits = outfits.filter(o => !o.custom);
+            const results = allOutfits.filter(o => {
+                return (!pantalon || o.prendas.pantalon === pantalon)
+                    && (!camisa   || o.prendas.camisa === camisa)
+                    && (!abrigo   || o.prendas.abrigo === abrigo)
+                    && (!zapatos  || o.prendas.zapatos === zapatos);
+            });
+
+            const grid = document.getElementById('outfitsGrid');
+            grid.innerHTML = '';
+
+            const label = document.getElementById('prendaResultsLabel');
+            if (results.length === 0) {
+                label.textContent = 'Sin resultados para esa combinación.';
+                grid.innerHTML = '<div class="empty-state"><h2>Ningún outfit coincide</h2><p>Probá con otra combinación de prendas.</p></div>';
+                return;
+            }
+
+            label.textContent = `${results.length} outfit${results.length > 1 ? 's' : ''} encontrado${results.length > 1 ? 's' : ''}.`;
+            results.forEach(outfit => {
+                const card = createOutfitCard(outfit);
+                grid.appendChild(card);
+            });
+        }
+
+        function clearPrendaFilter() {
+            document.getElementById('searchPantalon').value = '';
+            document.getElementById('searchCamisa').value = '';
+            document.getElementById('searchAbrigo').value = '';
+            document.getElementById('searchZapatos').value = '';
+            document.getElementById('prendaResultsLabel').textContent = '';
+            prendaFilterActive = false;
+            // Restore "Todos" as active filter
+            document.querySelectorAll('#tab-sugeridos .filter-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector('#tab-sugeridos .filter-btn').classList.add('active');
+            renderOutfits('todos');
+        }
+
+        // ============ EDIT OUTFIT ============
+        function openEditOutfit(id) {
+            let savedOutfits = JSON.parse(localStorage.getItem('customOutfits')) || [];
+            const outfit = savedOutfits.find(o => o.id === id);
+            if (!outfit) return;
+
+            const overlay = document.createElement('div');
+            overlay.className = 'edit-overlay';
+            overlay.id = 'editOverlay';
+
+            overlay.innerHTML = `
+                <div class="edit-dialog">
+                    <h3>✏️ Editar outfit</h3>
+
+                    <div class="form-group">
+                        <label>Nombre del outfit</label>
+                        <input type="text" id="editName" value="${outfit.nombre.replace(/"/g, '&quot;')}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Contexto / Ocasión</label>
+                        <input type="text" id="editContext" value="${outfit.contexto.replace(/"/g, '&quot;')}" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Nivel de formalidad</label>
+                        <select id="editFormality">
+                            <option value="formal" ${outfit.formalidad === 'formal' ? 'selected' : ''}>Formal</option>
+                            <option value="elegante-sport" ${outfit.formalidad === 'elegante-sport' ? 'selected' : ''}>Elegante Sport</option>
+                            <option value="casual" ${outfit.formalidad === 'casual' ? 'selected' : ''}>Casual</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Pantalón</label>
+                        <select id="editPantalon">
+                            <option value="Azul Zara por altura del tobillo" ${outfit.prendas.pantalon === 'Azul Zara por altura del tobillo' ? 'selected' : ''}>Azul Zara por altura del tobillo</option>
+                            <option value="Negro Zara por altura del tobilo" ${outfit.prendas.pantalon === 'Negro Zara por altura del tobilo' ? 'selected' : ''}>Negro Zara por altura del tobilo</option>
+                            <option value="Gris medio de traje" ${outfit.prendas.pantalon === 'Gris medio de traje' ? 'selected' : ''}>Gris medio de traje</option>
+                            <option value="Gris medio-oscuro nuevo" ${outfit.prendas.pantalon === 'Gris medio-oscuro nuevo' ? 'selected' : ''}>Gris medio-oscuro nuevo</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Camisa</label>
+                        <select id="editCamisa">
+                            <option value="Blanca lisa" ${outfit.prendas.camisa === 'Blanca lisa' ? 'selected' : ''}>Blanca lisa</option>
+                            <option value="Celeste lisa (claro)" ${outfit.prendas.camisa === 'Celeste lisa (claro)' ? 'selected' : ''}>Celeste lisa (claro)</option>
+                            <option value="Celeste medio-oscuro con pequeños detalles en blanco (Brooksfield)" ${outfit.prendas.camisa === 'Celeste medio-oscuro con pequeños detalles en blanco (Brooksfield)' ? 'selected' : ''}>Celeste medio-oscuro con detalles (Brooksfield)</option>
+                            <option value="Gris haspeado" ${outfit.prendas.camisa === 'Gris haspeado' ? 'selected' : ''}>Gris haspeado</option>
+                            <option value="Rayas celeste claro y blanco (Polo)" ${outfit.prendas.camisa === 'Rayas celeste claro y blanco (Polo)' ? 'selected' : ''}>Rayas celeste claro y blanco (Polo)</option>
+                            <option value="Rayas finitas azul y blanco" ${outfit.prendas.camisa === 'Rayas finitas azul y blanco' ? 'selected' : ''}>Rayas finitas azul y blanco</option>
+                            <option value="Azul oscuro" ${outfit.prendas.camisa === 'Azul oscuro' ? 'selected' : ''}>Azul oscuro</option>
+                            <option value="Celeste medio-oscuro con lineas pequeñas blancas y rojas (Brooksfield)" ${outfit.prendas.camisa === 'Celeste medio-oscuro con lineas pequeñas blancas y rojas (Brooksfield)' ? 'selected' : ''}>Celeste con líneas blancas y rojas (Brooksfield)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Abrigo / Sweater</label>
+                        <select id="editAbrigo">
+                            <option value="Sweater patagonia gris haspeado (quarter-zip)" ${outfit.prendas.abrigo === 'Sweater patagonia gris haspeado (quarter-zip)' ? 'selected' : ''}>Sweater Patagonia gris haspeado (quarter-zip)</option>
+                            <option value="Campera Patagonia roja/bordeau" ${outfit.prendas.abrigo === 'Campera Patagonia roja/bordeau' ? 'selected' : ''}>Campera Patagonia roja/bordeau</option>
+                            <option value="Sweater UNIQLO azul" ${outfit.prendas.abrigo === 'Sweater UNIQLO azul' ? 'selected' : ''}>Sweater UNIQLO azul</option>
+                            <option value="Sweater UNIQLO celeste oscuro" ${outfit.prendas.abrigo === 'Sweater UNIQLO celeste oscuro' ? 'selected' : ''}>Sweater UNIQLO celeste oscuro</option>
+                            <option value="Quarter-zip gris oscuro Springfield" ${outfit.prendas.abrigo === 'Quarter-zip gris oscuro Springfield' ? 'selected' : ''}>Quarter-zip gris oscuro Springfield</option>
+                            <option value="Quarter-zip gris claro (Polo)" ${outfit.prendas.abrigo === 'Quarter-zip gris claro (Polo)' ? 'selected' : ''}>Quarter-zip gris claro (Polo)</option>
+                            <option value="Quarter-zip azul Polo (estilo lana)" ${outfit.prendas.abrigo === 'Quarter-zip azul Polo (estilo lana)' ? 'selected' : ''}>Quarter-zip azul Polo (estilo lana)</option>
+                            <option value="Quarter-zip bordeau Polo (estilo lana)" ${outfit.prendas.abrigo === 'Quarter-zip bordeau Polo (estilo lana)' ? 'selected' : ''}>Quarter-zip bordeau Polo (estilo lana)</option>
+                            <option value="Campera Brooksfield negra (tipo polar)" ${outfit.prendas.abrigo === 'Campera Brooksfield negra (tipo polar)' ? 'selected' : ''}>Campera Brooksfield negra (tipo polar)</option>
+                            <option value="Campera Brooksfield bordeau (tipo polar)" ${outfit.prendas.abrigo === 'Campera Brooksfield bordeau (tipo polar)' ? 'selected' : ''}>Campera Brooksfield bordeau (tipo polar)</option>
+                            <option value="Sweater finito Brooksfield azul con rayas blancas" ${outfit.prendas.abrigo === 'Sweater finito Brooksfield azul con rayas blancas' ? 'selected' : ''}>Sweater finito Brooksfield azul con rayas blancas</option>
+                            <option value="Chaleco Patagonia gris haspeado" ${outfit.prendas.abrigo === 'Chaleco Patagonia gris haspeado' ? 'selected' : ''}>Chaleco Patagonia gris haspeado</option>
+                            <option value="Chaleco Patagonia azul haspeado" ${outfit.prendas.abrigo === 'Chaleco Patagonia azul haspeado' ? 'selected' : ''}>Chaleco Patagonia azul haspeado</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Zapatos</label>
+                        <select id="editZapatos">
+                            <option value="Vans negras" ${outfit.prendas.zapatos === 'Vans negras' ? 'selected' : ''}>Vans negras</option>
+                            <option value="Adidas Spezial beige y negro" ${outfit.prendas.zapatos === 'Adidas Spezial beige y negro' ? 'selected' : ''}>Adidas Spezial beige y negro</option>
+                            <option value="Tiger blancas con líneas negras" ${outfit.prendas.zapatos === 'Tiger blancas con líneas negras' ? 'selected' : ''}>Tiger blancas con líneas negras</option>
+                            <option value="Levis azules con marrón" ${outfit.prendas.zapatos === 'Levis azules con marrón' ? 'selected' : ''}>Levis azules con marrón</option>
+                            <option value="Zapatos marrones" ${outfit.prendas.zapatos === 'Zapatos marrones' ? 'selected' : ''}>Zapatos marrones</option>
+                            <option value="Zapatos negros" ${outfit.prendas.zapatos === 'Zapatos negros' ? 'selected' : ''}>Zapatos negros</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Notas personales</label>
+                        <textarea id="editNotes">${outfit.notas === 'Sin notas' ? '' : outfit.notas}</textarea>
+                    </div>
+
+                    <div class="dialog-buttons">
+                        <button class="btn-cancel" onclick="closeEditDialog()">Cancelar</button>
+                        <button class="btn-save-edit" onclick="saveEditOutfit(${id})">Guardar cambios 💾</button>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(overlay);
+            overlay.addEventListener('click', function(e) {
+                if (e.target === overlay) closeEditDialog();
+            });
+        }
+
+        function closeEditDialog() {
+            const overlay = document.getElementById('editOverlay');
+            if (overlay) overlay.remove();
+        }
+
+        function saveEditOutfit(id) {
+            let savedOutfits = JSON.parse(localStorage.getItem('customOutfits')) || [];
+            const idx = savedOutfits.findIndex(o => o.id === id);
+            if (idx === -1) return;
+
+            savedOutfits[idx] = {
+                ...savedOutfits[idx],
+                nombre:    document.getElementById('editName').value.trim(),
+                contexto:  document.getElementById('editContext').value.trim(),
+                formalidad: document.getElementById('editFormality').value,
+                prendas: {
+                    pantalon: document.getElementById('editPantalon').value,
+                    camisa:   document.getElementById('editCamisa').value,
+                    abrigo:   document.getElementById('editAbrigo').value,
+                    zapatos:  document.getElementById('editZapatos').value,
+                },
+                notas: document.getElementById('editNotes').value.trim() || 'Sin notas',
+            };
+
+            localStorage.setItem('customOutfits', JSON.stringify(savedOutfits));
+            closeEditDialog();
+            renderCustomOutfits();
+
+            // Show success toast reusing delete toast styling
+            const toast = document.getElementById('deleteSuccessToast');
+            toast.textContent = '✏️ Outfit actualizado';
+            toast.style.background = '#1565c0';
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    toast.textContent = '🗑 Outfit eliminado';
+                    toast.style.background = '#c62828';
+                }, 400);
+            }, 2500);
         }
 
         // ============ INIT ============
