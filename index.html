@@ -1264,6 +1264,7 @@
             <button class="tab-btn" onclick="switchTab('crear')">Crear Outfit</button>
             <button class="tab-btn" onclick="switchTab('mios')">Mis Outfits</button>
             <button class="random-btn" onclick="openRandomOutfit()">🎲 Outfit al Azar</button>
+            <button class="random-btn" onclick="showWeatherRecommendations()" style="background: #ff9800;">🌤️ Por Clima</button>
         </div>
 
         <!-- TAB: SUGERIDOS -->
@@ -1505,6 +1506,7 @@
                     zapatos: "Zapatos negros"
                 },
                 notas: "El outfit más formal y seguro. El chaleco suma elegancia sin ser agobiante.",
+                climaIdeal: ['nublado', 'lluvia', 'frio'],
                 custom: false
             },
             {
@@ -1519,6 +1521,7 @@
                     zapatos: "Zapatos marrones"
                 },
                 notas: "Elegante pero con más personalidad. La camisa Brooksfield es statement.",
+                climaIdeal: ['nublado', 'templado'],
                 custom: false
             },
             {
@@ -2597,6 +2600,7 @@
 
         // ============ WEATHER ============
         let currentLocation = null;
+        let currentWeatherCondition = null;
         const weatherLocations = {
             'Haarlem': { lat: 52.3910, lng: 4.6346 },
             'Amsterdam': { lat: 52.3676, lng: 4.9041 },
@@ -2660,6 +2664,8 @@
             const emoji = getWeatherEmoji(description);
             const tempText = maxTemp !== null ? `${maxTemp}°` : '--°';
             
+            currentWeatherCondition = description; // Guardar condición para recomendaciones
+            
             document.getElementById('weatherEmoji').textContent = emoji;
             document.getElementById('weatherTemp').textContent = tempText;
             document.getElementById('weatherLocation').textContent = location;
@@ -2693,6 +2699,131 @@
                     alert('Ciudad no disponible. Opciones: ' + locations.join(', '));
                 }
             }
+        }
+
+        function toggleWeatherLocation() {
+            const locations = Object.keys(weatherLocations);
+            let message = 'Elige una ciudad:\n\n' + locations.join('\n');
+            const newLocation = prompt(message, currentLocation || 'Haarlem');
+            
+            if (newLocation && newLocation.trim()) {
+                const trimmed = newLocation.trim();
+                // Capitalizar primera letra
+                const formatted = trimmed.charAt(0).toUpperCase() + trimmed.slice(1).toLowerCase();
+                if (weatherLocations[formatted]) {
+                    fetchWeather(formatted);
+                } else {
+                    alert('Ciudad no disponible. Opciones: ' + locations.join(', '));
+                }
+            }
+        }
+
+        // ============ WEATHER-BASED RECOMMENDATIONS ============
+        function evaluateOutfitForWeather(outfit, weatherCondition) {
+            if (!weatherCondition) return true;
+            
+            const prendas = outfit.prendas;
+            const prendasStr = JSON.stringify(prendas).toLowerCase();
+            
+            // Lluvia: evitar zapatillas deportivas, preferir zapatos cerrados
+            if (weatherCondition === 'rain' || weatherCondition === 'drizzle') {
+                if (prendasStr.includes('adidas') || prendasStr.includes('tiger') || prendasStr.includes('levis')) {
+                    return false;
+                }
+                if (prendasStr.includes('zapatos negros') || prendasStr.includes('zapatos marrones') || prendasStr.includes('vans')) {
+                    return true;
+                }
+            }
+            
+            // Soleado: evitar abrigos muy abrigados
+            if (weatherCondition === 'sunny' || weatherCondition === 'clear') {
+                if ((prendasStr.includes('quarter-zip') && prendasStr.includes('lana')) || 
+                    prendasStr.includes('chaleco patagonia')) {
+                    return false;
+                }
+                if (prendasStr.includes('sin abrigo') || prendasStr.includes('uniqlo') || prendasStr.includes('brooksfield')) {
+                    return true;
+                }
+            }
+            
+            // Frío/Nublado: abrigos gruesos son buenos
+            if (weatherCondition === 'fog' || weatherCondition === 'overcast' || weatherCondition === 'cloud') {
+                if (prendasStr.includes('chaleco') || (prendasStr.includes('quarter-zip') && prendasStr.includes('lana')) || 
+                    prendasStr.includes('patagonia')) {
+                    return true;
+                }
+            }
+            
+            // Nieve: evitar zapatos inapropiados
+            if (weatherCondition === 'snow') {
+                if (prendasStr.includes('adidas') || prendasStr.includes('tiger')) {
+                    return false;
+                }
+                if (prendasStr.includes('zapatos')) {
+                    return true;
+                }
+            }
+            
+            return true;
+        }
+
+        function getWeatherRecommendations(weatherCondition) {
+            const allOutfits = [...outfits];
+            const customOutfits = JSON.parse(localStorage.getItem('customOutfits')) || [];
+            allOutfits.push(...customOutfits);
+            
+            const scored = allOutfits.map(outfit => ({
+                outfit,
+                score: evaluateOutfitForWeather(outfit, weatherCondition) ? 2 : 1
+            })).sort((a, b) => b.score - a.score);
+            
+            return scored.map(s => s.outfit);
+        }
+
+        function showWeatherRecommendations() {
+            if (!currentWeatherCondition) {
+                alert('Esperando clima... clickeá en el widget ☀️ arriba a la derecha');
+                return;
+            }
+            
+            switchTab('sugeridos');
+            
+            const grid = document.getElementById('outfitsGrid');
+            grid.innerHTML = '';
+            
+            const recommended = getWeatherRecommendations(currentWeatherCondition);
+            
+            if (!recommended || recommended.length === 0) {
+                grid.innerHTML = '<div class="empty-state"><h2>Sin recomendaciones</h2><p>Probá con otro clima o actualiza.</p></div>';
+                return;
+            }
+            
+            const banner = document.createElement('div');
+            banner.style.gridColumn = '1 / -1';
+            banner.style.background = '#e3f2fd';
+            banner.style.padding = '16px 20px';
+            banner.style.borderRadius = '12px';
+            banner.style.marginBottom = '20px';
+            banner.style.color = '#1565c0';
+            banner.style.fontWeight = '600';
+            banner.style.textAlign = 'center';
+            
+            const weatherEmoji = document.getElementById('weatherEmoji').textContent;
+            const weatherTemp = document.getElementById('weatherTemp').textContent;
+            const weatherLoc = document.getElementById('weatherLocation').textContent;
+            
+            banner.textContent = `💡 ${recommended.length} outfit${recommended.length > 1 ? 's' : ''} recomendado${recommended.length > 1 ? 's' : ''} para ${weatherEmoji} ${weatherTemp} en ${weatherLoc}`;
+            grid.appendChild(banner);
+            
+            recommended.forEach(outfit => {
+                const card = createOutfitCard(outfit);
+                grid.appendChild(card);
+            });
+            
+            // Scroll a top después de renderizar
+            setTimeout(() => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }, 100);
         }
 
         // ============ INIT ============
