@@ -87,6 +87,119 @@
             font-size: 0.85em;
         }
 
+        .weather-manual-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .weather-manual-dialog {
+            background: white;
+            border-radius: 16px;
+            padding: 28px;
+            max-width: 400px;
+            width: 92%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: slideUp 0.2s ease;
+        }
+
+        .weather-manual-dialog h3 {
+            color: #1a3a52;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+
+        .weather-manual-dialog p {
+            color: #888;
+            font-size: 0.85em;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .weather-manual-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .weather-manual-btn {
+            padding: 13px 16px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.95em;
+            font-weight: 600;
+            color: #333;
+            transition: all 0.2s;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .weather-manual-btn:hover {
+            border-color: #1a3a52;
+            color: #1a3a52;
+            background: #f0f4f7;
+        }
+
+        .weather-manual-btn .wm-sub {
+            font-weight: 400;
+            font-size: 0.82em;
+            color: #888;
+            display: block;
+            margin-top: 2px;
+        }
+
+        .weather-manual-temp {
+            margin-bottom: 16px;
+        }
+
+        .weather-manual-temp label {
+            display: block;
+            font-size: 0.85em;
+            color: #666;
+            font-weight: 600;
+            margin-bottom: 8px;
+            text-align: left;
+        }
+
+        .weather-manual-temp input[type=range] {
+            width: 100%;
+        }
+
+        .weather-manual-temp .temp-display {
+            text-align: center;
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #1a3a52;
+            margin-top: 6px;
+        }
+
+        .btn-wm-cancel {
+            width: 100%;
+            padding: 11px;
+            background: #f5f5f5;
+            color: #666;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            transition: background 0.2s;
+        }
+
+        .btn-wm-cancel:hover { background: #e0e0e0; }
+
         h1 {
             color: #1a3a52;
             font-size: 2.5em;
@@ -2668,11 +2781,14 @@
             const emoji = getWeatherEmoji(description);
             const tempText = maxTemp !== null ? `${maxTemp}°` : '--°';
             
-            currentWeatherCondition = description; // Guardar condición para recomendaciones
+            // Solo actualizar la condición si el fetch fue exitoso
+            if (description && description !== 'error') {
+                currentWeatherCondition = description;
+            }
             
             document.getElementById('weatherEmoji').textContent = emoji;
             document.getElementById('weatherTemp').textContent = tempText;
-            document.getElementById('weatherLocation').textContent = location;
+            document.getElementById('weatherLocation').textContent = description === 'error' ? '⚠️ Sin datos' : location;
         }
 
         function getWeatherEmoji(description) {
@@ -2802,11 +2918,80 @@
             });
         }
 
+        function openManualWeatherPicker() {
+            const overlay = document.createElement('div');
+            overlay.className = 'weather-manual-overlay';
+            overlay.id = 'weatherManualOverlay';
+
+            let manualTemp = 12;
+
+            overlay.innerHTML = `
+                <div class="weather-manual-dialog">
+                    <div style="font-size:2em; margin-bottom:8px;">🌤️</div>
+                    <h3>¿Cómo está el clima hoy?</h3>
+                    <p>No se pudo obtener el clima automáticamente.<br>Seleccioná las condiciones manualmente.</p>
+                    <div class="weather-manual-options">
+                        <button class="weather-manual-btn" onclick="applyManualWeather('sunny', parseInt(document.getElementById('manualTempSlider').value))">
+                            ☀️ Soleado / Despejado
+                            <span class="wm-sub">Sin nubes, cielo limpio</span>
+                        </button>
+                        <button class="weather-manual-btn" onclick="applyManualWeather('cloud', parseInt(document.getElementById('manualTempSlider').value))">
+                            ⛅ Nublado / Parcialmente nublado
+                            <span class="wm-sub">Nubes pero sin lluvia</span>
+                        </button>
+                        <button class="weather-manual-btn" onclick="applyManualWeather('drizzle', parseInt(document.getElementById('manualTempSlider').value))">
+                            🌦️ Llovizna
+                            <span class="wm-sub">Lluvia leve o intermitente</span>
+                        </button>
+                        <button class="weather-manual-btn" onclick="applyManualWeather('rain', parseInt(document.getElementById('manualTempSlider').value))">
+                            🌧️ Lluvia
+                            <span class="wm-sub">Lluvia moderada o fuerte</span>
+                        </button>
+                        <button class="weather-manual-btn" onclick="applyManualWeather('snow', parseInt(document.getElementById('manualTempSlider').value))">
+                            ❄️ Nieve
+                            <span class="wm-sub">Frío extremo</span>
+                        </button>
+                    </div>
+                    <div class="weather-manual-temp">
+                        <label>Temperatura máxima del día</label>
+                        <input type="range" id="manualTempSlider" min="-5" max="35" value="12" step="1"
+                            oninput="document.getElementById('manualTempDisplay').textContent = this.value + '°'">
+                        <div class="temp-display" id="manualTempDisplay">12°</div>
+                    </div>
+                    <button class="btn-wm-cancel" onclick="closeManualWeatherPicker()">Cancelar</button>
+                </div>
+            `;
+
+            document.body.appendChild(overlay);
+            overlay.addEventListener('click', e => { if (e.target === overlay) closeManualWeatherPicker(); });
+        }
+
+        function applyManualWeather(condition, temp) {
+            currentWeatherCondition = condition;
+            currentMaxTemp = temp;
+            // Update the widget display too
+            const emoji = getWeatherEmoji(condition);
+            document.getElementById('weatherEmoji').textContent = emoji;
+            document.getElementById('weatherTemp').textContent = temp + '°';
+            document.getElementById('weatherLocation').textContent = 'Manual';
+            closeManualWeatherPicker();
+            _doShowWeatherRecommendations();
+        }
+
+        function closeManualWeatherPicker() {
+            const el = document.getElementById('weatherManualOverlay');
+            if (el) el.remove();
+        }
+
         function showWeatherRecommendations() {
-            if (!currentWeatherCondition) {
-                alert('Esperando clima... clickeá en el widget ☀️ arriba a la derecha');
+            if (!currentWeatherCondition || currentWeatherCondition === 'error') {
+                openManualWeatherPicker();
                 return;
             }
+            _doShowWeatherRecommendations();
+        }
+
+        function _doShowWeatherRecommendations() {
 
             switchTab('sugeridos');
 
