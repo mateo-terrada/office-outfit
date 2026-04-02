@@ -6,9 +6,9 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Rabobank Outfits">
-    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect fill='%231a1a1a' width='180' height='180'/><text x='90' y='95' font-size='80' font-weight='bold' text-anchor='middle' dy='.3em' fill='white' font-family='system-ui'>🏦</text></svg>">
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%231a1a1a' width='100' height='100' rx='20'/><text x='50' y='55' font-size='60' text-anchor='middle' dy='.3em' font-family='system-ui'>🏦</text></svg>">
-    <title>Rabobank Outfits | Professional Style</title>
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect fill='%231a3a52' width='180' height='180'/><text x='90' y='95' font-size='80' font-weight='bold' text-anchor='middle' dy='.3em' fill='white' font-family='system-ui'>🏦</text></svg>">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%231a3a52' width='100' height='100' rx='20'/><text x='50' y='55' font-size='60' text-anchor='middle' dy='.3em' font-family='system-ui'>🏦</text></svg>">
+    <title>Rabobank Outfits | Teo's Office Style</title>
     <style>
         * {
             margin: 0;
@@ -17,80 +17,64 @@
         }
 
         body {
-            font-family: 'Segoe UI', 'Helvetica Neue', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: #fafaf8;
-            padding: 50px 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+            padding: 20px;
             min-height: 100vh;
-            letter-spacing: -0.3px;
-            color: #2a2a2a;
         }
 
         .container {
-            max-width: 1700px;
+            max-width: 1400px;
             margin: 0 auto;
         }
 
-        /* ============ HEADER ============ */
         header {
             text-align: center;
-            margin-bottom: 70px;
-            padding-bottom: 50px;
-            border-bottom: 2px solid #e5e0d8;
+            margin-bottom: 40px;
         }
 
         h1 {
-            color: #1a1a1a;
-            font-size: 2.8em;
-            margin-bottom: 16px;
-            font-weight: 300;
-            letter-spacing: 0.8px;
-            line-height: 1.2;
+            color: #1a3a52;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
         }
 
         .subtitle {
-            color: #888;
-            font-size: 0.9em;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            font-weight: 400;
-            margin-top: 12px;
+            color: #666;
+            font-size: 1.1em;
+            margin-bottom: 30px;
         }
 
-        /* ============ TABS ============ */
         .tabs {
             display: flex;
-            gap: 12px;
-            margin-bottom: 60px;
+            gap: 10px;
+            margin-bottom: 30px;
             justify-content: center;
             flex-wrap: wrap;
         }
 
         .tab-btn {
-            padding: 11px 26px;
-            border: 1.5px solid #d0cbbd;
+            padding: 12px 24px;
+            border: 2px solid #d0d0d0;
             background: white;
-            border-radius: 0;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 0.8em;
-            font-weight: 500;
-            letter-spacing: 0.6px;
-            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-            color: #666;
-            text-transform: uppercase;
+            font-size: 0.95em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            color: #333;
         }
 
         .tab-btn:hover {
-            border-color: #1a1a1a;
-            color: #1a1a1a;
-            background: #f9f9f7;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            border-color: #1a3a52;
+            color: #1a3a52;
         }
 
         .tab-btn.active {
-            background: #1a1a1a;
-            color: #f8f7f3;
-            border-color: #1a1a1a;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            background: #1a3a52;
+            color: white;
+            border-color: #1a3a52;
         }
 
         .tab-content {
@@ -101,60 +85,52 @@
             display: block;
         }
 
-        /* ============ FILTERS ============ */
         .filters {
             display: flex;
-            gap: 14px;
-            margin-bottom: 60px;
+            gap: 15px;
+            margin-bottom: 30px;
             flex-wrap: wrap;
             justify-content: center;
         }
 
         .filter-btn {
             padding: 10px 20px;
-            border: 1.5px solid #d0cbbd;
+            border: 2px solid #d0d0d0;
             background: white;
-            border-radius: 24px;
+            border-radius: 25px;
             cursor: pointer;
-            font-size: 0.78em;
+            font-size: 0.95em;
             font-weight: 500;
-            letter-spacing: 0.5px;
-            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-            color: #666;
-            text-transform: capitalize;
+            transition: all 0.3s ease;
+            color: #333;
         }
 
         .filter-btn:hover {
-            border-color: #1a1a1a;
-            color: #1a1a1a;
-            background: #f9f9f7;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            border-color: #1a3a52;
+            color: #1a3a52;
         }
 
         .filter-btn.active {
-            background: #1a1a1a;
+            background: #1a3a52;
             color: white;
-            border-color: #1a1a1a;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            border-color: #1a3a52;
         }
 
-        /* ============ OUTFITS GRID ============ */
         .outfits-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-            gap: 48px;
-            margin-bottom: 60px;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
         }
 
         .outfit-card {
             background: white;
-            border-radius: 0;
+            border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
             display: none;
             position: relative;
-            border: 1px solid #ede8e0;
         }
 
         .outfit-card.show {
@@ -163,390 +139,626 @@
         }
 
         .outfit-card:hover {
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
-            transform: translateY(-8px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            transform: translateY(-5px);
         }
 
-        /* ============ FAVORITE BUTTON ============ */
+        .outfit-card.custom {
+            border: 2px solid #6a1b9a;
+        }
+
+        .custom-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #6a1b9a;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-weight: 700;
+        }
+
         .favorite-btn {
             position: absolute;
-            top: 22px;
-            right: 22px;
-            background: rgba(255, 255, 255, 0.95);
-            border: 1px solid #e5e0d8;
-            font-size: 1.5em;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 1.8em;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            padding: 8px;
+            transition: transform 0.2s, filter 0.2s;
+            padding: 5px;
             line-height: 1;
-            z-index: 10;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            backdrop-filter: blur(4px);
         }
 
         .favorite-btn:hover {
-            transform: scale(1.12);
-            background: white;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            border-color: #1a1a1a;
+            transform: scale(1.2);
+            filter: drop-shadow(0 0 3px rgba(255, 215, 0, 0.5));
         }
 
         .favorite-btn.active {
-            color: #d4af37;
-            background: white;
-            border-color: #d4af37;
-            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2);
-        }
-            filter: opacity(1) drop-shadow(0 2px 4px rgba(212, 175, 55, 0.3));
+            color: #FFD700;
+            filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.7));
         }
 
-        .favorite-btn.active {
-            color: #d4af37;
-            background: white;
-            border-color: #d4af37;
-            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.2);
-        }
-
-        /* ============ OUTFIT HEADER ============ */
         .outfit-header {
-            padding: 30px 30px 22px 30px;
-            border-bottom: 1px solid #f0ebe4;
-            background: #fafaf8;
+            padding: 15px 20px;
+            border-bottom: 2px solid #f0f0f0;
+            background: #f9fafb;
         }
 
         .outfit-title {
-            font-size: 1.4em;
-            font-weight: 500;
-            color: #1a1a1a;
-            margin-bottom: 8px;
-            letter-spacing: 0.2px;
-            line-height: 1.3;
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #1a3a52;
+            margin-bottom: 5px;
         }
 
         .outfit-context {
-            font-size: 0.8em;
-            color: #999;
-            margin-bottom: 14px;
-            letter-spacing: 0.3px;
-            line-height: 1.5;
+            font-size: 0.85em;
+            color: #666;
+            margin-bottom: 8px;
         }
 
-        .color-dots {
-            display: flex;
-            gap: 9px;
-            margin-bottom: 14px;
-        }
-
-        .color-dot {
-            width: 15px;
-            height: 15px;
-            border-radius: 50%;
-            border: 1px solid #e5e0d8;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
-        }
-
-        /* ============ FORMALITY BADGE ============ */
         .formality-badge {
             display: inline-block;
-            padding: 7px 15px;
-            border-radius: 20px;
-            font-size: 0.7em;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8em;
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.7px;
-            border: 1.2px solid;
-            transition: all 0.3s ease;
+            letter-spacing: 0.5px;
         }
 
         .formal {
-            background: #f5f8fb;
-            color: #2c5aa0;
-            border-color: #d5dfe8;
+            background: #e3f2fd;
+            color: #1565c0;
         }
 
         .elegante-sport {
-            background: #faf6f9;
-            color: #6b5b8c;
-            border-color: #e8dfe5;
+            background: #f3e5f5;
+            color: #6a1b9a;
         }
 
         .casual {
-            background: #f5faf6;
-            color: #3d7d4d;
-            border-color: #e3ede8;
+            background: #e8f5e9;
+            color: #2e7d32;
         }
 
-        /* ============ OUTFIT CONTENT ============ */
         .outfit-content {
-            padding: 30px 30px 28px 30px;
+            padding: 20px;
             flex: 1;
             display: flex;
             flex-direction: column;
         }
 
         .prenda-grupo {
-            margin-bottom: 24px;
-        }
-
-        .prenda-grupo:last-of-type {
-            margin-bottom: 26px;
+            margin-bottom: 18px;
         }
 
         .prenda-tipo {
-            font-size: 0.68em;
-            color: #aaa;
+            font-size: 0.75em;
+            color: #999;
             text-transform: uppercase;
-            letter-spacing: 1.1px;
-            font-weight: 600;
-            margin-bottom: 7px;
+            letter-spacing: 1px;
+            font-weight: 700;
+            margin-bottom: 6px;
             display: block;
         }
 
         .prenda-nombre {
-            font-size: 0.98em;
-            color: #2a2a2a;
-            font-weight: 400;
-            letter-spacing: -0.1px;
-            line-height: 1.4;
+            font-size: 1.05em;
+            color: #333;
+            margin-bottom: 4px;
         }
 
         .outfit-notes {
             margin-top: auto;
-            padding-top: 22px;
-            border-top: 1px solid #f0ebe4;
-            font-size: 0.85em;
-            color: #888;
-            line-height: 1.6;
+            padding-top: 15px;
+            border-top: 1px solid #f0f0f0;
+            font-size: 0.9em;
+            color: #666;
             font-style: italic;
-            font-weight: 300;
         }
 
-        /* ============ CATEGORY SEPARATOR ============ */
         .category-separator {
             grid-column: 1 / -1;
-            margin: 50px 0 40px 0;
-            padding: 40px 0 35px 0;
-            border-top: 1.5px solid #e5e0d8;
-            border-bottom: 1.5px solid #e5e0d8;
+            margin: 30px 0 20px 0;
+            padding: 20px 0;
+            border-top: 2px solid #e0e0e0;
             text-align: center;
         }
 
         .category-separator h3 {
-            color: #1a1a1a;
-            font-size: 1.6em;
-            font-weight: 300;
-            letter-spacing: 0.6px;
+            color: #1a3a52;
+            font-size: 1.4em;
+            font-weight: 600;
             margin: 0;
         }
 
-        /* ============ FORMS ============ */
-        .form-section {
-            background: white;
-            border-radius: 0;
-            padding: 45px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-            max-width: 750px;
-            margin: 0 auto;
-            border: 1px solid #ede8e0;
-        }
-
-        .form-section h2 {
-            color: #1a1a1a;
-            font-size: 2.2em;
-            font-weight: 300;
-            margin-bottom: 35px;
-            letter-spacing: 0.4px;
-        }
-
-        .form-group {
-            margin-bottom: 26px;
-        }
-
-        .form-group label {
-            display: block;
-            font-weight: 500;
-            margin-bottom: 9px;
-            color: #2a2a2a;
-            font-size: 0.88em;
-            letter-spacing: 0.3px;
-        }
-
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 13px 15px;
-            border: 1px solid #d0cbbd;
-            border-radius: 0;
-            font-size: 0.95em;
-            font-family: inherit;
-            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-            color: #333;
-            background: white;
-            letter-spacing: -0.2px;
-        }
-
-        .form-group input:hover,
-        .form-group select:hover,
-        .form-group textarea:hover {
-            border-color: #1a1a1a;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: #1a1a1a;
-            box-shadow: 0 0 0 3px rgba(26, 26, 26, 0.06);
-        }
-
-        .form-group textarea {
-            resize: vertical;
-            min-height: 110px;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 22px;
-        }
-
-        .success-message {
-            background: #f8fcf9;
-            color: #2d7a4d;
-            padding: 15px 18px;
-            border-radius: 0;
-            margin-bottom: 26px;
-            font-weight: 500;
-            display: none;
-            border: 1.2px solid #d4e5da;
-            letter-spacing: 0.2px;
-        }
-
-        .success-message.show {
-            display: block;
-        }
-
-        /* ============ BUTTONS ============ */
-        .btn-submit {
-            width: 100%;
-            padding: 15px;
-            background: #1a1a1a;
-            color: white;
-            border: 1.5px solid #1a1a1a;
-            border-radius: 0;
-            font-size: 0.9em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-            letter-spacing: 0.6px;
-            text-transform: uppercase;
-        }
-
-        .btn-submit:hover {
-            background: #0d0d0d;
-            border-color: #0d0d0d;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-        }
-
-        .btn-submit:active {
-            transform: translateY(1px);
+        .outfit-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #f0f0f0;
         }
 
         .delete-btn {
             flex: 1;
-            padding: 11px 15px;
-            background: #fef8f7;
+            padding: 10px 14px;
+            background: #ffebee;
             color: #c62828;
-            border: 1.2px solid #f0ccc9;
-            border-radius: 0;
+            border: 1px solid #ffcdd2;
+            border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
-            font-size: 0.84em;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            letter-spacing: 0.3px;
+            font-size: 0.85em;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
         }
 
         .delete-btn:hover {
             background: #ef5350;
             color: white;
             border-color: #ef5350;
-            box-shadow: 0 4px 12px rgba(239, 83, 80, 0.2);
         }
 
-        /* ============ EMPTY STATE ============ */
+        /* COLOR DOTS */
+        .color-dots {
+            display: flex;
+            gap: 5px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .color-dot {
+            width: 11px;
+            height: 11px;
+            border-radius: 50%;
+            border: 1.5px solid rgba(0,0,0,0.15);
+            flex-shrink: 0;
+        }
+
+        .delete-confirm-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            animation: fadeIn 0.2s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .delete-confirm-dialog {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 380px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: slideUp 0.2s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .delete-confirm-dialog .dialog-icon {
+            font-size: 2.5em;
+            margin-bottom: 12px;
+        }
+
+        .delete-confirm-dialog h3 {
+            color: #1a3a52;
+            margin-bottom: 8px;
+            font-size: 1.15em;
+        }
+
+        .delete-confirm-dialog p {
+            color: #666;
+            margin-bottom: 24px;
+            font-size: 0.9em;
+            line-height: 1.4;
+        }
+
+        .delete-confirm-dialog .dialog-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .delete-confirm-dialog .btn-cancel {
+            flex: 1;
+            padding: 12px;
+            background: #f5f5f5;
+            color: #333;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            transition: background 0.2s;
+        }
+
+        .delete-confirm-dialog .btn-cancel:hover {
+            background: #e0e0e0;
+        }
+
+        .delete-confirm-dialog .btn-confirm-delete {
+            flex: 1;
+            padding: 12px;
+            background: #ef5350;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            transition: background 0.2s;
+        }
+
+        .delete-confirm-dialog .btn-confirm-delete:hover {
+            background: #c62828;
+        }
+
+        .delete-success-toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #c62828;
+            color: white;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.95em;
+            box-shadow: 0 4px 20px rgba(198,40,40,0.3);
+            z-index: 1001;
+            transition: transform 0.3s ease;
+            pointer-events: none;
+        }
+
+        .delete-success-toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .form-section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #1a3a52;
+            font-size: 0.95em;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 0.95em;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #1a3a52;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background: #1a3a52;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-submit:hover {
+            background: #0f2438;
+        }
+
+        .btn-submit:active {
+            transform: scale(0.98);
+        }
+
+        .success-message {
+            background: #c8e6c9;
+            color: #2e7d32;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+            display: none;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
         .empty-state {
             text-align: center;
-            padding: 100px 30px;
-            color: #aaa;
+            padding: 60px 20px;
+            color: #999;
         }
 
         .empty-state h2 {
-            font-size: 1.5em;
-            margin-bottom: 14px;
+            font-size: 1.3em;
+            margin-bottom: 10px;
             color: #666;
-            font-weight: 300;
-            letter-spacing: 0.3px;
         }
 
-        .empty-state p {
+        /* Random Outfit */
+        .random-btn {
+            padding: 12px 24px;
+            border: 2px solid #e67e22;
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            border-radius: 8px;
+            cursor: pointer;
             font-size: 0.95em;
-            color: #999;
-            line-height: 1.6;
+            font-weight: 600;
+            color: white;
+            transition: all 0.3s ease;
         }
 
-        /* ============ CUSTOM OUTFITS ============ */
-        .outfit-card.custom {
-            border: 1.5px solid #d4af37;
+        .random-btn:hover {
+            background: linear-gradient(135deg, #e67e22, #d35400);
+            border-color: #d35400;
+            transform: scale(1.03);
         }
 
-        .custom-badge {
-            position: absolute;
-            top: 22px;
-            left: 22px;
-            background: #d4af37;
-            color: #1a1a1a;
-            padding: 6px 13px;
-            border-radius: 20px;
-            font-size: 0.68em;
-            font-weight: 700;
-            letter-spacing: 0.7px;
-            text-transform: uppercase;
-        }
-
-        .outfit-actions {
+        .random-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
             display: flex;
-            gap: 11px;
-            margin-top: 18px;
-            padding-top: 18px;
-            border-top: 1px solid #f0ebe4;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            animation: fadeIn 0.2s ease;
         }
 
-        /* ============ RESPONSIVE ============ */
-        @media (max-width: 1024px) {
-            .outfits-grid {
-                grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-                gap: 30px;
-            }
+        .random-dialog {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: slideUp 0.2s ease;
+        }
+
+        .random-dialog h3 {
+            color: #1a3a52;
+            margin-bottom: 6px;
+            font-size: 1.2em;
+        }
+
+        .random-dialog p {
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+        }
+
+        .random-category-btns {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+
+        .random-cat-btn {
+            padding: 14px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.2s;
+            color: #333;
+        }
+
+        .random-cat-btn:hover {
+            border-color: #e67e22;
+            color: #e67e22;
+            background: #fff8f0;
+        }
+
+        .random-cat-btn.selected {
+            border-color: #e67e22;
+            background: #e67e22;
+            color: white;
+        }
+
+        .random-result {
+            text-align: left;
+            margin-top: 20px;
+        }
+
+        .random-result .outfit-title {
+            text-align: center;
+            font-size: 1.3em;
+            margin-bottom: 5px;
+        }
+
+        .random-result .formality-badge {
+            display: block;
+            text-align: center;
+            margin-bottom: 18px;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .random-result .prenda-grupo {
+            margin-bottom: 14px;
+        }
+
+        .random-result .color-dots {
+            justify-content: center;
+            margin-bottom: 16px;
+        }
+
+        .random-dialog .dialog-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .random-dialog .btn-cancel {
+            flex: 1;
+            padding: 12px;
+            background: #f5f5f5;
+            color: #333;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            transition: background 0.2s;
+        }
+
+        .random-dialog .btn-cancel:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-random-generate {
+            flex: 1;
+            padding: 12px;
+            background: #e67e22;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            transition: background 0.2s;
+        }
+
+        .btn-random-generate:hover {
+            background: #d35400;
+        }
+
+        .btn-random-generate:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .btn-save-random {
+            flex: 1;
+            padding: 12px;
+            background: #1a3a52;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            transition: background 0.2s;
+        }
+
+        .btn-save-random:hover {
+            background: #0f2438;
+        }
+
+        .btn-retry-random {
+            flex: 1;
+            padding: 12px;
+            background: #f39c12;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            transition: background 0.2s;
+        }
+
+        .btn-retry-random:hover {
+            background: #e67e22;
+        }
+
+        .random-success-toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #2e7d32;
+            color: white;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.95em;
+            box-shadow: 0 4px 20px rgba(46,125,50,0.3);
+            z-index: 1001;
+            transition: transform 0.3s ease;
+            pointer-events: none;
+        }
+
+        .random-success-toast.show {
+            transform: translateX(-50%) translateY(0);
         }
 
         @media (max-width: 768px) {
-            body {
-                padding: 20px 16px;
+            .outfits-grid {
+                grid-template-columns: 1fr;
             }
 
             h1 {
-                font-size: 2em;
-            }
-
-            .outfits-grid {
-                grid-template-columns: 1fr;
-                gap: 24px;
+                font-size: 1.8em;
             }
 
             .filters {
@@ -568,24 +780,21 @@
             .tab-btn {
                 width: 100%;
             }
-
-            .form-section {
-                padding: 28px;
-            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>🏦 RABOBANK</h1>
-            <p class="subtitle">Professional Wardrobe Curator</p>
+            <h1>🏦 Rabobank Outfits</h1>
+            <p class="subtitle">Tu guardarropas profesional para el traineeship</p>
         </header>
 
         <div class="tabs">
             <button class="tab-btn active" onclick="switchTab('sugeridos')">Outfits Sugeridos</button>
             <button class="tab-btn" onclick="switchTab('crear')">Crear Outfit</button>
             <button class="tab-btn" onclick="switchTab('mios')">Mis Outfits</button>
+            <button class="random-btn" onclick="openRandomOutfit()">🎲 Outfit al Azar</button>
         </div>
 
         <!-- TAB: SUGERIDOS -->
@@ -603,7 +812,7 @@
         <!-- TAB: CREAR -->
         <div class="tab-content" id="tab-crear">
             <div class="form-section">
-                <h2>Crear tu propio outfit</h2>
+                <h2 style="margin-bottom: 20px; color: #1a3a52;">Crear tu propio outfit</h2>
                 <div class="success-message" id="successMessage">✓ Outfit creado exitosamente</div>
                 
                 <form onsubmit="handleCreateOutfit(event)">
@@ -692,7 +901,7 @@
                         <textarea id="outfitNotes" placeholder="ej: Combina bien con el chaleco, considerá el clima..."></textarea>
                     </div>
 
-                    <button type="submit" class="btn-submit">Guardar Outfit</button>
+                    <button type="submit" class="btn-submit">Guardar Outfit 💾</button>
                 </form>
             </div>
         </div>
@@ -702,6 +911,11 @@
             <div id="customOutfitsContainer"></div>
         </div>
     </div>
+
+    <div id="deleteSuccessToast" class="delete-success-toast">🗑 Outfit eliminado</div>
+    <div id="randomSuccessToast" class="random-success-toast">✓ Outfit guardado en "Mis Outfits"</div>
+
+    <script>
         const outfits = [
             {
                 id: 1,
