@@ -2601,6 +2601,8 @@
         // ============ WEATHER ============
         let currentLocation = null;
         let currentWeatherCondition = null;
+        let currentMaxTemp = null;
+        let currentMinTemp = null;
         const weatherLocations = {
             'Haarlem': { lat: 52.3910, lng: 4.6346 },
             'Amsterdam': { lat: 52.3676, lng: 4.9041 },
@@ -2631,6 +2633,8 @@
                     const description = getWeatherDescription(weatherCode);
                     
                     currentLocation = location;
+                    currentMaxTemp = maxTemp;
+                    currentMinTemp = minTemp;
                     updateWeatherDisplay(maxTemp, minTemp, description, location);
                 })
                 .catch(error => {
@@ -2719,65 +2723,83 @@
         }
 
         // ============ WEATHER-BASED RECOMMENDATIONS ============
-        function evaluateOutfitForWeather(outfit, weatherCondition) {
-            if (!weatherCondition) return true;
-            
-            const prendas = outfit.prendas;
-            const prendasStr = JSON.stringify(prendas).toLowerCase();
-            
-            // Lluvia: evitar zapatillas deportivas, preferir zapatos cerrados
-            if (weatherCondition === 'rain' || weatherCondition === 'drizzle') {
-                if (prendasStr.includes('adidas') || prendasStr.includes('tiger') || prendasStr.includes('levis')) {
-                    return false;
+
+        // Returns { ok: bool, reasons: string[] }
+        function evaluateOutfitForWeather(outfit, condition, maxTemp) {
+            const p = outfit.prendas;
+            const zapatos   = (p.zapatos  || '').toLowerCase();
+            const abrigo    = (p.abrigo   || '').toLowerCase();
+            const pantalon  = (p.pantalon || '').toLowerCase();
+            const camisa    = (p.camisa   || '').toLowerCase();
+
+            const isRainy        = condition === 'rain' || condition === 'drizzle' || condition === 'thunderstorm';
+            const isSunnyWarm    = (condition === 'sunny' || condition === 'cloud') && maxTemp !== null && maxTemp >= 18;
+            const isColdOrGloomy = maxTemp !== null && maxTemp < 12;
+            const isMild         = maxTemp !== null && maxTemp >= 12 && maxTemp < 18;
+
+            const reasons = [];
+
+            // ── LLUVIA ──────────────────────────────────────────────────
+            if (isRainy) {
+                // Zapatos que NO aguantan lluvia → excluir
+                if (zapatos.includes('adidas') || zapatos.includes('tiger') || zapatos.includes('levis')) {
+                    reasons.push(`❌ ${p.zapatos} no son para lluvia`);
+                    return { ok: false, reasons };
                 }
-                if (prendasStr.includes('zapatos negros') || prendasStr.includes('zapatos marrones') || prendasStr.includes('vans')) {
-                    return true;
+                // Vans aguantan lo justo, zapatos de cuero son ideales → ok
+            }
+
+            // ── CALOR / TEMPLADO (máx ≥ 18°) ──────────────────────────
+            if (isSunnyWarm) {
+                // Quarter-zip de lana → demasiado abrigado
+                if (abrigo.includes('lana')) {
+                    reasons.push(`❌ ${p.abrigo} es demasiado abrigado para ${maxTemp}°`);
+                    return { ok: false, reasons };
+                }
+                // Campera polar → también demasiado
+                if (abrigo.includes('polar') || abrigo.includes('patagonia') && !abrigo.includes('chaleco')) {
+                    reasons.push(`❌ ${p.abrigo} es demasiado abrigado para ${maxTemp}°`);
+                    return { ok: false, reasons };
+                }
+                // Chaleco Patagonia en pleno calor → evitar
+                if (abrigo.includes('chaleco') && maxTemp >= 22) {
+                    reasons.push(`❌ Chaleco innecesario con ${maxTemp}°`);
+                    return { ok: false, reasons };
                 }
             }
-            
-            // Soleado: evitar abrigos muy abrigados
-            if (weatherCondition === 'sunny' || weatherCondition === 'clear') {
-                if ((prendasStr.includes('quarter-zip') && prendasStr.includes('lana')) || 
-                    prendasStr.includes('chaleco patagonia')) {
-                    return false;
+
+            // ── FRÍO (máx < 12°) ──────────────────────────────────────
+            if (isColdOrGloomy) {
+                // Sin abrigo → excluir
+                if (abrigo.includes('sin abrigo') || abrigo === '') {
+                    reasons.push(`❌ Sin abrigo con ${maxTemp}° es mala idea`);
+                    return { ok: false, reasons };
                 }
-                if (prendasStr.includes('sin abrigo') || prendasStr.includes('uniqlo') || prendasStr.includes('brooksfield')) {
-                    return true;
-                }
+                // Sweater fino sin campera encima → marginal, pero no excluir
             }
-            
-            // Frío/Nublado: abrigos gruesos son buenos
-            if (weatherCondition === 'fog' || weatherCondition === 'overcast' || weatherCondition === 'cloud') {
-                if (prendasStr.includes('chaleco') || (prendasStr.includes('quarter-zip') && prendasStr.includes('lana')) || 
-                    prendasStr.includes('patagonia')) {
-                    return true;
-                }
-            }
-            
-            // Nieve: evitar zapatos inapropiados
-            if (weatherCondition === 'snow') {
-                if (prendasStr.includes('adidas') || prendasStr.includes('tiger')) {
-                    return false;
-                }
-                if (prendasStr.includes('zapatos')) {
-                    return true;
-                }
-            }
-            
-            return true;
+
+            return { ok: true, reasons };
         }
 
-        function getWeatherRecommendations(weatherCondition) {
+        function getWeatherExplanation(condition, maxTemp) {
+            const temp = maxTemp !== null ? `${maxTemp}°` : '';
+            if (condition === 'rain' || condition === 'thunderstorm') return `🌧️ Lluvia ${temp} — sin zapatillas deportivas, solo zapatos o Vans`;
+            if (condition === 'drizzle') return `🌦️ Llovizna ${temp} — mejor zapatos cerrados`;
+            if (condition === 'snow') return `❄️ Nieve ${temp} — zapatos cerrados y abrigo`;
+            if ((condition === 'sunny' || condition === 'cloud') && maxTemp >= 18) return `☀️ ${temp} — sin abrigos de lana ni polares`;
+            if (maxTemp !== null && maxTemp < 12) return `🧥 ${temp} — outfits con buen abrigo`;
+            return `⛅ ${temp} — condiciones neutras, todos los outfits aplican`;
+        }
+
+        function getWeatherRecommendations(condition, maxTemp) {
             const allOutfits = [...outfits];
             const customOutfits = JSON.parse(localStorage.getItem('customOutfits')) || [];
             allOutfits.push(...customOutfits);
-            
-            const scored = allOutfits.map(outfit => ({
-                outfit,
-                score: evaluateOutfitForWeather(outfit, weatherCondition) ? 2 : 1
-            })).sort((a, b) => b.score - a.score);
-            
-            return scored.map(s => s.outfit);
+
+            return allOutfits.filter(outfit => {
+                const { ok } = evaluateOutfitForWeather(outfit, condition, maxTemp);
+                return ok;
+            });
         }
 
         function showWeatherRecommendations() {
@@ -2785,45 +2807,39 @@
                 alert('Esperando clima... clickeá en el widget ☀️ arriba a la derecha');
                 return;
             }
-            
+
             switchTab('sugeridos');
-            
+
             const grid = document.getElementById('outfitsGrid');
             grid.innerHTML = '';
-            
-            const recommended = getWeatherRecommendations(currentWeatherCondition);
-            
+
+            const allOutfits = [...outfits];
+            const customOutfits = JSON.parse(localStorage.getItem('customOutfits')) || [];
+            allOutfits.push(...customOutfits);
+            const total = allOutfits.length;
+
+            const recommended = getWeatherRecommendations(currentWeatherCondition, currentMaxTemp);
+            const excluded = total - recommended.length;
+
             if (!recommended || recommended.length === 0) {
                 grid.innerHTML = '<div class="empty-state"><h2>Sin recomendaciones</h2><p>Probá con otro clima o actualiza.</p></div>';
                 return;
             }
-            
+
             const banner = document.createElement('div');
-            banner.style.gridColumn = '1 / -1';
-            banner.style.background = '#e3f2fd';
-            banner.style.padding = '16px 20px';
-            banner.style.borderRadius = '12px';
-            banner.style.marginBottom = '20px';
-            banner.style.color = '#1565c0';
-            banner.style.fontWeight = '600';
-            banner.style.textAlign = 'center';
-            
-            const weatherEmoji = document.getElementById('weatherEmoji').textContent;
-            const weatherTemp = document.getElementById('weatherTemp').textContent;
-            const weatherLoc = document.getElementById('weatherLocation').textContent;
-            
-            banner.textContent = `💡 ${recommended.length} outfit${recommended.length > 1 ? 's' : ''} recomendado${recommended.length > 1 ? 's' : ''} para ${weatherEmoji} ${weatherTemp} en ${weatherLoc}`;
+            banner.style.cssText = 'grid-column:1/-1; background:#e3f2fd; padding:16px 20px; border-radius:12px; margin-bottom:20px; color:#1565c0; font-weight:600; text-align:center;';
+
+            const explanation = getWeatherExplanation(currentWeatherCondition, currentMaxTemp);
+            const excludedNote = excluded > 0 ? ` (${excluded} outfit${excluded > 1 ? 's' : ''} descartado${excluded > 1 ? 's' : ''} por el clima)` : '';
+            banner.innerHTML = `${explanation}<br><span style="font-weight:400; font-size:0.9em;">${recommended.length} outfit${recommended.length > 1 ? 's' : ''} recomendado${recommended.length > 1 ? 's' : ''}${excludedNote}</span>`;
             grid.appendChild(banner);
-            
+
             recommended.forEach(outfit => {
                 const card = createOutfitCard(outfit);
                 grid.appendChild(card);
             });
-            
-            // Scroll a top después de renderizar
-            setTimeout(() => {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }, 100);
+
+            setTimeout(() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }, 100);
         }
 
         // ============ INIT ============
