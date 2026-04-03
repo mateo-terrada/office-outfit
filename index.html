@@ -238,7 +238,7 @@
         }
 
         .outfit-card.custom {
-            border: 2px solid #6a1b9a;
+            border: 1px solid rgba(0,0,0,0.05);
         }
 
         .custom-badge {
@@ -1936,11 +1936,17 @@
             const zapatosDark = darken(c.zapatos, 30);
             const camisaDark  = darken(c.camisa, 15);
 
-            const skin     = '#F0C8A0';
-            const skinDark = '#D4A574';
+            const skin     = '#C8935A';
+            const skinDark = '#A87040';
 
             // "Sin abrigo" → camisa es el torso completo
-            const noAbrigo   = outfit.prendas.abrigo.toLowerCase().includes('sin abrigo');
+            const noAbrigo  = outfit.prendas.abrigo.toLowerCase().includes('sin abrigo');
+            const esChaleco = outfit.prendas.abrigo.toLowerCase().includes('chaleco');
+
+            // Chaleco → mangas muestran color de camisa, no del abrigo
+            const mangaColor = esChaleco ? c.camisa : c.abrigo;
+            const mangaDark  = esChaleco ? camisaDark : abrigoDark;
+            const mangaLight = esChaleco ? lighten(c.camisa, 30) : abrigoLight;
 
             const abrigoLayers = noAbrigo ? `
   <!-- Sin abrigo: camisa visible en todo el torso -->
@@ -1955,12 +1961,12 @@
   <polygon points="66,42 66,80 45,80 45,55 52,42" fill="${c.abrigo}"/>
   <rect x="24" y="42" width="7" height="38" rx="3" fill="${abrigoDark}" opacity="0.2"/>
   <rect x="59" y="42" width="7" height="38" rx="3" fill="${abrigoDark}" opacity="0.2"/>
-  <!-- Arms abrigo -->
-  <rect x="12" y="43" width="13" height="28" rx="5" fill="${c.abrigo}"/>
-  <rect x="65" y="43" width="13" height="28" rx="5" fill="${c.abrigo}"/>
+  <!-- Arms: camisa color si chaleco, abrigo color si sweater/campera -->
+  <rect x="12" y="43" width="13" height="28" rx="5" fill="${mangaColor}"/>
+  <rect x="65" y="43" width="13" height="28" rx="5" fill="${mangaColor}"/>
   <!-- Cuffs -->
-  <rect x="12" y="65" width="13" height="6" rx="3" fill="${abrigoLight}" opacity="0.55"/>
-  <rect x="65" y="65" width="13" height="6" rx="3" fill="${abrigoLight}" opacity="0.55"/>`;
+  <rect x="12" y="65" width="13" height="6" rx="3" fill="${mangaLight}" opacity="0.55"/>
+  <rect x="65" y="65" width="13" height="6" rx="3" fill="${mangaLight}" opacity="0.55"/>`;
 
             return `<svg width="37" height="54" viewBox="0 0 90 130" xmlns="http://www.w3.org/2000/svg">
   <!-- Legs / Pantalón -->
@@ -1990,8 +1996,14 @@
 
   <!-- Head -->
   <ellipse cx="45" cy="22" rx="14" ry="16" fill="${skin}"/>
-  <ellipse cx="45" cy="10" rx="14" ry="8" fill="${skinDark}"/>
-  <rect x="31" y="10" width="28" height="8" fill="${skin}"/>
+  <!-- Hair base -->
+  <ellipse cx="45" cy="12" rx="14" ry="10" fill="#3D2314"/>
+  <rect x="31" y="12" width="28" height="10" fill="${skin}"/>
+  <!-- Thin modern sideburns -->
+  <rect x="31" y="12" width="2" height="10" rx="1" fill="#3D2314"/>
+  <rect x="57" y="12" width="2" height="10" rx="1" fill="#3D2314"/>
+  <!-- Jopo: pronounced quiff curving up and forward -->
+  <path d="M34,10 Q28,0 36,−2 Q43,−4 41,6 Q39,10 36,10 Z" fill="#3D2314"/>
   <circle cx="40" cy="21" r="1.8" fill="#5C3D2E"/>
   <circle cx="50" cy="21" r="1.8" fill="#5C3D2E"/>
   <path d="M40,27 Q45,31 50,27" stroke="#5C3D2E" stroke-width="1.2" fill="none" stroke-linecap="round"/>
