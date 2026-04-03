@@ -1327,6 +1327,24 @@
             .tab-btn {
                 width: 100%;
             }
+
+            header {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 12px;
+                padding-top: 0;
+            }
+
+            .weather-widget {
+                position: static;
+                transform: none !important;
+                min-width: unset;
+                width: auto;
+                align-self: center;
+                font-size: 0.88em;
+                padding: 9px 14px;
+            }
         }
 
         /* Formality-colored accent on card header */
@@ -1362,12 +1380,6 @@
             border: 1px solid rgba(0,0,0,0.05);
         }
 
-        @media (max-width: 768px) {
-            .tabs {
-                max-width: 100%;
-                border-radius: 14px;
-            }
-        }
     </style>
 </head>
 <body>
@@ -1867,23 +1879,25 @@
         // within a single garment. Max 4 dots total.
         const colorRules = [
             { keywords: ['bordeau', 'bordeaux', 'bordo'],                       color: '#7B2D42' },
-            { keywords: ['camisa azul oscura'],                                  color: '#1a3a6e' },
-            { keywords: ['pantalón azul', 'levis azules', 'azul/blanco',
-                          'uniqlo azul', 'patagonia azul', 'polo azul',
-                          'brooksfield azul', 'spezial azul'],                   color: '#2E6DAD' },
-            { keywords: ['azul'],                                                color: '#2E6DAD' },
+            { keywords: ['campera patagonia bordeau'],                           color: '#7B2D42' },
+            { keywords: ['camisa azul oscura'],                                  color: '#1a3060' },
+            { keywords: ['pantalón azul', 'levis azules'],                       color: '#1E3A5F' },
+            { keywords: ['uniqlo azul', 'patagonia azul', 'polo azul',
+                          'brooksfield azul', 'quarter-zip polo azul',
+                          'sweater uniqlo azul', 'chaleco patagonia azul'],      color: '#1E3A5F' },
+            { keywords: ['azul/blanco'],                                         color: '#1E3A5F' },
+            { keywords: ['azul'],                                                color: '#1E3A5F' },
             { keywords: ['celeste/blanco', 'celeste clara', 'celeste líneas',
-                          'celeste brooksfield', 'uniqlo celeste'],              color: '#87CEEB' },
-            { keywords: ['celeste'],                                             color: '#87CEEB' },
+                          'celeste brooksfield', 'uniqlo celeste'],              color: '#7BAFD4' },
+            { keywords: ['celeste'],                                             color: '#7BAFD4' },
             { keywords: ['pantalón gris oscuro', 'springfield gris',
                           'polo gris claro', 'patagonia gris'],                  color: '#6B6B6B' },
             { keywords: ['gris jaspeada', 'gris'],                              color: '#6B6B6B' },
-            { keywords: ['camisa blanca', 'tiger blancas', 'blanco', 'blancas'],'color': '#E0E0E0' },
+            { keywords: ['camisa blanca', 'tiger blancas', 'blanco', 'blancas'], color: '#E0E0E0' },
             { keywords: ['pantalón negro', 'polar brooksfield negro',
                           'vans negras', 'zapatos negros', 'negro', 'negras'],   color: '#2C2C2C' },
             { keywords: ['zapatos marrones'],                                    color: '#8B5E3C' },
             { keywords: ['beige'],                                               color: '#D4B896' },
-            { keywords: ['campera patagonia bordeau'],                           color: '#7B2D42' },
         ];
 
         // ── Per-prenda color extraction (used by both dots and mannequin) ──
@@ -1900,13 +1914,13 @@
                 pantalon: getPrendaColor(outfit.prendas.pantalon) || '#888888',
                 abrigo:   getPrendaColor(outfit.prendas.abrigo)   || '#888888',
                 zapatos:  getPrendaColor(outfit.prendas.zapatos)  || '#444444',
+                camisa:   getPrendaColor(outfit.prendas.camisa)   || '#E8E8E8',
             };
         }
 
         function renderMannequin(outfit) {
             const c = getOutfitColors(outfit);
 
-            // Lighten abrigo slightly for collar/cuff detail
             function lighten(hex, amt) {
                 const n = parseInt(hex.slice(1), 16);
                 const r = Math.min(255, (n >> 16) + amt);
@@ -1916,26 +1930,42 @@
             }
             function darken(hex, amt) { return lighten(hex, -amt); }
 
-            const abrigoLight = lighten(c.abrigo, 30);
             const abrigoDark  = darken(c.abrigo, 20);
+            const abrigoLight = lighten(c.abrigo, 30);
             const pantalDark  = darken(c.pantalon, 25);
             const zapatosDark = darken(c.zapatos, 30);
+            const camisaDark  = darken(c.camisa, 15);
 
-            // Skin tone
-            const skin = '#F0C8A0';
+            const skin     = '#F0C8A0';
             const skinDark = '#D4A574';
 
-            // "Sin abrigo" → show camisa color as torso
-            const noAbrigo = outfit.prendas.abrigo.toLowerCase().includes('sin abrigo');
-            const torsoColor = noAbrigo ? '#E8E8E8' : c.abrigo;
-            const torsoLight = noAbrigo ? '#F5F5F5' : abrigoLight;
-            const torsoDark  = noAbrigo ? '#CCCCCC' : abrigoDark;
+            // "Sin abrigo" → camisa es el torso completo
+            const noAbrigo   = outfit.prendas.abrigo.toLowerCase().includes('sin abrigo');
 
-            return `<svg width="31" height="45" viewBox="0 0 90 130" xmlns="http://www.w3.org/2000/svg">
+            const abrigoLayers = noAbrigo ? `
+  <!-- Sin abrigo: camisa visible en todo el torso -->
+  <rect x="24" y="42" width="42" height="38" rx="5" fill="${c.camisa}"/>
+  <rect x="24" y="42" width="7" height="38" rx="3" fill="${camisaDark}" opacity="0.18"/>
+  <rect x="59" y="42" width="7" height="38" rx="3" fill="${camisaDark}" opacity="0.18"/>
+  <!-- Arms camisa -->
+  <rect x="12" y="43" width="13" height="28" rx="5" fill="${c.camisa}"/>
+  <rect x="65" y="43" width="13" height="28" rx="5" fill="${c.camisa}"/>` : `
+  <!-- ABRIGO con V cutout -->
+  <polygon points="24,42 24,80 45,80 45,55 38,42" fill="${c.abrigo}"/>
+  <polygon points="66,42 66,80 45,80 45,55 52,42" fill="${c.abrigo}"/>
+  <rect x="24" y="42" width="7" height="38" rx="3" fill="${abrigoDark}" opacity="0.2"/>
+  <rect x="59" y="42" width="7" height="38" rx="3" fill="${abrigoDark}" opacity="0.2"/>
+  <!-- Arms abrigo -->
+  <rect x="12" y="43" width="13" height="28" rx="5" fill="${c.abrigo}"/>
+  <rect x="65" y="43" width="13" height="28" rx="5" fill="${c.abrigo}"/>
+  <!-- Cuffs -->
+  <rect x="12" y="65" width="13" height="6" rx="3" fill="${abrigoLight}" opacity="0.55"/>
+  <rect x="65" y="65" width="13" height="6" rx="3" fill="${abrigoLight}" opacity="0.55"/>`;
+
+            return `<svg width="37" height="54" viewBox="0 0 90 130" xmlns="http://www.w3.org/2000/svg">
   <!-- Legs / Pantalón -->
   <rect x="28" y="76" width="14" height="36" rx="3" fill="${c.pantalon}"/>
   <rect x="48" y="76" width="14" height="36" rx="3" fill="${c.pantalon}"/>
-  <!-- Leg crease -->
   <line x1="35" y1="78" x2="35" y2="110" stroke="${pantalDark}" stroke-width="1" opacity="0.4"/>
   <line x1="55" y1="78" x2="55" y2="110" stroke="${pantalDark}" stroke-width="1" opacity="0.4"/>
 
@@ -1945,34 +1975,25 @@
   <ellipse cx="35" cy="113" rx="6" ry="3" fill="${zapatosDark}" opacity="0.3"/>
   <ellipse cx="59" cy="113" rx="6" ry="3" fill="${zapatosDark}" opacity="0.3"/>
 
-  <!-- Torso / Abrigo -->
-  <rect x="24" y="42" width="42" height="38" rx="5" fill="${torsoColor}"/>
-  <!-- Abrigo shading -->
-  <rect x="24" y="42" width="8"  height="38" rx="3" fill="${torsoDark}" opacity="0.25"/>
-  <rect x="58" y="42" width="8"  height="38" rx="3" fill="${torsoDark}" opacity="0.25"/>
+  <!-- CAMISA: base layer (always drawn, visible in V and collar) -->
+  <rect x="26" y="38" width="38" height="42" rx="4" fill="${c.camisa}"/>
+  <!-- Camisa collar lapels (stick up above sweater neckline) -->
+  <polygon points="45,30 39,42 45,40" fill="${c.camisa}"/>
+  <polygon points="45,30 51,42 45,40" fill="${c.camisa}"/>
+  <line x1="45" y1="30" x2="39" y2="42" stroke="${camisaDark}" stroke-width="0.7" opacity="0.5"/>
+  <line x1="45" y1="30" x2="51" y2="42" stroke="${camisaDark}" stroke-width="0.7" opacity="0.5"/>
 
-  <!-- Arms -->
-  <rect x="12" y="43" width="13" height="28" rx="5" fill="${torsoColor}"/>
-  <rect x="65" y="43" width="13" height="28" rx="5" fill="${torsoColor}"/>
-  <!-- Cuffs -->
-  <rect x="12" y="65" width="13" height="6"  rx="3" fill="${torsoLight}" opacity="0.6"/>
-  <rect x="65" y="65" width="13" height="6"  rx="3" fill="${torsoLight}" opacity="0.6"/>
-
-  <!-- Collar / neckline -->
-  <polygon points="45,42 38,52 52,52" fill="${torsoLight}" opacity="0.5"/>
+  ${abrigoLayers}
 
   <!-- Neck -->
   <rect x="40" y="30" width="10" height="14" rx="3" fill="${skin}"/>
 
   <!-- Head -->
   <ellipse cx="45" cy="22" rx="14" ry="16" fill="${skin}"/>
-  <!-- Hair -->
   <ellipse cx="45" cy="10" rx="14" ry="8" fill="${skinDark}"/>
   <rect x="31" y="10" width="28" height="8" fill="${skin}"/>
-  <!-- Face: eyes -->
   <circle cx="40" cy="21" r="1.8" fill="#5C3D2E"/>
   <circle cx="50" cy="21" r="1.8" fill="#5C3D2E"/>
-  <!-- Face: smile -->
   <path d="M40,27 Q45,31 50,27" stroke="#5C3D2E" stroke-width="1.2" fill="none" stroke-linecap="round"/>
 </svg>`;
         }
