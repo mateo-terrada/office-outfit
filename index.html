@@ -9,6 +9,9 @@
     <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect fill='%231a3a52' width='180' height='180'/><text x='90' y='95' font-size='80' font-weight='bold' text-anchor='middle' dy='.3em' fill='white' font-family='system-ui'>🏦</text></svg>">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%231a3a52' width='100' height='100' rx='20'/><text x='50' y='55' font-size='60' text-anchor='middle' dy='.3em' font-family='system-ui'>🏦</text></svg>">
     <title>Rabobank Outfits | Teo's Office Style</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -17,8 +20,10 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f4f2ef;
+            background-image: radial-gradient(circle, #d0ccc5 1px, transparent 1px);
+            background-size: 28px 28px;
             padding: 20px;
             min-height: 100vh;
         }
@@ -38,10 +43,13 @@
             position: absolute;
             top: 0;
             right: 0;
-            background: white;
-            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.72);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.9);
+            border-radius: 14px;
             padding: 12px 16px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
             display: flex;
             align-items: center;
             gap: 10px;
@@ -92,6 +100,19 @@
             font-size: 2.5em;
             margin-bottom: 10px;
             font-weight: 700;
+            letter-spacing: -0.5px;
+            display: inline-block;
+            position: relative;
+        }
+
+        h1::after {
+            content: '';
+            display: block;
+            height: 3px;
+            width: 60%;
+            margin: 6px auto 0;
+            background: linear-gradient(90deg, #1a3a52, #4a90b8, transparent);
+            border-radius: 2px;
         }
 
         .subtitle {
@@ -102,33 +123,45 @@
 
         .tabs {
             display: flex;
-            gap: 10px;
+            gap: 6px;
             margin-bottom: 30px;
             justify-content: center;
             flex-wrap: wrap;
+            background: rgba(255,255,255,0.6);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.9);
+            border-radius: 14px;
+            padding: 8px;
+            max-width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
         }
 
         .tab-btn {
-            padding: 12px 24px;
-            border: 2px solid #d0d0d0;
-            background: white;
-            border-radius: 8px;
+            padding: 10px 22px;
+            border: none;
+            background: transparent;
+            border-radius: 10px;
             cursor: pointer;
-            font-size: 0.95em;
+            font-size: 0.92em;
             font-weight: 600;
-            transition: all 0.3s ease;
-            color: #333;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.25s ease;
+            color: #666;
+            position: relative;
         }
 
         .tab-btn:hover {
-            border-color: #1a3a52;
             color: #1a3a52;
+            background: rgba(26, 58, 82, 0.06);
         }
 
         .tab-btn.active {
             background: #1a3a52;
             color: white;
-            border-color: #1a3a52;
+            box-shadow: 0 2px 8px rgba(26, 58, 82, 0.3);
         }
 
         .tab-content {
@@ -148,26 +181,32 @@
         }
 
         .filter-btn {
-            padding: 10px 20px;
-            border: 2px solid #d0d0d0;
+            padding: 9px 20px;
+            border: 1.5px solid #ddd;
             background: white;
             border-radius: 25px;
             cursor: pointer;
-            font-size: 0.95em;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            color: #333;
+            font-size: 0.88em;
+            font-weight: 600;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.2s ease;
+            color: #555;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
         }
 
         .filter-btn:hover {
             border-color: #1a3a52;
             color: #1a3a52;
+            background: #f0f4f7;
+            transform: translateY(-1px);
+            box-shadow: 0 3px 8px rgba(26,58,82,0.12);
         }
 
         .filter-btn.active {
             background: #1a3a52;
             color: white;
             border-color: #1a3a52;
+            box-shadow: 0 3px 10px rgba(26,58,82,0.25);
         }
 
         .outfits-grid {
@@ -179,12 +218,13 @@
 
         .outfit-card {
             background: white;
-            border-radius: 12px;
+            border-radius: 16px;
             overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.07);
             transition: all 0.3s ease;
             display: none;
             position: relative;
+            border: 1px solid rgba(0,0,0,0.05);
         }
 
         .outfit-card.show {
@@ -193,7 +233,7 @@
         }
 
         .outfit-card:hover {
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.13);
             transform: translateY(-5px);
         }
 
@@ -267,16 +307,31 @@
         }
 
         .outfit-header {
-            padding: 15px 20px;
-            border-bottom: 2px solid #f0f0f0;
-            background: #f9fafb;
+            padding: 14px 18px;
+            border-bottom: 1px solid #f0f0f0;
+            background: #fafafa;
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .outfit-header-text {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .outfit-mini-mannequin {
+            flex-shrink: 0;
+            opacity: 0.9;
+            filter: drop-shadow(0 1px 2px rgba(0,0,0,0.12));
         }
 
         .outfit-title {
-            font-size: 1.2em;
+            font-size: 1.15em;
             font-weight: 600;
             color: #1a3a52;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
         }
 
         .outfit-context {
@@ -289,25 +344,25 @@
             display: inline-block;
             padding: 4px 12px;
             border-radius: 15px;
-            font-size: 0.8em;
-            font-weight: 600;
+            font-size: 0.78em;
+            font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.6px;
         }
 
         .formal {
-            background: #e3f2fd;
-            color: #1565c0;
+            background: #1565c0;
+            color: white;
         }
 
         .elegante-sport {
-            background: #f3e5f5;
-            color: #6a1b9a;
+            background: #6a1b9a;
+            color: white;
         }
 
         .casual {
-            background: #e8f5e9;
-            color: #2e7d32;
+            background: #2e7d32;
+            color: white;
         }
 
         .outfit-content {
@@ -419,9 +474,11 @@
         .stats-panel {
             margin-top: 40px;
             padding: 20px;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.9);
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.07);
             max-width: 600px;
             margin-left: auto;
             margin-right: auto;
@@ -780,11 +837,12 @@
         }
 
         .color-dot {
-            width: 11px;
-            height: 11px;
+            width: 14px;
+            height: 14px;
             border-radius: 50%;
-            border: 1.5px solid rgba(0,0,0,0.15);
+            border: 2px solid rgba(0,0,0,0.12);
             flex-shrink: 0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
 
         .delete-confirm-overlay {
@@ -886,14 +944,17 @@
             transform: translateX(-50%) translateY(100px);
             background: #c62828;
             color: white;
-            padding: 14px 28px;
-            border-radius: 12px;
+            padding: 14px 24px;
+            border-radius: 14px;
             font-weight: 600;
             font-size: 0.95em;
-            box-shadow: 0 4px 20px rgba(198,40,40,0.3);
+            box-shadow: 0 6px 24px rgba(198,40,40,0.4);
             z-index: 1001;
-            transition: transform 0.3s ease;
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
             pointer-events: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .delete-success-toast.show {
@@ -1219,14 +1280,17 @@
             transform: translateX(-50%) translateY(100px);
             background: #2e7d32;
             color: white;
-            padding: 14px 28px;
-            border-radius: 12px;
+            padding: 14px 24px;
+            border-radius: 14px;
             font-weight: 600;
             font-size: 0.95em;
-            box-shadow: 0 4px 20px rgba(46,125,50,0.3);
+            box-shadow: 0 6px 24px rgba(46,125,50,0.4);
             z-index: 1001;
-            transition: transform 0.3s ease;
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
             pointer-events: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .random-success-toast.show {
@@ -1256,10 +1320,52 @@
 
             .tabs {
                 flex-direction: column;
+                max-width: 100%;
+                border-radius: 14px;
             }
 
             .tab-btn {
                 width: 100%;
+            }
+        }
+
+        /* Formality-colored accent on card header */
+        .outfit-card .outfit-header {
+            border-left: 4px solid #ccc;
+        }
+        .outfit-card[data-formality="formal"] .outfit-header {
+            border-left-color: #1565c0;
+        }
+        .outfit-card[data-formality="elegante-sport"] .outfit-header {
+            border-left-color: #6a1b9a;
+        }
+        .outfit-card[data-formality="casual"] .outfit-header {
+            border-left-color: #2e7d32;
+        }
+
+        /* Global button font */
+        button {
+            font-family: 'DM Sans', -apple-system, sans-serif;
+        }
+
+        /* Prenda search section subtle update */
+        .prenda-search-section {
+            background: rgba(255,255,255,0.85);
+            border-radius: 14px;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        /* Form section subtle update */
+        .form-section {
+            background: rgba(255,255,255,0.92);
+            border-radius: 16px;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        @media (max-width: 768px) {
+            .tabs {
+                max-width: 100%;
+                border-radius: 14px;
             }
         }
     </style>
@@ -1780,6 +1886,97 @@
             { keywords: ['campera patagonia bordeau'],                           color: '#7B2D42' },
         ];
 
+        // ── Per-prenda color extraction (used by both dots and mannequin) ──
+        function getPrendaColor(prenda) {
+            const text = prenda.toLowerCase();
+            for (const rule of colorRules) {
+                if (rule.keywords.some(kw => text.includes(kw))) return rule.color;
+            }
+            return null;
+        }
+
+        function getOutfitColors(outfit) {
+            return {
+                pantalon: getPrendaColor(outfit.prendas.pantalon) || '#888888',
+                abrigo:   getPrendaColor(outfit.prendas.abrigo)   || '#888888',
+                zapatos:  getPrendaColor(outfit.prendas.zapatos)  || '#444444',
+            };
+        }
+
+        function renderMannequin(outfit) {
+            const c = getOutfitColors(outfit);
+
+            // Lighten abrigo slightly for collar/cuff detail
+            function lighten(hex, amt) {
+                const n = parseInt(hex.slice(1), 16);
+                const r = Math.min(255, (n >> 16) + amt);
+                const g = Math.min(255, ((n >> 8) & 0xff) + amt);
+                const b = Math.min(255, (n & 0xff) + amt);
+                return '#' + [r,g,b].map(v => v.toString(16).padStart(2,'0')).join('');
+            }
+            function darken(hex, amt) { return lighten(hex, -amt); }
+
+            const abrigoLight = lighten(c.abrigo, 30);
+            const abrigoDark  = darken(c.abrigo, 20);
+            const pantalDark  = darken(c.pantalon, 25);
+            const zapatosDark = darken(c.zapatos, 30);
+
+            // Skin tone
+            const skin = '#F0C8A0';
+            const skinDark = '#D4A574';
+
+            // "Sin abrigo" → show camisa color as torso
+            const noAbrigo = outfit.prendas.abrigo.toLowerCase().includes('sin abrigo');
+            const torsoColor = noAbrigo ? '#E8E8E8' : c.abrigo;
+            const torsoLight = noAbrigo ? '#F5F5F5' : abrigoLight;
+            const torsoDark  = noAbrigo ? '#CCCCCC' : abrigoDark;
+
+            return `<svg width="31" height="45" viewBox="0 0 90 130" xmlns="http://www.w3.org/2000/svg">
+  <!-- Legs / Pantalón -->
+  <rect x="28" y="76" width="14" height="36" rx="3" fill="${c.pantalon}"/>
+  <rect x="48" y="76" width="14" height="36" rx="3" fill="${c.pantalon}"/>
+  <!-- Leg crease -->
+  <line x1="35" y1="78" x2="35" y2="110" stroke="${pantalDark}" stroke-width="1" opacity="0.4"/>
+  <line x1="55" y1="78" x2="55" y2="110" stroke="${pantalDark}" stroke-width="1" opacity="0.4"/>
+
+  <!-- Shoes -->
+  <ellipse cx="33" cy="114" rx="9" ry="5" fill="${c.zapatos}"/>
+  <ellipse cx="57" cy="114" rx="9" ry="5" fill="${c.zapatos}"/>
+  <ellipse cx="35" cy="113" rx="6" ry="3" fill="${zapatosDark}" opacity="0.3"/>
+  <ellipse cx="59" cy="113" rx="6" ry="3" fill="${zapatosDark}" opacity="0.3"/>
+
+  <!-- Torso / Abrigo -->
+  <rect x="24" y="42" width="42" height="38" rx="5" fill="${torsoColor}"/>
+  <!-- Abrigo shading -->
+  <rect x="24" y="42" width="8"  height="38" rx="3" fill="${torsoDark}" opacity="0.25"/>
+  <rect x="58" y="42" width="8"  height="38" rx="3" fill="${torsoDark}" opacity="0.25"/>
+
+  <!-- Arms -->
+  <rect x="12" y="43" width="13" height="28" rx="5" fill="${torsoColor}"/>
+  <rect x="65" y="43" width="13" height="28" rx="5" fill="${torsoColor}"/>
+  <!-- Cuffs -->
+  <rect x="12" y="65" width="13" height="6"  rx="3" fill="${torsoLight}" opacity="0.6"/>
+  <rect x="65" y="65" width="13" height="6"  rx="3" fill="${torsoLight}" opacity="0.6"/>
+
+  <!-- Collar / neckline -->
+  <polygon points="45,42 38,52 52,52" fill="${torsoLight}" opacity="0.5"/>
+
+  <!-- Neck -->
+  <rect x="40" y="30" width="10" height="14" rx="3" fill="${skin}"/>
+
+  <!-- Head -->
+  <ellipse cx="45" cy="22" rx="14" ry="16" fill="${skin}"/>
+  <!-- Hair -->
+  <ellipse cx="45" cy="10" rx="14" ry="8" fill="${skinDark}"/>
+  <rect x="31" y="10" width="28" height="8" fill="${skin}"/>
+  <!-- Face: eyes -->
+  <circle cx="40" cy="21" r="1.8" fill="#5C3D2E"/>
+  <circle cx="50" cy="21" r="1.8" fill="#5C3D2E"/>
+  <!-- Face: smile -->
+  <path d="M40,27 Q45,31 50,27" stroke="#5C3D2E" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+</svg>`;
+        }
+
         function extractColors(outfit) {
             // Evaluate each prenda separately so one item can't trigger two color rules
             const prendas = Object.values(outfit.prendas);
@@ -1926,10 +2123,13 @@
         function createOutfitCard(outfit) {
             const card = document.createElement('div');
             card.className = 'outfit-card show';
+            card.dataset.formality = outfit.formalidad;
 
             const formalidadLabel = outfit.formalidad === 'elegante-sport'
-                ? 'Elegante Sport'
-                : outfit.formalidad.charAt(0).toUpperCase() + outfit.formalidad.slice(1);
+                ? '🧥 Elegante Sport'
+                : outfit.formalidad === 'formal'
+                ? '🎩 Formal'
+                : '👕 Casual';
 
             // Cargar favoritos desde localStorage
             const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
@@ -1947,10 +2147,15 @@
                     👕 ${usageCount}
                 </div>
                 <div class="outfit-header">
-                    <div class="outfit-title">${outfit.nombre}</div>
-                    <div class="outfit-context">${outfit.contexto}</div>
-                    ${renderColorDots(outfit)}
-                    <span class="formality-badge ${outfit.formalidad}" style="margin-top:8px; display:inline-block;">${formalidadLabel}</span>
+                    <div class="outfit-header-text">
+                        <div class="outfit-title">${outfit.nombre}</div>
+                        <div class="outfit-context">${outfit.contexto}</div>
+                        ${renderColorDots(outfit)}
+                        <span class="formality-badge ${outfit.formalidad}" style="margin-top:8px; display:inline-block;">${formalidadLabel}</span>
+                    </div>
+                    <div class="outfit-mini-mannequin">
+                        ${renderMannequin(outfit)}
+                    </div>
                 </div>
                 <div class="outfit-content">
                     <div class="prenda-grupo">
@@ -2091,10 +2296,13 @@
             savedOutfits.forEach(outfit => {
                 const card = document.createElement('div');
                 card.className = 'outfit-card show custom';
+                card.dataset.formality = outfit.formalidad;
 
                 const formalidadLabel = outfit.formalidad === 'elegante-sport'
-                    ? 'Elegante Sport'
-                    : outfit.formalidad.charAt(0).toUpperCase() + outfit.formalidad.slice(1);
+                    ? '🧥 Elegante Sport'
+                    : outfit.formalidad === 'formal'
+                    ? '🎩 Formal'
+                    : '👕 Casual';
 
                 card.innerHTML = `
                     <div class="custom-badge">TU OUTFIT</div>
@@ -2221,8 +2429,10 @@
             if (!cat) return;
 
             const formalidadLabel = cat === 'elegante-sport'
-                ? 'Elegante Sport'
-                : cat.charAt(0).toUpperCase() + cat.slice(1);
+                ? '🧥 Elegante Sport'
+                : cat === 'formal'
+                ? '🎩 Formal'
+                : '👕 Casual';
 
             // Pick from existing predefined outfits only
             const outfitsDeCat = outfits.filter(o => o.formalidad === cat && !o.custom);
