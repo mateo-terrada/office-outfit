@@ -37,12 +37,10 @@
             text-align: center;
             margin-bottom: 40px;
             position: relative;
+            padding-top: 70px;
         }
 
         .weather-widget {
-            position: absolute;
-            top: 0;
-            right: 0;
             background: rgba(255, 255, 255, 0.72);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
@@ -54,7 +52,7 @@
             align-items: center;
             gap: 10px;
             font-size: 0.95em;
-            min-width: 180px;
+            min-width: 160px;
             cursor: pointer;
             transition: all 0.2s;
         }
@@ -62,6 +60,84 @@
         .weather-widget:hover {
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             transform: translateY(-2px);
+        }
+
+        .header-widgets {
+            position: absolute;
+            top: 0;
+            right: 0;
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+        }
+
+        .outfit-day-widget {
+            background: rgba(255, 255, 255, 0.72);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.9);
+            border-radius: 14px;
+            padding: 10px 14px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            display: none;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.88em;
+            cursor: pointer;
+            transition: all 0.2s;
+            max-width: 200px;
+        }
+
+        .outfit-day-widget:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .outfit-day-widget.loaded {
+            display: flex;
+        }
+
+        .outfit-day-info {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .outfit-day-label {
+            font-size: 0.75em;
+            color: #999;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 2px;
+        }
+
+        .outfit-day-name {
+            font-weight: 700;
+            color: #1a3a52;
+            font-size: 0.95em;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .outfit-day-temp {
+            font-size: 0.78em;
+            color: #888;
+            margin-top: 1px;
+        }
+
+        @media (max-width: 768px) {
+            .header-widgets {
+                position: static;
+                flex-direction: row;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+
+            .outfit-day-widget {
+                max-width: 100%;
+            }
         }
 
         .weather-emoji {
@@ -1336,14 +1412,21 @@
                 padding-top: 0;
             }
 
-            .weather-widget {
+            .header-widgets {
                 position: static;
-                transform: none !important;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+
+            .weather-widget {
                 min-width: unset;
-                width: auto;
-                align-self: center;
                 font-size: 0.88em;
                 padding: 9px 14px;
+            }
+
+            .outfit-day-widget {
+                max-width: unset;
+                font-size: 0.82em;
             }
         }
 
@@ -1385,11 +1468,21 @@
 <body>
     <div class="container">
         <header>
-            <div class="weather-widget" id="weatherWidget" onclick="toggleWeatherLocation()">
-                <span class="weather-emoji" id="weatherEmoji">⛅</span>
-                <div class="weather-info">
-                    <div class="weather-temp" id="weatherTemp">--°</div>
-                    <div class="weather-location" id="weatherLocation">Cargando...</div>
+            <div class="header-widgets">
+                <div class="outfit-day-widget" id="outfitDayWidget" onclick="showWeatherRecommendations()">
+                    <div id="outfitDayMannequin"></div>
+                    <div class="outfit-day-info">
+                        <span class="outfit-day-label">Outfit del día</span>
+                        <span class="outfit-day-name" id="outfitDayName">—</span>
+                        <span class="outfit-day-temp" id="outfitDayTemp"></span>
+                    </div>
+                </div>
+                <div class="weather-widget" id="weatherWidget" onclick="toggleWeatherLocation()">
+                    <span class="weather-emoji" id="weatherEmoji">⛅</span>
+                    <div class="weather-info">
+                        <div class="weather-temp" id="weatherTemp">--°</div>
+                        <div class="weather-location" id="weatherLocation">Cargando...</div>
+                    </div>
                 </div>
             </div>
             <h1>🏦 Rabobank Outfits</h1>
@@ -2748,37 +2841,39 @@
         // ============ STATS ============
         function updateStats() {
             const usageStats = JSON.parse(localStorage.getItem('usageStats')) || {};
-            const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
-            
+            const favorites  = JSON.parse(localStorage.getItem('favorites'))  || [];
+            const customOutfits = JSON.parse(localStorage.getItem('customOutfits')) || [];
+            const allOutfits = [...outfits, ...customOutfits];
+
             // Calcular totales
             const totalUsed = Object.values(usageStats).reduce((a, b) => a + b, 0);
-            
+
             // Encontrar outfit más usado
             let mostUsedOutfit = null;
             let mostUsedCount = 0;
             for (const [id, count] of Object.entries(usageStats)) {
                 if (count > mostUsedCount) {
                     mostUsedCount = count;
-                    const outfit = outfits.find(o => o.id == id);
+                    const outfit = allOutfits.find(o => o.id == id);
                     if (outfit) mostUsedOutfit = outfit.nombre;
                 }
             }
-            
+
             // Encontrar outfit menos usado (pero con al menos 1 uso)
             let leastUsedOutfit = null;
             let leastUsedCount = Infinity;
             for (const [id, count] of Object.entries(usageStats)) {
                 if (count > 0 && count < leastUsedCount) {
                     leastUsedCount = count;
-                    const outfit = outfits.find(o => o.id == id);
+                    const outfit = allOutfits.find(o => o.id == id);
                     if (outfit) leastUsedOutfit = outfit.nombre;
                 }
             }
-            
+
             // Calcular promedio
             const usedOutfits = Object.values(usageStats).filter(c => c > 0).length;
             const avgUsed = usedOutfits > 0 ? (totalUsed / usedOutfits).toFixed(1) : 0;
-            
+
             // Actualizar DOM
             document.getElementById('totalUsed').textContent = totalUsed;
             document.getElementById('mostUsed').textContent = mostUsedOutfit ? `${mostUsedOutfit} (${mostUsedCount}x)` : 'N/A';
@@ -2937,12 +3032,37 @@
         function updateWeatherDisplay(maxTemp, minTemp, description, location) {
             const emoji = getWeatherEmoji(description);
             const tempText = maxTemp !== null ? `${maxTemp}°` : '--°';
-            
-            currentWeatherCondition = description; // Guardar condición para recomendaciones
-            
+
+            currentWeatherCondition = description;
+
             document.getElementById('weatherEmoji').textContent = emoji;
             document.getElementById('weatherTemp').textContent = tempText;
             document.getElementById('weatherLocation').textContent = location;
+
+            // Update outfit-of-day widget
+            updateOutfitOfDay(description, maxTemp, minTemp);
+        }
+
+        function updateOutfitOfDay(condition, maxTemp, minTemp) {
+            if (!condition || condition === 'error') return;
+
+            const recommended = getWeatherRecommendations(condition, maxTemp);
+            if (!recommended || recommended.length === 0) return;
+
+            // Pick the top recommended outfit (first = most formal that passes filter)
+            const pick = recommended[0];
+
+            const widget = document.getElementById('outfitDayWidget');
+            const nameEl = document.getElementById('outfitDayName');
+            const tempEl = document.getElementById('outfitDayTemp');
+            const mannequinEl = document.getElementById('outfitDayMannequin');
+
+            nameEl.textContent = pick.nombre;
+            const emoji = getWeatherEmoji(condition);
+            tempEl.textContent = `${emoji} ${maxTemp !== null ? maxTemp + '°' : ''}${minTemp !== null ? ' / ' + minTemp + '°' : ''} · ${currentLocation || ''}`;
+            mannequinEl.innerHTML = renderMannequin(pick);
+
+            widget.classList.add('loaded');
         }
 
         function getWeatherEmoji(description) {
