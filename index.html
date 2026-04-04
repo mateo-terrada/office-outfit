@@ -292,20 +292,36 @@
             margin-bottom: 40px;
         }
 
+        @keyframes cardFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(14px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         .outfit-card {
             background: white;
             border-radius: 16px;
             overflow: hidden;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.07);
-            transition: all 0.3s ease;
+            transition: box-shadow 0.3s ease, transform 0.3s ease;
             display: none;
             position: relative;
             border: 1px solid rgba(0,0,0,0.05);
+            opacity: 0;
         }
 
         .outfit-card.show {
             display: flex;
             flex-direction: column;
+        }
+
+        .outfit-card.animate {
+            animation: cardFadeIn 0.35s ease forwards;
         }
 
         .outfit-card:hover {
@@ -329,33 +345,41 @@
             font-weight: 700;
         }
 
-        .favorite-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: none;
-            border: none;
-            font-size: 1.8em;
-            cursor: pointer;
-            transition: transform 0.2s, filter 0.2s;
-            padding: 5px;
-            line-height: 1;
-        }
-
-        .favorite-btn:hover {
-            transform: scale(1.2);
-            filter: drop-shadow(0 0 3px rgba(255, 215, 0, 0.5));
-        }
-
-        .favorite-btn.active {
-            color: #FFD700;
-            filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.7));
-        }
-
-        .usage-counter {
+        .card-actions {
             position: absolute;
             bottom: 10px;
             right: 10px;
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .favorite-btn {
+            background: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            padding: 4px 10px;
+            font-size: 0.88em;
+            cursor: pointer;
+            transition: all 0.2s;
+            line-height: 1.4;
+            color: #999;
+        }
+
+        .favorite-btn:hover {
+            background: #fff8e1;
+            border-color: #FFD700;
+            transform: scale(1.05);
+        }
+
+        .favorite-btn.active {
+            background: #fff8e1;
+            border-color: #FFD700;
+            color: #e6ac00;
+            filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.5));
+        }
+
+        .usage-counter {
             background: #f0f0f0;
             border: 1px solid #ddd;
             border-radius: 20px;
@@ -471,6 +495,7 @@
         .outfit-notes {
             margin-top: auto;
             padding-top: 15px;
+            padding-right: 110px;
             border-top: 1px solid #f0f0f0;
             font-size: 0.9em;
             color: #666;
@@ -1463,6 +1488,404 @@
             border: 1px solid rgba(0,0,0,0.05);
         }
 
+        /* ── CALENDAR FAB ── */
+        .cal-fab {
+            position: fixed;
+            bottom: 28px;
+            left: 28px;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: #1a3a52;
+            color: white;
+            border: none;
+            font-size: 1.4em;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(26,58,82,0.35);
+            transition: all 0.2s ease;
+            z-index: 900;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .cal-fab:hover {
+            background: #0f2438;
+            transform: scale(1.08);
+            box-shadow: 0 6px 20px rgba(26,58,82,0.45);
+        }
+
+        /* ── CALENDAR MODAL ── */
+        .cal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.45);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1100;
+            animation: fadeIn 0.2s ease;
+        }
+        .cal-overlay.open { display: flex; }
+
+        .cal-dialog {
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            width: min(420px, 94vw);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+            animation: slideUp 0.22s ease;
+        }
+
+        .cal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+        .cal-month-label {
+            font-weight: 700;
+            color: #1a3a52;
+            font-size: 1.05em;
+            text-transform: capitalize;
+        }
+        .cal-nav {
+            background: none;
+            border: none;
+            font-size: 1.4em;
+            cursor: pointer;
+            color: #1a3a52;
+            padding: 2px 8px;
+            border-radius: 8px;
+            transition: background 0.15s;
+        }
+        .cal-nav:hover { background: #f0f4f7; }
+        .cal-close {
+            background: none;
+            border: none;
+            font-size: 1em;
+            cursor: pointer;
+            color: #999;
+            padding: 4px 8px;
+            border-radius: 8px;
+            margin-left: 8px;
+            transition: background 0.15s;
+        }
+        .cal-close:hover { background: #f5f5f5; color: #333; }
+
+        .cal-weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            text-align: center;
+            font-size: 0.72em;
+            font-weight: 700;
+            color: #aaa;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .cal-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+        }
+
+        .cal-day {
+            aspect-ratio: 1;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.82em;
+            font-weight: 600;
+            color: #333;
+            transition: all 0.15s;
+            position: relative;
+            padding: 2px;
+            border: 1.5px solid transparent;
+        }
+        .cal-day:hover { background: #f0f4f7; }
+        .cal-day.empty { cursor: default; }
+        .cal-day.today {
+            border-color: #1a3a52;
+            color: #1a3a52;
+        }
+        .cal-day.has-outfit {
+            background: #eef3f8;
+        }
+        .cal-day.selected {
+            background: #1a3a52;
+            color: white;
+        }
+        .cal-day.selected .cal-dot { background: white !important; }
+        .cal-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            margin-top: 2px;
+        }
+        .cal-day-num { line-height: 1; }
+
+        /* Day detail */
+        .cal-detail {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #f0f0f0;
+        }
+        .cal-detail-date {
+            font-weight: 700;
+            color: #1a3a52;
+            margin-bottom: 6px;
+            font-size: 0.95em;
+            text-transform: capitalize;
+        }
+        .cal-detail-current {
+            font-size: 0.85em;
+            color: #666;
+            font-style: italic;
+            margin-bottom: 10px;
+            min-height: 18px;
+        }
+        .cal-detail-label {
+            font-size: 0.8em;
+            font-weight: 600;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+        .cal-detail-select {
+            width: 100%;
+            padding: 9px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 0.9em;
+            font-family: 'DM Sans', sans-serif;
+            color: #333;
+            background: white;
+            margin-bottom: 12px;
+        }
+        .cal-detail-select:focus { outline: none; border-color: #1a3a52; }
+        .cal-detail-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .cal-detail-clear {
+            flex: 1;
+            padding: 10px;
+            background: #f5f5f5;
+            color: #666;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.88em;
+            font-family: 'DM Sans', sans-serif;
+            transition: background 0.2s;
+        }
+        .cal-detail-clear:hover { background: #e0e0e0; }
+        .cal-detail-save {
+            flex: 2;
+            padding: 10px;
+            background: #1a3a52;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.88em;
+            font-family: 'DM Sans', sans-serif;
+            transition: background 0.2s;
+        }
+        .cal-detail-save:hover { background: #0f2438; }
+
+        /* ── TRAIN WIDGET ── */
+        .train-fab {
+            position: fixed;
+            top: 28px;
+            left: 28px;
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.9);
+            border-radius: 14px;
+            padding: 10px 14px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.2s;
+            z-index: 900;
+            min-width: 160px;
+            max-width: 220px;
+        }
+        .train-fab:hover {
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+        }
+        .train-fab-icon { font-size: 1.4em; flex-shrink: 0; }
+        .train-fab-info { display: flex; flex-direction: column; min-width: 0; }
+        .train-fab-label {
+            font-size: 0.7em;
+            font-weight: 700;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .train-fab-next {
+            font-size: 1em;
+            font-weight: 700;
+            color: #1a3a52;
+            white-space: nowrap;
+        }
+        .train-fab-detail {
+            font-size: 0.75em;
+            color: #888;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .train-fab-delayed { color: #e65100; }
+        .train-fab-cancelled { color: #c62828; text-decoration: line-through; }
+
+        /* Train modal */
+        .train-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.45);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1100;
+            animation: fadeIn 0.2s ease;
+        }
+        .train-overlay.open { display: flex; }
+        .train-dialog {
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            width: min(400px, 94vw);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+            animation: slideUp 0.22s ease;
+        }
+        .train-dialog-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .train-dialog-title {
+            font-weight: 700;
+            color: #1a3a52;
+            font-size: 1em;
+        }
+        .train-dialog-sub {
+            font-size: 0.8em;
+            color: #999;
+            margin-top: 1px;
+        }
+        .train-close {
+            background: none;
+            border: none;
+            font-size: 1em;
+            cursor: pointer;
+            color: #999;
+            padding: 4px 8px;
+            border-radius: 8px;
+            transition: background 0.15s;
+        }
+        .train-close:hover { background: #f5f5f5; color: #333; }
+        .train-list { display: flex; flex-direction: column; gap: 8px; }
+        .train-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            border-left: 4px solid #1a3a52;
+        }
+        .train-row.delayed { border-left-color: #e65100; }
+        .train-row.cancelled {
+            border-left-color: #c62828;
+            opacity: 0.7;
+        }
+        .train-time {
+            font-size: 1.15em;
+            font-weight: 700;
+            color: #1a3a52;
+            min-width: 42px;
+        }
+        .train-time.delayed { color: #e65100; }
+        .train-time.cancelled { color: #c62828; text-decoration: line-through; }
+        .train-info { flex: 1; min-width: 0; }
+        .train-dest {
+            font-weight: 600;
+            color: #333;
+            font-size: 0.9em;
+        }
+        .train-meta {
+            font-size: 0.78em;
+            color: #999;
+            margin-top: 2px;
+        }
+        .train-platform {
+            font-size: 0.9em;
+            font-weight: 700;
+            color: #fff;
+            background: #1a3a52;
+            border-radius: 8px;
+            padding: 3px 8px;
+            min-width: 28px;
+            text-align: center;
+        }
+        .train-platform.changed { background: #e65100; }
+        .train-error {
+            text-align: center;
+            padding: 20px;
+            color: #999;
+            font-size: 0.9em;
+        }
+        .train-error a {
+            color: #1a3a52;
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .train-error a:hover { text-decoration: underline; }
+        .train-updated {
+            font-size: 0.72em;
+            color: #bbb;
+            text-align: right;
+            margin-top: 12px;
+        }
+        .train-refresh {
+            width: 100%;
+            margin-top: 12px;
+            padding: 10px;
+            background: #f0f4f7;
+            color: #1a3a52;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.88em;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .train-refresh:hover { background: #dde8f0; }
+
+        @media (max-width: 768px) {
+            .train-fab {
+                position: static;
+                max-width: 100%;
+                margin: 0 auto;
+            }
+        }
+
     </style>
 </head>
 <body>
@@ -1474,20 +1897,41 @@
                     <div class="outfit-day-info">
                         <span class="outfit-day-label">Outfit del día</span>
                         <span class="outfit-day-name" id="outfitDayName">—</span>
-                        <span class="outfit-day-temp" id="outfitDayTemp"></span>
-                    </div>
-                </div>
-                <div class="weather-widget" id="weatherWidget" onclick="toggleWeatherLocation()">
-                    <span class="weather-emoji" id="weatherEmoji">⛅</span>
-                    <div class="weather-info">
-                        <div class="weather-temp" id="weatherTemp">--°</div>
-                        <div class="weather-location" id="weatherLocation">Cargando...</div>
+                        <span class="outfit-day-temp" id="outfitDayTemp">Cargando clima...</span>
                     </div>
                 </div>
             </div>
             <h1>🏦 Rabobank Outfits</h1>
             <p class="subtitle">Tu guardarropas profesional para el traineeship</p>
         </header>
+
+        <!-- TRAIN MODAL -->
+        <div class="train-overlay" id="trainOverlay" onclick="closeTrainModal(event)">
+            <div class="train-dialog">
+                <div class="train-dialog-header">
+                    <div>
+                        <div class="train-dialog-title">🚆 Haarlem → Utrecht</div>
+                        <div class="train-dialog-sub" id="trainModalSub">Próximas salidas</div>
+                    </div>
+                    <button class="train-close" onclick="closeTrainModal()">✕</button>
+                </div>
+                <div class="train-list" id="trainList">
+                    <div class="train-error">Cargando...</div>
+                </div>
+                <div class="train-updated" id="trainUpdated"></div>
+                <button class="train-refresh" onclick="fetchTrains()">↻ Actualizar</button>
+            </div>
+        </div>
+
+        <!-- TRAIN FAB (fixed top-left on desktop, injected in mobile header via JS) -->
+        <div class="train-fab" id="trainFab" onclick="openTrainModal()">
+            <span class="train-fab-icon">🚆</span>
+            <div class="train-fab-info">
+                <span class="train-fab-label">Haarlem → Utrecht</span>
+                <span class="train-fab-next" id="trainFabNext">Cargando...</span>
+                <span class="train-fab-detail" id="trainFabDetail"></span>
+            </div>
+        </div>
 
         <div class="tabs">
             <button class="tab-btn active" onclick="switchTab('sugeridos')">Outfits Sugeridos</button>
@@ -1721,6 +2165,37 @@
 
     <div id="deleteSuccessToast" class="delete-success-toast">🗑 Outfit eliminado</div>
     <div id="randomSuccessToast" class="random-success-toast">✓ Outfit guardado en "Mis Outfits"</div>
+
+    <!-- CALENDAR FAB -->
+    <button class="cal-fab" onclick="openCalendar()" title="Calendario de outfits">📅</button>
+
+    <!-- CALENDAR MODAL -->
+    <div class="cal-overlay" id="calOverlay" onclick="closeCalendar(event)">
+        <div class="cal-dialog" id="calDialog">
+            <div class="cal-header">
+                <button class="cal-nav" onclick="calShiftMonth(-1)">‹</button>
+                <span class="cal-month-label" id="calMonthLabel"></span>
+                <button class="cal-nav" onclick="calShiftMonth(1)">›</button>
+                <button class="cal-close" onclick="closeCalendar()">✕</button>
+            </div>
+            <div class="cal-weekdays">
+                <span>Lu</span><span>Ma</span><span>Mi</span><span>Ju</span><span>Vi</span><span>Sa</span><span>Do</span>
+            </div>
+            <div class="cal-grid" id="calGrid"></div>
+
+            <!-- Day detail panel -->
+            <div class="cal-detail" id="calDetail" style="display:none;">
+                <div class="cal-detail-date" id="calDetailDate"></div>
+                <div class="cal-detail-current" id="calDetailCurrent"></div>
+                <div class="cal-detail-label">Asignar outfit:</div>
+                <select class="cal-detail-select" id="calDetailSelect"></select>
+                <div class="cal-detail-actions">
+                    <button class="cal-detail-clear" onclick="calClearDay()">Limpiar</button>
+                    <button class="cal-detail-save" onclick="calSaveDay()">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
         const outfits = [
@@ -2244,6 +2719,16 @@
                     grid.appendChild(card);
                 });
             }
+
+            animateCards(grid);
+        }
+
+        function animateCards(container) {
+            const cards = container.querySelectorAll('.outfit-card.show');
+            cards.forEach((card, i) => {
+                card.style.animationDelay = `${i * 55}ms`;
+                card.classList.add('animate');
+            });
         }
 
         function createOutfitCard(outfit) {
@@ -2266,11 +2751,13 @@
             const usageCount = usageStats[outfit.id] || 0;
 
             card.innerHTML = `
-                <button class="favorite-btn ${isFavorite ? 'active' : ''}" onclick="toggleFavorite(event, ${outfit.id})" title="Agregar a favoritos">
-                    ${isFavorite ? '⭐' : '☆'}
-                </button>
-                <div class="usage-counter ${usageCount > 0 ? 'used' : ''}" onclick="incrementUsage(event, ${outfit.id})" title="Clickea para marcar como usado">
-                    👕 ${usageCount}
+                <div class="card-actions">
+                    <button class="favorite-btn ${isFavorite ? 'active' : ''}" onclick="toggleFavorite(event, ${outfit.id})" title="Favorito">
+                        ${isFavorite ? '⭐' : '☆'}
+                    </button>
+                    <div class="usage-counter ${usageCount > 0 ? 'used' : ''}" onclick="incrementUsage(event, ${outfit.id})" title="Marcar como usado">
+                        👕 ${usageCount}
+                    </div>
                 </div>
                 <div class="outfit-header">
                     <div class="outfit-header-text">
@@ -3030,16 +3517,7 @@
         }
 
         function updateWeatherDisplay(maxTemp, minTemp, description, location) {
-            const emoji = getWeatherEmoji(description);
-            const tempText = maxTemp !== null ? `${maxTemp}°` : '--°';
-
             currentWeatherCondition = description;
-
-            document.getElementById('weatherEmoji').textContent = emoji;
-            document.getElementById('weatherTemp').textContent = tempText;
-            document.getElementById('weatherLocation').textContent = location;
-
-            // Update outfit-of-day widget
             updateOutfitOfDay(description, maxTemp, minTemp);
         }
 
@@ -3049,8 +3527,10 @@
             const recommended = getWeatherRecommendations(condition, maxTemp);
             if (!recommended || recommended.length === 0) return;
 
-            // Pick the top recommended outfit (first = most formal that passes filter)
-            const pick = recommended[0];
+            // Date-based seed: changes every day, consistent within the day
+            const today = new Date();
+            const seed = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
+            const pick = recommended[seed % recommended.length];
 
             const widget = document.getElementById('outfitDayWidget');
             const nameEl = document.getElementById('outfitDayName');
@@ -3059,7 +3539,8 @@
 
             nameEl.textContent = pick.nombre;
             const emoji = getWeatherEmoji(condition);
-            tempEl.textContent = `${emoji} ${maxTemp !== null ? maxTemp + '°' : ''}${minTemp !== null ? ' / ' + minTemp + '°' : ''} · ${currentLocation || ''}`;
+            const tempStr = maxTemp !== null ? `${maxTemp}° / ${minTemp}°` : '';
+            tempEl.textContent = `${emoji} ${tempStr} · ${currentLocation || ''}`;
             mannequinEl.innerHTML = renderMannequin(pick);
 
             widget.classList.add('loaded');
@@ -3229,13 +3710,331 @@
                 grid.appendChild(card);
             });
 
+            animateCards(grid);
             setTimeout(() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }, 100);
+        }
+
+        // ============ CALENDAR ============
+        let calYear, calMonth, calSelectedDate = null;
+
+        function calKey(y, m, d) {
+            return `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+        }
+
+        function calGetData() {
+            return JSON.parse(localStorage.getItem('calendarOutfits')) || {};
+        }
+
+        function calSaveData(data) {
+            localStorage.setItem('calendarOutfits', JSON.stringify(data));
+        }
+
+        function openCalendar() {
+            const now = new Date();
+            calYear = now.getFullYear();
+            calMonth = now.getMonth();
+            document.getElementById('calOverlay').classList.add('open');
+            renderCalendar();
+        }
+
+        function closeCalendar(e) {
+            if (e && e.target !== document.getElementById('calOverlay')) return;
+            document.getElementById('calOverlay').classList.remove('open');
+            document.getElementById('calDetail').style.display = 'none';
+            calSelectedDate = null;
+        }
+
+        function calShiftMonth(dir) {
+            calMonth += dir;
+            if (calMonth > 11) { calMonth = 0; calYear++; }
+            if (calMonth < 0)  { calMonth = 11; calYear--; }
+            calSelectedDate = null;
+            document.getElementById('calDetail').style.display = 'none';
+            renderCalendar();
+        }
+
+        function renderCalendar() {
+            const data = calGetData();
+            const today = new Date();
+            const todayKey = calKey(today.getFullYear(), today.getMonth(), today.getDate());
+
+            const label = new Date(calYear, calMonth, 1)
+                .toLocaleDateString('es-ES', { month: 'long', year: 'numeric' });
+            document.getElementById('calMonthLabel').textContent = label;
+
+            const grid = document.getElementById('calGrid');
+            grid.innerHTML = '';
+
+            // First weekday of month (Monday=0)
+            const firstDay = new Date(calYear, calMonth, 1).getDay();
+            const offset = (firstDay + 6) % 7;
+            const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+
+            for (let i = 0; i < offset; i++) {
+                const blank = document.createElement('div');
+                blank.className = 'cal-day empty';
+                grid.appendChild(blank);
+            }
+
+            for (let d = 1; d <= daysInMonth; d++) {
+                const key = calKey(calYear, calMonth, d);
+                const hasOutfit = !!data[key];
+                const isToday = key === todayKey;
+                const isSelected = key === calSelectedDate;
+
+                const cell = document.createElement('div');
+                cell.className = 'cal-day' +
+                    (hasOutfit ? ' has-outfit' : '') +
+                    (isToday ? ' today' : '') +
+                    (isSelected ? ' selected' : '');
+
+                const dotColor = hasOutfit ? (data[key].abrigoColor || '#1a3a52') : null;
+                cell.innerHTML = `<span class="cal-day-num">${d}</span>${hasOutfit ? `<span class="cal-dot" style="background:${dotColor};"></span>` : ''}`;
+                cell.onclick = () => selectCalDay(calYear, calMonth, d);
+                grid.appendChild(cell);
+            }
+        }
+
+        function selectCalDay(y, m, d) {
+            calSelectedDate = calKey(y, m, d);
+            renderCalendar();
+
+            const data = calGetData();
+            const existing = data[calSelectedDate];
+
+            const dateLabel = new Date(y, m, d).toLocaleDateString('es-ES', {
+                weekday: 'long', day: 'numeric', month: 'long'
+            });
+            document.getElementById('calDetailDate').textContent = dateLabel;
+            document.getElementById('calDetailCurrent').textContent = existing
+                ? `Outfit registrado: ${existing.nombre}`
+                : 'Sin outfit registrado';
+
+            // Populate select with all outfits
+            const customOutfits = JSON.parse(localStorage.getItem('customOutfits')) || [];
+            const allOutfits = [...outfits, ...customOutfits];
+            const sel = document.getElementById('calDetailSelect');
+            sel.innerHTML = '<option value="">— Elegir outfit —</option>';
+            ['formal','elegante-sport','casual'].forEach(cat => {
+                const group = document.createElement('optgroup');
+                group.label = cat === 'formal' ? '🎩 Formal' : cat === 'elegante-sport' ? '🧥 Elegante Sport' : '👕 Casual';
+                allOutfits.filter(o => o.formalidad === cat).forEach(o => {
+                    const opt = document.createElement('option');
+                    opt.value = o.id;
+                    opt.textContent = o.nombre;
+                    if (existing && existing.id == o.id) opt.selected = true;
+                    group.appendChild(opt);
+                });
+                sel.appendChild(group);
+            });
+
+            document.getElementById('calDetail').style.display = 'block';
+        }
+
+        function calSaveDay() {
+            if (!calSelectedDate) return;
+            const sel = document.getElementById('calDetailSelect');
+            const id = sel.value;
+            if (!id) return;
+
+            const customOutfits = JSON.parse(localStorage.getItem('customOutfits')) || [];
+            const allOutfits = [...outfits, ...customOutfits];
+            const outfit = allOutfits.find(o => o.id == id);
+            if (!outfit) return;
+
+            const data = calGetData();
+            data[calSelectedDate] = {
+                id: outfit.id,
+                nombre: outfit.nombre,
+                abrigoColor: getPrendaColor(outfit.prendas.abrigo) || '#1a3a52'
+            };
+            calSaveData(data);
+
+            document.getElementById('calDetailCurrent').textContent = `Outfit registrado: ${outfit.nombre}`;
+            renderCalendar();
+
+            // Toast
+            const toast = document.getElementById('randomSuccessToast');
+            toast.textContent = `📅 ${outfit.nombre} guardado`;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2000);
+        }
+
+        function calClearDay() {
+            if (!calSelectedDate) return;
+            const data = calGetData();
+            delete data[calSelectedDate];
+            calSaveData(data);
+            document.getElementById('calDetailCurrent').textContent = 'Sin outfit registrado';
+            document.getElementById('calDetailSelect').value = '';
+            renderCalendar();
+        }
+
+        // ============ TRAIN WIDGET ============
+        let trainData = [];
+        let trainLastFetch = null;
+
+        // On mobile, move the FAB into header for better flow
+        function initTrainFab() {
+            if (window.innerWidth <= 768) {
+                const fab = document.getElementById('trainFab');
+                const header = document.querySelector('header');
+                if (fab && header) header.appendChild(fab);
+            }
+        }
+
+        function formatTime(isoString) {
+            const d = new Date(isoString);
+            return d.toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function minutesUntil(isoString) {
+            const diff = new Date(isoString) - new Date();
+            return Math.round(diff / 60000);
+        }
+
+        async function fetchTrains() {
+            const PROXY = 'https://corsproxy.io/?url=';
+            const API   = 'https://reisinfo.rijdendetreinen.nl/v2/departures/station/HLM';
+
+            document.getElementById('trainList').innerHTML = '<div class="train-error">Cargando...</div>';
+
+            try {
+                const res = await fetch(PROXY + encodeURIComponent(API));
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                const json = await res.json();
+
+                // Filter: heading toward Utrecht (UT in route/destination codes)
+                const toUtrecht = (json.departures || []).filter(d => {
+                    const dest = (d.destination_actual || '').toLowerCase();
+                    const codes = d.destination_actual_codes || [];
+                    const via = (d.via || '').toLowerCase();
+                    // Direct to UT, or passing through it
+                    return codes.includes('UT') ||
+                           dest.includes('utrecht') ||
+                           via.includes('utrecht');
+                }).slice(0, 4);
+
+                trainData = toUtrecht;
+                trainLastFetch = new Date();
+                renderTrainFab(toUtrecht);
+                renderTrainModal(toUtrecht);
+
+            } catch (err) {
+                console.warn('Train fetch failed:', err);
+                renderTrainError();
+            }
+        }
+
+        function renderTrainFab(trains) {
+            const fabNext   = document.getElementById('trainFabNext');
+            const fabDetail = document.getElementById('trainFabDetail');
+            if (!trains.length) {
+                fabNext.textContent = 'Sin datos';
+                fabDetail.textContent = 'Tocá para ver en 9292';
+                return;
+            }
+
+            const t = trains[0];
+            const cancelled = t.cancelled;
+            const delay = t.delay || 0;
+            const depTime = formatTime(t.departure_time);
+            const mins = minutesUntil(t.departure_time);
+            const delayMin = Math.round(delay / 60);
+
+            fabNext.className = 'train-fab-next' + (cancelled ? ' train-fab-cancelled' : delay > 120 ? ' train-fab-delayed' : '');
+
+            if (cancelled) {
+                fabNext.textContent = depTime + ' ✗';
+                fabDetail.textContent = 'Cancelado · ' + (trains[1] ? formatTime(trains[1].departure_time) : '—');
+            } else if (delayMin > 0) {
+                fabNext.textContent = depTime + ' +' + delayMin + 'min';
+                fabDetail.textContent = mins <= 1 ? 'Ahora' : `En ${mins} min · spoor ${t.platform_actual || '?'}`;
+            } else {
+                fabNext.textContent = depTime;
+                fabDetail.textContent = mins <= 1 ? 'Ahora' : `En ${mins} min · spoor ${t.platform_actual || '?'}`;
+            }
+        }
+
+        function renderTrainModal(trains) {
+            const list = document.getElementById('trainList');
+            const sub  = document.getElementById('trainModalSub');
+            const upd  = document.getElementById('trainUpdated');
+
+            if (trainLastFetch) {
+                upd.textContent = 'Actualizado a las ' + trainLastFetch.toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' });
+            }
+
+            if (!trains.length) {
+                list.innerHTML = '<div class="train-error">Sin trenes hacia Utrecht en este momento.<br><a href="https://9292.nl/reisadvies?van=haarlem&naar=utrecht-centraal" target="_blank">Ver en 9292 →</a></div>';
+                sub.textContent = 'Sin resultados';
+                return;
+            }
+
+            sub.textContent = `${trains.length} próximas salidas`;
+
+            list.innerHTML = trains.map(t => {
+                const cancelled = t.cancelled;
+                const delay = t.delay || 0;
+                const delayMin = Math.round(delay / 60);
+                const depTime = formatTime(t.departure_time);
+                const mins = minutesUntil(t.departure_time);
+                const platform = t.platform_actual || '?';
+                const platformChanged = t.platform_changed;
+                const rowClass = cancelled ? 'cancelled' : delayMin > 0 ? 'delayed' : '';
+                const timeClass = cancelled ? 'cancelled' : delayMin > 0 ? 'delayed' : '';
+                const type = t.type_code || 'IC';
+                const dest = t.destination_actual || 'Utrecht';
+                const minsLabel = mins <= 0 ? 'Ya' : mins === 1 ? '1 min' : `${mins} min`;
+                const delayLabel = delayMin > 0 && !cancelled ? ` <span style="color:#e65100">+${delayMin}'</span>` : '';
+                const cancelLabel = cancelled ? ' <span style="color:#c62828">Cancelado</span>' : '';
+
+                return `<div class="train-row ${rowClass}">
+                    <div class="train-time ${timeClass}">${depTime}${delayLabel}${cancelLabel}</div>
+                    <div class="train-info">
+                        <div class="train-dest">${dest}</div>
+                        <div class="train-meta">${type} · ${minsLabel}${t.via ? ' · via ' + t.via : ''}</div>
+                    </div>
+                    <div class="train-platform ${platformChanged ? 'changed' : ''}">${platform}</div>
+                </div>`;
+            }).join('');
+        }
+
+        function renderTrainError() {
+            document.getElementById('trainFabNext').textContent = 'Sin conexión';
+            document.getElementById('trainFabDetail').textContent = 'Tocá para abrir 9292';
+            document.getElementById('trainList').innerHTML = `
+                <div class="train-error">
+                    No se pudo obtener datos en tiempo real.<br><br>
+                    <a href="https://9292.nl/reisadvies?van=haarlem&naar=utrecht-centraal" target="_blank">
+                        Ver horarios en 9292 →
+                    </a>
+                </div>`;
+        }
+
+        function openTrainModal() {
+            document.getElementById('trainOverlay').classList.add('open');
+            // Refresh if data is older than 2 minutes
+            if (!trainLastFetch || new Date() - trainLastFetch > 120000) {
+                fetchTrains();
+            } else {
+                renderTrainModal(trainData);
+            }
+        }
+
+        function closeTrainModal(e) {
+            if (e && e.target !== document.getElementById('trainOverlay')) return;
+            document.getElementById('trainOverlay').classList.remove('open');
         }
 
         // ============ INIT ============
         renderOutfits();
         updateStats();
         fetchWeather('Haarlem');
+        initTrainFab();
+        fetchTrains();
+        // Auto-refresh trains every 90 seconds
+        setInterval(fetchTrains, 90000);
     </script>
 </body>
 </html>
