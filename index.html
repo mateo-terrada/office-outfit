@@ -1722,10 +1722,48 @@
             z-index: 900;
             min-width: 160px;
             max-width: 220px;
+            position: fixed;
         }
         .train-fab:hover {
             box-shadow: 0 6px 20px rgba(0,0,0,0.15);
             transform: translateY(-2px);
+        }
+
+        .train-countdown-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #1a3a52;
+            color: white;
+            font-size: 0.72em;
+            font-weight: 700;
+            font-family: 'DM Sans', sans-serif;
+            border-radius: 20px;
+            padding: 2px 7px;
+            min-width: 28px;
+            text-align: center;
+            line-height: 1.6;
+            box-shadow: 0 2px 6px rgba(26,58,82,0.4);
+            transition: background 0.4s;
+            white-space: nowrap;
+        }
+        .train-countdown-badge.ok {
+            background: #2e7d32;
+        }
+        .train-countdown-badge.warn {
+            background: #e65100;
+            animation: pulse 1s ease-in-out infinite;
+        }
+        .train-countdown-badge.urgent {
+            background: #c62828;
+            animation: pulse 0.6s ease-in-out infinite;
+        }
+        .train-countdown-badge.go {
+            background: #2e7d32;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.12); }
         }
         .train-fab-icon { font-size: 1.4em; flex-shrink: 0; }
         .train-fab-info { display: flex; flex-direction: column; min-width: 0; }
@@ -1925,6 +1963,7 @@
 
         <!-- TRAIN FAB (fixed top-left on desktop, injected in mobile header via JS) -->
         <div class="train-fab" id="trainFab" onclick="openTrainModal()">
+            <span class="train-countdown-badge" id="trainCountdown" style="display:none"></span>
             <span class="train-fab-icon">🚆</span>
             <div class="train-fab-info">
                 <span class="train-fab-label">Haarlem → Utrecht</span>
@@ -3873,6 +3912,32 @@
         // ============ TRAIN WIDGET ============
         let trainData = [];
         let trainLastFetch = null;
+        let nextDepartureTime = null; // ISO string of the trip we're counting down to
+
+        function updateCountdownBadge() {
+            const badge = document.getElementById('trainCountdown');
+            if (!badge || !nextDepartureTime) { if (badge) badge.style.display = 'none'; return; }
+
+            const minsToDepart = minutesUntil(nextDepartureTime);
+            const minsToLeave  = minsToDepart - 15; // minus bike buffer
+
+            badge.style.display = '';
+            badge.className = 'train-countdown-badge';
+
+            if (minsToLeave <= 0) {
+                badge.textContent = '¡Ya!';
+                badge.classList.add('go');
+            } else if (minsToLeave <= 1) {
+                badge.textContent = minsToLeave + 'min';
+                badge.classList.add('urgent');
+            } else if (minsToLeave <= 5) {
+                badge.textContent = minsToLeave + 'min';
+                badge.classList.add('warn');
+            } else {
+                badge.textContent = minsToLeave + 'min';
+                badge.classList.add('ok');
+            }
+        }
 
         // On mobile, move the FAB into header for better flow
         function initTrainFab() {
@@ -3957,11 +4022,21 @@
             if (!trips.length) {
                 fabNext.textContent = 'Sin datos';
                 fabDetail.textContent = 'Tocá para abrir 9292';
+                nextDepartureTime = null;
+                updateCountdownBadge();
                 return;
             }
 
             const t = parseTripTimes(trips[0]);
             if (!t) return;
+
+            // For the countdown, skip cancelled trips — use first non-cancelled
+            const countdownTrip = trips.find(trip => {
+                const parsed = parseTripTimes(trip);
+                return parsed && !parsed.cancelled;
+            });
+            nextDepartureTime = countdownTrip ? parseTripTimes(countdownTrip).depActual : null;
+            updateCountdownBadge();
 
             const depTime = formatTime(t.depActual);
             const arrTime = formatTime(t.arrActual);
@@ -3974,7 +4049,7 @@
                 fabDetail.textContent = 'Cancelado';
             } else {
                 fabNext.textContent = depTime + (t.delay > 0 ? ` +${t.delay}'` : '') + ' → ' + arrTime;
-                fabDetail.textContent = `🚲 15' + ${mins - 15} min · spoor ${t.track}`;
+                fabDetail.textContent = `🚲 15' + ${Math.max(0, mins - 15)} min · spoor ${t.track}`;
             }
         }
 
@@ -4054,6 +4129,8 @@
         fetchTrains();
         // Auto-refresh trains every 90 seconds
         setInterval(fetchTrains, 90000);
+        // Countdown ticks every 30 seconds
+        setInterval(updateCountdownBadge, 30000);
     </script>
 </body>
 </html>
