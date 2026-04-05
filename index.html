@@ -492,14 +492,29 @@
             margin-bottom: 4px;
         }
 
-        .outfit-notes {
+        .outfit-bottom {
             margin-top: auto;
-            padding-top: 15px;
-            padding-right: 110px;
+            padding-top: 14px;
             border-top: 1px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .outfit-notes {
+            flex: 1;
             font-size: 0.9em;
             color: #666;
             font-style: italic;
+            text-align: justify;
+            min-width: 0;
+        }
+
+        .outfit-actions-inline {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex-shrink: 0;
         }
 
         .category-separator {
@@ -523,6 +538,14 @@
             margin-top: 15px;
             padding-top: 15px;
             border-top: 1px solid #f0f0f0;
+        }
+
+        .outfit-actions-inline .edit-btn,
+        .outfit-actions-inline .delete-btn {
+            padding: 7px 10px;
+            font-size: 0.78em;
+            flex: none;
+            width: 80px;
         }
 
         .delete-btn {
@@ -569,6 +592,36 @@
             background: #1565c0;
             color: white;
             border-color: #1565c0;
+        }
+
+        .mios-header {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 20px;
+        }
+
+        .btn-nuevo-outfit {
+            padding: 10px 20px;
+            background: #1a3a52;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-nuevo-outfit:hover {
+            background: #0f2438;
+        }
+
+        .btn-nuevo-outfit.open {
+            background: #555;
+        }
+
+        .create-form-wrapper {
+            margin-bottom: 28px;
         }
 
         /* STATS PANEL */
@@ -1430,17 +1483,39 @@
             }
 
             header {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                gap: 12px;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                grid-template-rows: auto auto;
+                gap: 10px;
                 padding-top: 0;
+                text-align: center;
             }
 
             .header-widgets {
                 position: static;
-                justify-content: center;
-                flex-wrap: wrap;
+                grid-column: 1 / 2;
+                grid-row: 1;
+                justify-content: flex-start;
+                flex-wrap: nowrap;
+            }
+
+            .header-train-mobile {
+                grid-column: 2 / 3;
+                grid-row: 1;
+                display: flex;
+                justify-content: flex-end;
+            }
+
+            header h1 {
+                grid-column: 1 / 3;
+                grid-row: 2;
+                margin: 0;
+            }
+
+            header .subtitle {
+                grid-column: 1 / 3;
+                grid-row: 3;
+                margin: 0;
             }
 
             .weather-widget {
@@ -1733,7 +1808,7 @@
             position: absolute;
             top: -8px;
             right: -8px;
-            background: #1a3a52;
+            background: #888;
             color: white;
             font-size: 0.72em;
             font-weight: 700;
@@ -1744,7 +1819,6 @@
             text-align: center;
             line-height: 1.6;
             box-shadow: 0 2px 6px rgba(26,58,82,0.4);
-            transition: background 0.4s;
             white-space: nowrap;
         }
         .train-countdown-badge.ok {
@@ -1759,7 +1833,7 @@
             animation: pulse 0.6s ease-in-out infinite;
         }
         .train-countdown-badge.go {
-            background: #2e7d32;
+            background: #1565c0;
         }
         @keyframes pulse {
             0%, 100% { transform: scale(1); }
@@ -1920,7 +1994,7 @@
             .train-fab {
                 position: static;
                 max-width: 100%;
-                margin: 0 auto;
+                margin: 0;
             }
         }
 
@@ -1974,7 +2048,6 @@
 
         <div class="tabs">
             <button class="tab-btn active" onclick="switchTab('sugeridos')">Outfits Sugeridos</button>
-            <button class="tab-btn" onclick="switchTab('crear')">Crear Outfit</button>
             <button class="tab-btn" onclick="switchTab('mios')">Mis Outfits</button>
             <button class="random-btn" onclick="openRandomOutfit()">🎲 Outfit al Azar</button>
             <button class="weather-btn" onclick="showWeatherRecommendations()">🌤️ Por Clima</button>
@@ -2065,109 +2138,110 @@
             <div class="outfits-grid" id="outfitsGrid"></div>
         </div>
 
-        <!-- TAB: CREAR -->
-        <div class="tab-content" id="tab-crear">
-            <div class="form-section">
-                <h2 style="margin-bottom: 20px; color: #1a3a52;">Crear tu propio outfit</h2>
-                <div class="success-message" id="successMessage">✓ Outfit creado exitosamente</div>
-                
-                <form onsubmit="handleCreateOutfit(event)">
-                    <div class="form-group">
-                        <label>Nombre del outfit</label>
-                        <input type="text" id="outfitName" placeholder="ej: Mi combo favorito" required>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Contexto/Ocasión</label>
-                            <input type="text" id="outfitContext" placeholder="ej: Reuniones casuales" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Nivel de formalidad</label>
-                            <select id="outfitFormality" required>
-                                <option value="">Selecciona...</option>
-                                <option value="formal">Formal</option>
-                                <option value="elegante-sport">Elegante Sport</option>
-                                <option value="casual">Casual</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Pantalón</label>
-                        <select id="outfitPantalon" required>
-                            <option value="">Selecciona un pantalón...</option>
-                            <option value="Pantalón azul (tobillo)">Pantalón azul (tobillo)</option>
-                            <option value="Pantalón negro (tobillo)">Pantalón negro (tobillo)</option>
-                            <option value="Pantalón gris claro">Pantalón gris claro</option>
-                            <option value="Pantalón gris oscuro">Pantalón gris oscuro</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Camisa</label>
-                        <select id="outfitCamisa" required>
-                            <option value="">Selecciona una camisa...</option>
-                            <option value="Camisa blanca">Camisa blanca</option>
-                            <option value="Camisa celeste clara">Camisa celeste clara</option>
-                            <option value="Camisa celeste Brooksfield">Celeste medio-oscuro con detalles (Brooksfield)</option>
-                            <option value="Camisa gris jaspeada">Camisa gris jaspeada</option>
-                            <option value="Camisa rayas celeste/blanco">Camisa rayas celeste/blanco</option>
-                            <option value="Camisa rayas azul/blanco">Camisa rayas azul/blanco</option>
-                            <option value="Camisa azul oscura">Camisa azul oscura</option>
-                            <option value="Camisa celeste líneas Brooksfield">Celeste con líneas blancas y rojas (Brooksfield)</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Abrigo/Sweater</label>
-                        <select id="outfitAbrigo" required>
-                            <option value="">Selecciona un abrigo...</option>
-                            <option value="Quarter-zip Patagonia gris">Sweater Patagonia gris haspeado (quarter-zip)</option>
-                            <option value="Campera Patagonia bordeau">Campera Patagonia bordeau</option>
-                            <option value="Sweater UNIQLO azul">Sweater UNIQLO azul</option>
-                            <option value="Sweater UNIQLO celeste">Sweater UNIQLO celeste</option>
-                            <option value="Quarter-zip Springfield gris">Quarter-zip Springfield gris</option>
-                            <option value="Quarter-zip Polo gris claro">Quarter-zip Polo gris claro</option>
-                            <option value="Quarter-zip Polo azul">Quarter-zip Polo azul</option>
-                            <option value="Quarter-zip Polo bordeau">Quarter-zip Polo bordeau</option>
-                            <option value="Polar Brooksfield negro">Polar Brooksfield negro</option>
-                            <option value="Polar Brooksfield bordeau">Polar Brooksfield bordeau</option>
-                            <option value="Sweater Brooksfield azul">Sweater Brooksfield azul</option>
-                            <option value="Chaleco Patagonia gris">Chaleco Patagonia gris</option>
-                            <option value="Chaleco Patagonia azul">Chaleco Patagonia azul</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Zapatos</label>
-                        <select id="outfitZapatos" required>
-                            <option value="">Selecciona zapatos...</option>
-                            <option value="Vans negras">Vans negras</option>
-                            <option value="Adidas Spezial beige">Adidas Spezial beige</option>
-                            <option value="Tiger blancas">Tiger blancas</option>
-                            <option value="Levis azules">Levis azules</option>
-                            <option value="Zapatos marrones">Zapatos marrones</option>
-                            <option value="Zapatos negros">Zapatos negros</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Notas personales (opcional)</label>
-                        <textarea id="outfitNotes" placeholder="ej: Combina bien con el chaleco, considerá el clima..."></textarea>
-                    </div>
-
-                    <button type="submit" class="btn-submit">Guardar Outfit 💾</button>
-                </form>
-            </div>
-        </div>
-
         <!-- TAB: MIS OUTFITS -->
         <div class="tab-content" id="tab-mios">
+            <div class="mios-header">
+                <button class="btn-nuevo-outfit" id="btnNuevoOutfit" onclick="toggleCreateForm()">+ Nuevo outfit</button>
+            </div>
+            <div class="create-form-wrapper" id="createFormWrapper" style="display:none">
+                <div class="form-section">
+                    <h2 style="margin-bottom: 20px; color: #1a3a52;">Crear outfit</h2>
+                    <div class="success-message" id="successMessage">✓ Outfit creado exitosamente</div>
+                
+                    <form onsubmit="handleCreateOutfit(event)">
+                        <div class="form-group">
+                            <label>Nombre del outfit</label>
+                            <input type="text" id="outfitName" placeholder="ej: Mi combo favorito" required>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Contexto/Ocasión</label>
+                                <input type="text" id="outfitContext" placeholder="ej: Reuniones casuales" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Nivel de formalidad</label>
+                                <select id="outfitFormality" required>
+                                    <option value="">Selecciona...</option>
+                                    <option value="formal">Formal</option>
+                                    <option value="elegante-sport">Elegante Sport</option>
+                                    <option value="casual">Casual</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Pantalón</label>
+                            <select id="outfitPantalon" required>
+                                <option value="">Selecciona un pantalón...</option>
+                                <option value="Pantalón azul (tobillo)">Pantalón azul (tobillo)</option>
+                                <option value="Pantalón negro (tobillo)">Pantalón negro (tobillo)</option>
+                                <option value="Pantalón gris claro">Pantalón gris claro</option>
+                                <option value="Pantalón gris oscuro">Pantalón gris oscuro</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Camisa</label>
+                            <select id="outfitCamisa" required>
+                                <option value="">Selecciona una camisa...</option>
+                                <option value="Camisa blanca">Camisa blanca</option>
+                                <option value="Camisa celeste clara">Camisa celeste clara</option>
+                                <option value="Camisa celeste Brooksfield">Celeste medio-oscuro con detalles (Brooksfield)</option>
+                                <option value="Camisa gris jaspeada">Camisa gris jaspeada</option>
+                                <option value="Camisa rayas celeste/blanco">Camisa rayas celeste/blanco</option>
+                                <option value="Camisa rayas azul/blanco">Camisa rayas azul/blanco</option>
+                                <option value="Camisa azul oscura">Camisa azul oscura</option>
+                                <option value="Camisa celeste líneas Brooksfield">Celeste con líneas blancas y rojas (Brooksfield)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Abrigo/Sweater</label>
+                            <select id="outfitAbrigo" required>
+                                <option value="">Selecciona un abrigo...</option>
+                                <option value="Quarter-zip Patagonia gris">Sweater Patagonia gris haspeado (quarter-zip)</option>
+                                <option value="Campera Patagonia bordeau">Campera Patagonia bordeau</option>
+                                <option value="Sweater UNIQLO azul">Sweater UNIQLO azul</option>
+                                <option value="Sweater UNIQLO celeste">Sweater UNIQLO celeste</option>
+                                <option value="Quarter-zip Springfield gris">Quarter-zip Springfield gris</option>
+                                <option value="Quarter-zip Polo gris claro">Quarter-zip Polo gris claro</option>
+                                <option value="Quarter-zip Polo azul">Quarter-zip Polo azul</option>
+                                <option value="Quarter-zip Polo bordeau">Quarter-zip Polo bordeau</option>
+                                <option value="Polar Brooksfield negro">Polar Brooksfield negro</option>
+                                <option value="Polar Brooksfield bordeau">Polar Brooksfield bordeau</option>
+                                <option value="Sweater Brooksfield azul">Sweater Brooksfield azul</option>
+                                <option value="Chaleco Patagonia gris">Chaleco Patagonia gris</option>
+                                <option value="Chaleco Patagonia azul">Chaleco Patagonia azul</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Zapatos</label>
+                            <select id="outfitZapatos" required>
+                                <option value="">Selecciona zapatos...</option>
+                                <option value="Vans negras">Vans negras</option>
+                                <option value="Adidas Spezial beige">Adidas Spezial beige</option>
+                                <option value="Tiger blancas">Tiger blancas</option>
+                                <option value="Levis azules">Levis azules</option>
+                                <option value="Zapatos marrones">Zapatos marrones</option>
+                                <option value="Zapatos negros">Zapatos negros</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Notas personales (opcional)</label>
+                            <textarea id="outfitNotes" placeholder="ej: Combina bien con el chaleco, considerá el clima..."></textarea>
+                        </div>
+
+                        <button type="submit" class="btn-submit">Guardar Outfit 💾</button>
+                    </form>
+                </div>
+            </div>
             <div id="customOutfitsContainer"></div>
         </div>
 
-        <!-- STATS PANEL -->
+                <!-- STATS PANEL -->
         <div class="stats-panel">
             <div class="stats-header" onclick="toggleStats()">
                 <h3>📊 Estadísticas de uso</h3>
@@ -2326,7 +2400,7 @@
             },
             {
                 id: 7,
-                nombre: "Pattern Play",
+                nombre: "Vest & Blue",
                 formalidad: "elegante-sport",
                 contexto: "Días con actividades variadas, sin meetings importantes",
                 prendas: {
@@ -2335,7 +2409,7 @@
                     abrigo: "Chaleco Patagonia azul",
                     zapatos: "Adidas Spezial beige"
                 },
-                notas: "Las texturas hacen el look. El chaleco sobre pantalón negro es chef's kiss.",
+                notas: "El chaleco Patagonia sobre negro y celeste Brooksfield. Sofisticado sin esfuerzo.",
                 custom: false
             },
             {
@@ -2354,7 +2428,7 @@
             },
             {
                 id: 9,
-                nombre: "Red Patagonia Vibe",
+                nombre: "Bordeaux Patagonia",
                 formalidad: "elegante-sport",
                 contexto: "Team building, eventos informales, días con energía",
                 prendas: {
@@ -2363,12 +2437,12 @@
                     abrigo: "Campera Patagonia bordeau",
                     zapatos: "Adidas Spezial beige"
                 },
-                notas: "Casual pero con un punto de sofisticación. La campera Patagonia es iconic.",
+                notas: "El bordeau de la Patagonia con pantalón azul y Adidas. Casual con carácter.",
                 custom: false
             },
             {
                 id: 10,
-                nombre: "Monochrome Grey",
+                nombre: "Dark Mix",
                 formalidad: "casual",
                 contexto: "Workdays relajados, entrenamientos internos, networking casual",
                 prendas: {
@@ -2377,7 +2451,7 @@
                     abrigo: "Sweater Brooksfield azul",
                     zapatos: "Tiger blancas"
                 },
-                notas: "Juega con texturas en la gama neutral. Las zapatillas blancas lo hacen accessible.",
+                notas: "Negro, azul y blanco. El sweater Brooksfield le da el toque inesperado.",
                 custom: false
             },
             {
@@ -2405,12 +2479,12 @@
                     abrigo: "Sweater UNIQLO azul",
                     zapatos: "Zapatos marrones"
                 },
-                notas: "Azul en el sweater suma autoridad sin ser agresivo. Sofisticado y accesible.",
+                notas: "El azul del UNIQLO sobre gris y celeste. Soft, limpio y profesional.",
                 custom: false
             },
             {
                 id: 13,
-                nombre: "Grey Monochrome",
+                nombre: "Monochrome Grey",
                 formalidad: "formal",
                 contexto: "Días de mucho trabajo, focus meetings, cuando querés blending profesional",
                 prendas: {
@@ -2433,7 +2507,7 @@
                     abrigo: "Quarter-zip Polo azul",
                     zapatos: "Zapatos marrones"
                 },
-                notas: "El azul del quarter-zip eleva todo sin hacer que sea formal. European vibes.",
+                notas: "El quarter-zip azul Polo sobre blanco y gris. Eleva sin ser formal.",
                 custom: false
             },
             {
@@ -2776,10 +2850,10 @@
             card.dataset.formality = outfit.formalidad;
 
             const formalidadLabel = outfit.formalidad === 'elegante-sport'
-                ? '🧥 Elegante Sport'
+                ? 'Elegante Sport'
                 : outfit.formalidad === 'formal'
-                ? '🎩 Formal'
-                : '👕 Casual';
+                ? 'Formal'
+                : 'Casual';
 
             // Cargar favoritos desde localStorage
             const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
@@ -2826,7 +2900,9 @@
                         <span class="prenda-tipo">Zapatos</span>
                         <div class="prenda-nombre">${outfit.prendas.zapatos}</div>
                     </div>
-                    <div class="outfit-notes">${outfit.notas}</div>
+                    <div class="outfit-bottom">
+                        <div class="outfit-notes">${outfit.notas}</div>
+                    </div>
                 </div>
             `;
             return card;
@@ -2907,6 +2983,11 @@
             successMsg.classList.add('show');
             setTimeout(() => successMsg.classList.remove('show'), 3000);
             event.target.reset();
+            // Collapse form after saving
+            const wrapper = document.getElementById('createFormWrapper');
+            const btn = document.getElementById('btnNuevoOutfit');
+            if (wrapper) wrapper.style.display = 'none';
+            if (btn) { btn.textContent = '+ Nuevo outfit'; btn.classList.remove('open'); }
             
             // Re-renderizar los outfits sugeridos para mostrar el nuevo outfit
             renderOutfits('todos');
@@ -2932,13 +3013,22 @@
             });
         }
 
+        function toggleCreateForm() {
+            const wrapper = document.getElementById('createFormWrapper');
+            const btn = document.getElementById('btnNuevoOutfit');
+            const isOpen = wrapper.style.display !== 'none';
+            wrapper.style.display = isOpen ? 'none' : 'block';
+            btn.textContent = isOpen ? '+ Nuevo outfit' : '✕ Cancelar';
+            btn.classList.toggle('open', !isOpen);
+        }
+
         // ============ CUSTOM OUTFITS ============
         function renderCustomOutfits() {
             const container = document.getElementById('customOutfitsContainer');
             const savedOutfits = JSON.parse(localStorage.getItem('customOutfits')) || [];
 
             if (savedOutfits.length === 0) {
-                container.innerHTML = '<div class="empty-state"><h2>Todavía no creaste ningún outfit</h2><p>Andá a "Crear Outfit" para empezar 👕</p></div>';
+                container.innerHTML = '<div class="empty-state"><h2>Todavía no creaste ningún outfit</h2><p>Usá el botón "+ Nuevo outfit" para empezar 👕</p></div>';
                 return;
             }
 
@@ -2951,10 +3041,10 @@
                 card.dataset.formality = outfit.formalidad;
 
                 const formalidadLabel = outfit.formalidad === 'elegante-sport'
-                    ? '🧥 Elegante Sport'
+                    ? 'Elegante Sport'
                     : outfit.formalidad === 'formal'
-                    ? '🎩 Formal'
-                    : '👕 Casual';
+                    ? 'Formal'
+                    : 'Casual';
 
                 card.innerHTML = `
                     <div class="custom-badge">TU OUTFIT</div>
@@ -2981,10 +3071,12 @@
                             <span class="prenda-tipo">Zapatos</span>
                             <div class="prenda-nombre">${outfit.prendas.zapatos}</div>
                         </div>
-                        <div class="outfit-notes">${outfit.notas}</div>
-                        <div class="outfit-actions">
-                            <button class="edit-btn" onclick="openEditOutfit(${outfit.id})">✏️ Editar</button>
-                            <button class="delete-btn" onclick="deleteOutfit(${outfit.id}, '${outfit.nombre.replace(/'/g, "\\'")}')">🗑 Eliminar</button>
+                        <div class="outfit-bottom">
+                            <div class="outfit-notes">${outfit.notas}</div>
+                            <div class="outfit-actions-inline">
+                                <button class="edit-btn" onclick="openEditOutfit(${outfit.id})">✏️ Editar</button>
+                                <button class="delete-btn" onclick="deleteOutfit(${outfit.id}, '${outfit.nombre.replace(/'/g, "\\'")}')">🗑 Eliminar</button>
+                            </div>
                         </div>
                     </div>
                 `;
@@ -3081,10 +3173,10 @@
             if (!cat) return;
 
             const formalidadLabel = cat === 'elegante-sport'
-                ? '🧥 Elegante Sport'
+                ? 'Elegante Sport'
                 : cat === 'formal'
-                ? '🎩 Formal'
-                : '👕 Casual';
+                ? 'Formal'
+                : 'Casual';
 
             // Pick from existing predefined outfits only
             const outfitsDeCat = outfits.filter(o => o.formalidad === cat && !o.custom);
@@ -3856,7 +3948,7 @@
             sel.innerHTML = '<option value="">— Elegir outfit —</option>';
             ['formal','elegante-sport','casual'].forEach(cat => {
                 const group = document.createElement('optgroup');
-                group.label = cat === 'formal' ? '🎩 Formal' : cat === 'elegante-sport' ? '🧥 Elegante Sport' : '👕 Casual';
+                group.label = cat === 'formal' ? 'Formal' : cat === 'elegante-sport' ? 'Elegante Sport' : 'Casual';
                 allOutfits.filter(o => o.formalidad === cat).forEach(o => {
                     const opt = document.createElement('option');
                     opt.value = o.id;
@@ -3944,12 +4036,31 @@
             if (window.innerWidth <= 768) {
                 const fab = document.getElementById('trainFab');
                 const header = document.querySelector('header');
-                if (fab && header) header.appendChild(fab);
+                if (!fab || !header) return;
+                // Create right-slot wrapper and insert after header-widgets
+                let slot = header.querySelector('.header-train-mobile');
+                if (!slot) {
+                    slot = document.createElement('div');
+                    slot.className = 'header-train-mobile';
+                    const widgets = header.querySelector('.header-widgets');
+                    if (widgets && widgets.nextSibling) {
+                        header.insertBefore(slot, widgets.nextSibling);
+                    } else {
+                        header.appendChild(slot);
+                    }
+                }
+                slot.appendChild(fab);
             }
         }
 
         function formatTime(isoString) {
             const d = new Date(isoString);
+            return d.toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function formatArrival(isoString) {
+            // Add 5 min walk from Utrecht Centraal to office
+            const d = new Date(new Date(isoString).getTime() + 5 * 60000);
             return d.toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' });
         }
 
@@ -3976,9 +4087,20 @@
 
                 // Keep only trips with exactly 2 transit legs AND departing in 15+ minutes
                 const BIKE_BUFFER = 15;
+                // Log all trips so we can see their leg structure
+                trips.forEach((trip, i) => {
+                    const allLegs      = trip.legs || [];
+                    const transitLegs  = allLegs.filter(l => l.travelType === 'PUBLIC_TRANSIT');
+                    const depActual    = transitLegs[0]?.origin?.actualDateTime || transitLegs[0]?.origin?.plannedDateTime;
+                    const minsAway     = depActual ? minutesUntil(depActual) : '?';
+                    const products     = transitLegs.map(l => l.product?.shortCategoryName || l.product?.categoryCode || '?').join(' + ');
+                    const destinations = transitLegs.map(l => l.destination?.name || '?').join(' → ');
+                    console.log(`[Train ${i}] ${transitLegs.length} transit leg(s) | ${products} | → ${destinations} | dep in ${minsAway}min | status: ${trip.status || 'OK'}`);
+                });
+
                 const filtered = trips.filter(trip => {
                     const transitLegs = (trip.legs || []).filter(l => l.travelType === 'PUBLIC_TRANSIT');
-                    if (transitLegs.length !== 2) return false;
+                    if (transitLegs.length < 1 || transitLegs.length > 2) return false;
                     const depActual = transitLegs[0].origin?.actualDateTime || transitLegs[0].origin?.plannedDateTime;
                     if (!depActual) return false;
                     return minutesUntil(depActual) >= BIKE_BUFFER;
@@ -4007,13 +4129,14 @@
             const arrActual  = last.destination?.actualDateTime || arrPlanned;
             const delay      = depActual ? Math.round((new Date(depActual) - new Date(depPlanned)) / 60000) : 0;
             const cancelled  = trip.status === 'CANCELLED' || legs.some(l => l.cancelled);
-            const transfer   = legs[0].destination?.name || 'Amsterdam C';
+            const isDirect    = legs.length === 1;
+            const transfer   = isDirect ? null : (legs[0].destination?.name || 'Amsterdam C');
             const track      = first.origin?.actualTrack || first.origin?.plannedTrack || '?';
             const trackChanged = first.origin?.actualTrack && first.origin.actualTrack !== first.origin.plannedTrack;
             const type1      = first.product?.shortCategoryName || first.product?.categoryCode || 'IC';
-            const type2      = last.product?.shortCategoryName  || last.product?.categoryCode  || 'IC';
+            const type2      = isDirect ? null : (last.product?.shortCategoryName || last.product?.categoryCode || 'IC');
 
-            return { depPlanned, depActual, arrActual, delay, cancelled, transfer, track, trackChanged, type1, type2 };
+            return { depPlanned, depActual, arrActual, delay, cancelled, transfer, track, trackChanged, type1, type2, isDirect };
         }
 
         function renderTrainFab(trips) {
@@ -4039,7 +4162,7 @@
             updateCountdownBadge();
 
             const depTime = formatTime(t.depActual);
-            const arrTime = formatTime(t.arrActual);
+            const arrTime = formatArrival(t.arrActual);
             const mins    = minutesUntil(t.depActual);
 
             fabNext.className = 'train-fab-next' + (t.cancelled ? ' train-fab-cancelled' : t.delay > 0 ? ' train-fab-delayed' : '');
@@ -4075,7 +4198,7 @@
                 if (!t) return '';
 
                 const depTime  = formatTime(t.depActual);
-                const arrTime  = formatTime(t.arrActual);
+                const arrTime  = formatArrival(t.arrActual);
                 const mins     = minutesUntil(t.depActual);
                 const minsLabel = mins <= 0 ? 'Ya' : mins === 1 ? '1 min' : `${mins} min`;
                 const rowClass  = t.cancelled ? 'cancelled' : t.delay > 0 ? 'delayed' : '';
@@ -4087,7 +4210,7 @@
                     <div class="train-time ${timeClass}">${depTime}${delayLabel}${cancelLabel}</div>
                     <div class="train-info">
                         <div class="train-dest">${depTime} → ${arrTime} · Utrecht C</div>
-                        <div class="train-meta">${t.type1}+${t.type2} · ${minsLabel} · via ${t.transfer}</div>
+                        <div class="train-meta">${t.isDirect ? t.type1 + ' · Directo' : t.type1 + '+' + t.type2 + ' · via ' + t.transfer} · ${minsLabel}</div>
                     </div>
                     <div class="train-platform ${t.trackChanged ? 'changed' : ''}">${t.track}</div>
                 </div>`;
