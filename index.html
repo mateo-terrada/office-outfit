@@ -3894,108 +3894,127 @@
         }
 
         async function fetchTrains() {
-            const PROXY = 'https://corsproxy.io/?url=';
-            const API   = 'https://reisinfo.rijdendetreinen.nl/v2/departures/station/HLM';
+            const KEY = '27874576009e41a3a0a5301b90355937';
+            const URL = 'https://gateway.apiportal.ns.nl/reisinformatie-api/api/v3/trips'
+                      + '?fromStation=HLM&toStation=UT&excludeHighSpeedTrains=true&passing=false';
 
             document.getElementById('trainList').innerHTML = '<div class="train-error">Cargando...</div>';
 
             try {
-                const res = await fetch(PROXY + encodeURIComponent(API));
+                const res = await fetch(URL, {
+                    headers: { 'Ocp-Apim-Subscription-Key': KEY }
+                });
                 if (!res.ok) throw new Error('HTTP ' + res.status);
                 const json = await res.json();
 
-                // Filter: heading toward Utrecht (UT in route/destination codes)
-                const toUtrecht = (json.departures || []).filter(d => {
-                    const dest = (d.destination_actual || '').toLowerCase();
-                    const codes = d.destination_actual_codes || [];
-                    const via = (d.via || '').toLowerCase();
-                    // Direct to UT, or passing through it
-                    return codes.includes('UT') ||
-                           dest.includes('utrecht') ||
-                           via.includes('utrecht');
+                const trips = json.trips || [];
+
+                // Keep only trips with exactly 2 transit legs AND departing in 15+ minutes
+                const BIKE_BUFFER = 15;
+                const filtered = trips.filter(trip => {
+                    const transitLegs = (trip.legs || []).filter(l => l.travelType === 'PUBLIC_TRANSIT');
+                    if (transitLegs.length !== 2) return false;
+                    const depActual = transitLegs[0].origin?.actualDateTime || transitLegs[0].origin?.plannedDateTime;
+                    if (!depActual) return false;
+                    return minutesUntil(depActual) >= BIKE_BUFFER;
                 }).slice(0, 4);
 
-                trainData = toUtrecht;
+                trainData = filtered;
                 trainLastFetch = new Date();
-                renderTrainFab(toUtrecht);
-                renderTrainModal(toUtrecht);
+                renderTrainFab(filtered);
+                renderTrainModal(filtered);
 
             } catch (err) {
-                console.warn('Train fetch failed:', err);
+                console.error('Train fetch failed:', err.message);
                 renderTrainError();
             }
         }
 
-        function renderTrainFab(trains) {
+        function parseTripTimes(trip) {
+            const legs = (trip.legs || []).filter(l => l.travelType === 'PUBLIC_TRANSIT');
+            const first = legs[0];
+            const last  = legs[legs.length - 1];
+            if (!first || !last) return null;
+
+            const depPlanned = first.origin?.plannedDateTime;
+            const depActual  = first.origin?.actualDateTime || depPlanned;
+            const arrPlanned = last.destination?.plannedDateTime;
+            const arrActual  = last.destination?.actualDateTime || arrPlanned;
+            const delay      = depActual ? Math.round((new Date(depActual) - new Date(depPlanned)) / 60000) : 0;
+            const cancelled  = trip.status === 'CANCELLED' || legs.some(l => l.cancelled);
+            const transfer   = legs[0].destination?.name || 'Amsterdam C';
+            const track      = first.origin?.actualTrack || first.origin?.plannedTrack || '?';
+            const trackChanged = first.origin?.actualTrack && first.origin.actualTrack !== first.origin.plannedTrack;
+            const type1      = first.product?.shortCategoryName || first.product?.categoryCode || 'IC';
+            const type2      = last.product?.shortCategoryName  || last.product?.categoryCode  || 'IC';
+
+            return { depPlanned, depActual, arrActual, delay, cancelled, transfer, track, trackChanged, type1, type2 };
+        }
+
+        function renderTrainFab(trips) {
             const fabNext   = document.getElementById('trainFabNext');
             const fabDetail = document.getElementById('trainFabDetail');
-            if (!trains.length) {
+            if (!trips.length) {
                 fabNext.textContent = 'Sin datos';
-                fabDetail.textContent = 'Tocá para ver en 9292';
+                fabDetail.textContent = 'Tocá para abrir 9292';
                 return;
             }
 
-            const t = trains[0];
-            const cancelled = t.cancelled;
-            const delay = t.delay || 0;
-            const depTime = formatTime(t.departure_time);
-            const mins = minutesUntil(t.departure_time);
-            const delayMin = Math.round(delay / 60);
+            const t = parseTripTimes(trips[0]);
+            if (!t) return;
 
-            fabNext.className = 'train-fab-next' + (cancelled ? ' train-fab-cancelled' : delay > 120 ? ' train-fab-delayed' : '');
+            const depTime = formatTime(t.depActual);
+            const arrTime = formatTime(t.arrActual);
+            const mins    = minutesUntil(t.depActual);
 
-            if (cancelled) {
+            fabNext.className = 'train-fab-next' + (t.cancelled ? ' train-fab-cancelled' : t.delay > 0 ? ' train-fab-delayed' : '');
+
+            if (t.cancelled) {
                 fabNext.textContent = depTime + ' ✗';
-                fabDetail.textContent = 'Cancelado · ' + (trains[1] ? formatTime(trains[1].departure_time) : '—');
-            } else if (delayMin > 0) {
-                fabNext.textContent = depTime + ' +' + delayMin + 'min';
-                fabDetail.textContent = mins <= 1 ? 'Ahora' : `En ${mins} min · spoor ${t.platform_actual || '?'}`;
+                fabDetail.textContent = 'Cancelado';
             } else {
-                fabNext.textContent = depTime;
-                fabDetail.textContent = mins <= 1 ? 'Ahora' : `En ${mins} min · spoor ${t.platform_actual || '?'}`;
+                fabNext.textContent = depTime + (t.delay > 0 ? ` +${t.delay}'` : '') + ' → ' + arrTime;
+                fabDetail.textContent = `🚲 15' + ${mins - 15} min · spoor ${t.track}`;
             }
         }
 
-        function renderTrainModal(trains) {
+        function renderTrainModal(trips) {
             const list = document.getElementById('trainList');
             const sub  = document.getElementById('trainModalSub');
             const upd  = document.getElementById('trainUpdated');
 
             if (trainLastFetch) {
-                upd.textContent = 'Actualizado a las ' + trainLastFetch.toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' });
+                upd.textContent = 'Actualizado ' + trainLastFetch.toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' });
             }
 
-            if (!trains.length) {
-                list.innerHTML = '<div class="train-error">Sin trenes hacia Utrecht en este momento.<br><a href="https://9292.nl/reisadvies?van=haarlem&naar=utrecht-centraal" target="_blank">Ver en 9292 →</a></div>';
+            if (!trips.length) {
+                list.innerHTML = '<div class="train-error">Sin viajes disponibles.<br><a href="https://9292.nl/reisadvies?van=haarlem&naar=utrecht-centraal" target="_blank">Ver en 9292 →</a></div>';
                 sub.textContent = 'Sin resultados';
                 return;
             }
 
-            sub.textContent = `${trains.length} próximas salidas`;
+            sub.textContent = `${trips.length} próximos viajes`;
 
-            list.innerHTML = trains.map(t => {
-                const cancelled = t.cancelled;
-                const delay = t.delay || 0;
-                const delayMin = Math.round(delay / 60);
-                const depTime = formatTime(t.departure_time);
-                const mins = minutesUntil(t.departure_time);
-                const platform = t.platform_actual || '?';
-                const platformChanged = t.platform_changed;
-                const rowClass = cancelled ? 'cancelled' : delayMin > 0 ? 'delayed' : '';
-                const timeClass = cancelled ? 'cancelled' : delayMin > 0 ? 'delayed' : '';
-                const type = t.type_code || 'IC';
-                const dest = t.destination_actual || 'Utrecht';
+            list.innerHTML = trips.map(trip => {
+                const t = parseTripTimes(trip);
+                if (!t) return '';
+
+                const depTime  = formatTime(t.depActual);
+                const arrTime  = formatTime(t.arrActual);
+                const mins     = minutesUntil(t.depActual);
                 const minsLabel = mins <= 0 ? 'Ya' : mins === 1 ? '1 min' : `${mins} min`;
-                const delayLabel = delayMin > 0 && !cancelled ? ` <span style="color:#e65100">+${delayMin}'</span>` : '';
-                const cancelLabel = cancelled ? ' <span style="color:#c62828">Cancelado</span>' : '';
+                const rowClass  = t.cancelled ? 'cancelled' : t.delay > 0 ? 'delayed' : '';
+                const timeClass = t.cancelled ? 'cancelled' : t.delay > 0 ? 'delayed' : '';
+                const delayLabel = t.delay > 0 && !t.cancelled ? ` <span style="color:#e65100">+${t.delay}'</span>` : '';
+                const cancelLabel = t.cancelled ? ' <span style="color:#c62828">✗</span>' : '';
 
                 return `<div class="train-row ${rowClass}">
                     <div class="train-time ${timeClass}">${depTime}${delayLabel}${cancelLabel}</div>
                     <div class="train-info">
-                        <div class="train-dest">${dest}</div>
-                        <div class="train-meta">${type} · ${minsLabel}${t.via ? ' · via ' + t.via : ''}</div>
+                        <div class="train-dest">${depTime} → ${arrTime} · Utrecht C</div>
+                        <div class="train-meta">${t.type1}+${t.type2} · ${minsLabel} · via ${t.transfer}</div>
                     </div>
-                    <div class="train-platform ${platformChanged ? 'changed' : ''}">${platform}</div>
+                    <div class="train-platform ${t.trackChanged ? 'changed' : ''}">${t.track}</div>
                 </div>`;
             }).join('');
         }
