@@ -548,6 +548,38 @@
             width: 80px;
         }
 
+        .pencil-btn {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85em;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.2s, box-shadow 0.2s;
+            z-index: 2;
+            line-height: 1;
+            color: #666;
+        }
+
+        .outfit-card:hover .pencil-btn {
+            opacity: 1;
+        }
+
+        .pencil-btn:hover {
+            background: #f0f4f8;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+            color: #1a3a52;
+            border-color: #b0c4d8;
+        }
+
         .delete-btn {
             flex: 1;
             padding: 10px 14px;
@@ -2142,6 +2174,7 @@
         <div class="tab-content" id="tab-mios">
             <div class="mios-header">
                 <button class="btn-nuevo-outfit" id="btnNuevoOutfit" onclick="toggleCreateForm()">+ Nuevo outfit</button>
+                <button class="btn-debug-storage" onclick="debugStorage()" style="font-size:0.75em; padding:6px 12px; background:#f0f0f0; border:1px solid #ddd; border-radius:8px; cursor:pointer; color:#666;">🔍 Ver localStorage</button>
             </div>
             <div class="create-form-wrapper" id="createFormWrapper" style="display:none">
                 <div class="form-section">
@@ -2241,7 +2274,7 @@
             <div id="customOutfitsContainer"></div>
         </div>
 
-                <!-- STATS PANEL -->
+        <!-- STATS PANEL -->
         <div class="stats-panel">
             <div class="stats-header" onclick="toggleStats()">
                 <h3>📊 Estadísticas de uso</h3>
@@ -2723,17 +2756,29 @@
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById(`tab-${tabName}`).classList.add('active');
-            event.target.classList.add('active');
+            // Highlight the matching tab button by text content
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                if (btn.getAttribute('onclick') === `switchTab('${tabName}')`) btn.classList.add('active');
+            });
             if (tabName === 'mios') renderCustomOutfits();
         }
 
         // ============ SUGGESTED OUTFITS ============
+        function applyOverrides(outfitList) {
+            const overrides = JSON.parse(localStorage.getItem('outfitOverrides')) || {};
+            return outfitList.map(o => {
+                if (!overrides[o.id]) return o;
+                const ov = overrides[o.id];
+                return { ...o, ...ov, prendas: { ...o.prendas, ...ov.prendas } };
+            });
+        }
+
         function renderOutfits(filtro = 'todos') {
             const grid = document.getElementById('outfitsGrid');
             grid.innerHTML = '';
 
-            // Combinar outfits sugeridos con custom
-            const allOutfits = [...outfits];
+            // Combinar outfits sugeridos (con overrides) con custom
+            const allOutfits = applyOverrides([...outfits]);
             const customOutfits = JSON.parse(localStorage.getItem('customOutfits')) || [];
             allOutfits.push(...customOutfits);
 
@@ -2872,6 +2917,7 @@
                         👕 ${usageCount}
                     </div>
                 </div>
+                <button class="pencil-btn" onclick="event.stopPropagation(); openEditOutfit(${outfit.id})" title="Editar outfit">✎</button>
                 <div class="outfit-header">
                     <div class="outfit-header-text">
                         <div class="outfit-title">${outfit.nombre}</div>
@@ -2994,7 +3040,7 @@
         }
 
         function updateFilterCounts() {
-            const allOutfits = [...outfits];
+            const allOutfits = applyOverrides([...outfits]);
             const customOutfits = JSON.parse(localStorage.getItem('customOutfits')) || [];
             allOutfits.push(...customOutfits);
 
@@ -3048,6 +3094,7 @@
 
                 card.innerHTML = `
                     <div class="custom-badge">TU OUTFIT</div>
+                    <button class="pencil-btn" onclick="event.stopPropagation(); openEditOutfit(${outfit.id})" title="Editar outfit">✎</button>
                     <div class="outfit-header">
                         <div class="outfit-title">${outfit.nombre}</div>
                         <div class="outfit-context">${outfit.contexto}</div>
@@ -3074,7 +3121,6 @@
                         <div class="outfit-bottom">
                             <div class="outfit-notes">${outfit.notas}</div>
                             <div class="outfit-actions-inline">
-                                <button class="edit-btn" onclick="openEditOutfit(${outfit.id})">✏️ Editar</button>
                                 <button class="delete-btn" onclick="deleteOutfit(${outfit.id}, '${outfit.nombre.replace(/'/g, "\\'")}')">🗑 Eliminar</button>
                             </div>
                         </div>
@@ -3310,9 +3356,18 @@
 
         // ============ EDIT OUTFIT ============
         function openEditOutfit(id) {
+            // Look in custom outfits first, then predefined
             let savedOutfits = JSON.parse(localStorage.getItem('customOutfits')) || [];
-            const outfit = savedOutfits.find(o => o.id === id);
-            if (!outfit) return;
+            const overrides  = JSON.parse(localStorage.getItem('outfitOverrides')) || {};
+            let outfit = savedOutfits.find(o => o.id === id);
+            let isPredefined = false;
+            if (!outfit) {
+                const base = outfits.find(o => o.id === id);
+                if (!base) return;
+                // Apply any existing override on top of base
+                outfit = overrides[id] ? { ...base, ...overrides[id], prendas: { ...base.prendas, ...overrides[id].prendas } } : { ...base };
+                isPredefined = true;
+            }
 
             const overlay = document.createElement('div');
             overlay.className = 'edit-overlay';
@@ -3403,7 +3458,8 @@
 
                     <div class="dialog-buttons">
                         <button class="btn-cancel" onclick="closeEditDialog()">Cancelar</button>
-                        <button class="btn-save-edit" onclick="saveEditOutfit(${id})">Guardar cambios 💾</button>
+                        ${isPredefined ? `<button class="btn-cancel" onclick="restoreOutfit(${id})" style="color:#c62828;">↩ Restaurar</button>` : ''}
+                        <button class="btn-save-edit" onclick="saveEditOutfit(${id}, ${isPredefined})">Guardar cambios 💾</button>
                     </div>
                 </div>
             `;
@@ -3419,13 +3475,26 @@
             if (overlay) overlay.remove();
         }
 
-        function saveEditOutfit(id) {
-            let savedOutfits = JSON.parse(localStorage.getItem('customOutfits')) || [];
-            const idx = savedOutfits.findIndex(o => o.id === id);
-            if (idx === -1) return;
+        function restoreOutfit(id) {
+            const overrides = JSON.parse(localStorage.getItem('outfitOverrides')) || {};
+            delete overrides[id];
+            localStorage.setItem('outfitOverrides', JSON.stringify(overrides));
+            closeEditDialog();
+            const currentFilter = document.querySelector('#tab-sugeridos .filter-btn.active')?.textContent || 'Todos';
+            const filterType = currentFilter.includes('Todos') ? 'todos' :
+                               currentFilter.includes('Formal') ? 'formal' :
+                               currentFilter.includes('Elegante') ? 'elegante-sport' :
+                               currentFilter.includes('Casual') ? 'casual' : 'todos';
+            renderOutfits(filterType);
+            const toast = document.getElementById('deleteSuccessToast');
+            toast.textContent = '↩ Outfit restaurado al original';
+            toast.style.background = '#666';
+            toast.classList.add('show');
+            setTimeout(() => { toast.classList.remove('show'); setTimeout(() => { toast.textContent = '🗑 Outfit eliminado'; toast.style.background = '#c62828'; }, 400); }, 2500);
+        }
 
-            savedOutfits[idx] = {
-                ...savedOutfits[idx],
+        function saveEditOutfit(id, isPredefined = false) {
+            const updated = {
                 nombre:    document.getElementById('editName').value.trim(),
                 contexto:  document.getElementById('editContext').value.trim(),
                 formalidad: document.getElementById('editFormality').value,
@@ -3438,9 +3507,28 @@
                 notas: document.getElementById('editNotes').value.trim() || 'Sin notas',
             };
 
-            localStorage.setItem('customOutfits', JSON.stringify(savedOutfits));
-            closeEditDialog();
-            renderCustomOutfits();
+            if (isPredefined) {
+                // Save as override — doesn't touch the base outfits array
+                const overrides = JSON.parse(localStorage.getItem('outfitOverrides')) || {};
+                overrides[id] = updated;
+                localStorage.setItem('outfitOverrides', JSON.stringify(overrides));
+                closeEditDialog();
+                // Re-render sugeridos with current filter
+                const currentFilter = document.querySelector('#tab-sugeridos .filter-btn.active')?.textContent || 'Todos';
+                const filterType = currentFilter.includes('Todos') ? 'todos' :
+                                   currentFilter.includes('Formal') ? 'formal' :
+                                   currentFilter.includes('Elegante') ? 'elegante-sport' :
+                                   currentFilter.includes('Casual') ? 'casual' : 'todos';
+                renderOutfits(filterType);
+            } else {
+                let savedOutfits = JSON.parse(localStorage.getItem('customOutfits')) || [];
+                const idx = savedOutfits.findIndex(o => o.id === id);
+                if (idx === -1) return;
+                savedOutfits[idx] = { ...savedOutfits[idx], ...updated };
+                localStorage.setItem('customOutfits', JSON.stringify(savedOutfits));
+                closeEditDialog();
+                renderCustomOutfits();
+            }
 
             // Show success toast reusing delete toast styling
             const toast = document.getElementById('deleteSuccessToast');
@@ -3461,7 +3549,7 @@
             const usageStats = JSON.parse(localStorage.getItem('usageStats')) || {};
             const favorites  = JSON.parse(localStorage.getItem('favorites'))  || [];
             const customOutfits = JSON.parse(localStorage.getItem('customOutfits')) || [];
-            const allOutfits = [...outfits, ...customOutfits];
+            const allOutfits = [...applyOverrides([...outfits]), ...customOutfits];
 
             // Calcular totales
             const totalUsed = Object.values(usageStats).reduce((a, b) => a + b, 0);
@@ -3794,7 +3882,7 @@
         }
 
         function getWeatherRecommendations(condition, maxTemp) {
-            const allOutfits = [...outfits];
+            const allOutfits = applyOverrides([...outfits]);
             const customOutfits = JSON.parse(localStorage.getItem('customOutfits')) || [];
             allOutfits.push(...customOutfits);
 
@@ -3815,7 +3903,7 @@
             const grid = document.getElementById('outfitsGrid');
             grid.innerHTML = '';
 
-            const allOutfits = [...outfits];
+            const allOutfits = applyOverrides([...outfits]);
             const customOutfits = JSON.parse(localStorage.getItem('customOutfits')) || [];
             allOutfits.push(...customOutfits);
             const total = allOutfits.length;
@@ -3943,7 +4031,7 @@
 
             // Populate select with all outfits
             const customOutfits = JSON.parse(localStorage.getItem('customOutfits')) || [];
-            const allOutfits = [...outfits, ...customOutfits];
+            const allOutfits = [...applyOverrides([...outfits]), ...customOutfits];
             const sel = document.getElementById('calDetailSelect');
             sel.innerHTML = '<option value="">— Elegir outfit —</option>';
             ['formal','elegante-sport','casual'].forEach(cat => {
@@ -3969,7 +4057,7 @@
             if (!id) return;
 
             const customOutfits = JSON.parse(localStorage.getItem('customOutfits')) || [];
-            const allOutfits = [...outfits, ...customOutfits];
+            const allOutfits = [...applyOverrides([...outfits]), ...customOutfits];
             const outfit = allOutfits.find(o => o.id == id);
             if (!outfit) return;
 
@@ -4133,10 +4221,12 @@
             const transfer   = isDirect ? null : (legs[0].destination?.name || 'Amsterdam C');
             const track      = first.origin?.actualTrack || first.origin?.plannedTrack || '?';
             const trackChanged = first.origin?.actualTrack && first.origin.actualTrack !== first.origin.plannedTrack;
+            const track2       = isDirect ? null : (last.origin?.actualTrack || last.origin?.plannedTrack || null);
+            const track2Changed = !isDirect && last.origin?.actualTrack && last.origin.actualTrack !== last.origin.plannedTrack;
             const type1      = first.product?.shortCategoryName || first.product?.categoryCode || 'IC';
             const type2      = isDirect ? null : (last.product?.shortCategoryName || last.product?.categoryCode || 'IC');
 
-            return { depPlanned, depActual, arrActual, delay, cancelled, transfer, track, trackChanged, type1, type2, isDirect };
+            return { depPlanned, depActual, arrActual, delay, cancelled, transfer, track, trackChanged, track2, track2Changed, type1, type2, isDirect };
         }
 
         function renderTrainFab(trips) {
@@ -4212,7 +4302,10 @@
                         <div class="train-dest">${depTime} → ${arrTime} · Utrecht C</div>
                         <div class="train-meta">${t.isDirect ? t.type1 + ' · Directo' : t.type1 + '+' + t.type2 + ' · via ' + t.transfer} · ${minsLabel}</div>
                     </div>
-                    <div class="train-platform ${t.trackChanged ? 'changed' : ''}">${t.track}</div>
+                    <div style="display:flex; flex-direction:column; gap:3px; align-items:flex-end;">
+                        <div class="train-platform ${t.trackChanged ? 'changed' : ''}">${t.track}</div>
+                        ${!t.isDirect && t.track2 ? `<div class="train-platform ${t.track2Changed ? 'changed' : ''}" style="opacity:0.65; font-size:0.78em;">${t.track2}</div>` : ''}
+                    </div>
                 </div>`;
             }).join('');
         }
@@ -4244,8 +4337,15 @@
             document.getElementById('trainOverlay').classList.remove('open');
         }
 
+        function debugStorage() {
+            const raw = localStorage.getItem('customOutfits');
+            const outfits = JSON.parse(raw) || [];
+            alert(`localStorage 'customOutfits':\n\n${outfits.length} outfit(s) encontrado(s).\n\n${outfits.length > 0 ? outfits.map(o => `• ${o.nombre} (${o.formalidad})`).join('\n') : 'Vacío.'}`);
+        }
+
         // ============ INIT ============
         renderOutfits();
+        renderCustomOutfits(); // pre-load so outfits are ready when tab is opened
         updateStats();
         fetchWeather('Haarlem');
         initTrainFab();
