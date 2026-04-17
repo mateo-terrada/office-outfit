@@ -387,17 +387,11 @@
             font-size: 0.8em;
             font-weight: 600;
             color: #666;
-            cursor: pointer;
-            transition: all 0.2s;
+            cursor: default;
             display: flex;
             align-items: center;
             gap: 5px;
-        }
-
-        .usage-counter:hover {
-            background: #e0e0e0;
-            border-color: #999;
-            transform: scale(1.05);
+            user-select: none;
         }
 
         .usage-counter.used {
@@ -2904,16 +2898,15 @@
             const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
             const isFavorite = favorites.includes(outfit.id);
 
-            // Cargar contadores de uso
-            const usageStats = JSON.parse(localStorage.getItem('usageStats')) || {};
-            const usageCount = usageStats[outfit.id] || 0;
+            // Contar usos desde el calendario
+            const usageCount = getCalendarUsageCount(outfit.id);
 
             card.innerHTML = `
                 <div class="card-actions">
                     <button class="favorite-btn ${isFavorite ? 'active' : ''}" onclick="toggleFavorite(event, ${outfit.id})" title="Favorito">
                         ${isFavorite ? '⭐' : '☆'}
                     </button>
-                    <div class="usage-counter ${usageCount > 0 ? 'used' : ''}" onclick="incrementUsage(event, ${outfit.id})" title="Marcar como usado">
+                    <div class="usage-counter ${usageCount > 0 ? 'used' : ''}" title="${usageCount > 0 ? `Usado ${usageCount} vez${usageCount > 1 ? 'es' : ''} según calendario` : 'Sin usos registrados'}">
                         👕 ${usageCount}
                     </div>
                 </div>
@@ -2952,6 +2945,11 @@
                 </div>
             `;
             return card;
+        }
+
+        function getCalendarUsageCount(outfitId) {
+            const data = JSON.parse(localStorage.getItem('calendarOutfits')) || {};
+            return Object.values(data).filter(entry => String(entry.id) === String(outfitId)).length;
         }
 
         function incrementUsage(event, outfitId) {
@@ -3073,6 +3071,9 @@
             const container = document.getElementById('customOutfitsContainer');
             const savedOutfits = JSON.parse(localStorage.getItem('customOutfits')) || [];
 
+            console.log('[Mis Outfits] savedOutfits count:', savedOutfits.length);
+            savedOutfits.forEach((o, i) => console.log(`  [${i}] id=${o.id} nombre=${o.nombre} formalidad=${o.formalidad} prendas=${JSON.stringify(o.prendas)}`));
+
             if (savedOutfits.length === 0) {
                 container.innerHTML = '<div class="empty-state"><h2>Todavía no creaste ningún outfit</h2><p>Usá el botón "+ Nuevo outfit" para empezar 👕</p></div>';
                 return;
@@ -3082,46 +3083,66 @@
             grid.className = 'outfits-grid';
 
             savedOutfits.forEach(outfit => {
+                // Guard: skip malformed entries missing required fields
+                if (!outfit || !outfit.id || !outfit.nombre) {
+                    console.warn('[Mis Outfits] Skipping malformed outfit:', outfit);
+                    return;
+                }
+
+                // Ensure prendas exists with fallbacks
+                const prendas = outfit.prendas || {};
+                const pantalon = prendas.pantalon || '—';
+                const camisa   = prendas.camisa   || '—';
+                const abrigo   = prendas.abrigo   || '—';
+                const zapatos  = prendas.zapatos  || '—';
+                const notas    = outfit.notas || '';
+                const formalidad = outfit.formalidad || 'casual';
+
                 const card = document.createElement('div');
                 card.className = 'outfit-card show custom';
-                card.dataset.formality = outfit.formalidad;
+                card.dataset.formality = formalidad;
 
-                const formalidadLabel = outfit.formalidad === 'elegante-sport'
+                const formalidadLabel = formalidad === 'elegante-sport'
                     ? 'Elegante Sport'
-                    : outfit.formalidad === 'formal'
+                    : formalidad === 'formal'
                     ? 'Formal'
                     : 'Casual';
 
+                // Use string id to avoid issues with large Date.now() ids in onclick
+                const idStr = String(outfit.id);
+                const nombreEscaped = outfit.nombre.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+
                 card.innerHTML = `
                     <div class="custom-badge">TU OUTFIT</div>
-                    <button class="pencil-btn" onclick="event.stopPropagation(); openEditOutfit(${outfit.id})" title="Editar outfit">✎</button>
+                    <button class="pencil-btn" onclick="event.stopPropagation(); openEditOutfitById('${idStr}')" title="Editar outfit">✎</button>
                     <div class="outfit-header">
                         <div class="outfit-title">${outfit.nombre}</div>
-                        <div class="outfit-context">${outfit.contexto}</div>
+                        <div class="outfit-context">${outfit.contexto || ''}</div>
                         ${renderColorDots(outfit)}
-                        <span class="formality-badge ${outfit.formalidad}" style="margin-top:8px; display:inline-block;">${formalidadLabel}</span>
+                        <span class="formality-badge ${formalidad}" style="margin-top:8px; display:inline-block;">${formalidadLabel}</span>
                     </div>
                     <div class="outfit-content">
                         <div class="prenda-grupo">
                             <span class="prenda-tipo">Pantalón</span>
-                            <div class="prenda-nombre">${outfit.prendas.pantalon}</div>
+                            <div class="prenda-nombre">${pantalon}</div>
                         </div>
                         <div class="prenda-grupo">
                             <span class="prenda-tipo">Camisa</span>
-                            <div class="prenda-nombre">${outfit.prendas.camisa}</div>
+                            <div class="prenda-nombre">${camisa}</div>
                         </div>
                         <div class="prenda-grupo">
                             <span class="prenda-tipo">Abrigo</span>
-                            <div class="prenda-nombre">${outfit.prendas.abrigo}</div>
+                            <div class="prenda-nombre">${abrigo}</div>
                         </div>
                         <div class="prenda-grupo">
                             <span class="prenda-tipo">Zapatos</span>
-                            <div class="prenda-nombre">${outfit.prendas.zapatos}</div>
+                            <div class="prenda-nombre">${zapatos}</div>
                         </div>
                         <div class="outfit-bottom">
-                            <div class="outfit-notes">${outfit.notas}</div>
+                            <div class="outfit-notes">${notas}</div>
                             <div class="outfit-actions-inline">
-                                <button class="delete-btn" onclick="deleteOutfit(${outfit.id}, '${outfit.nombre.replace(/'/g, "\\'")}')">🗑 Eliminar</button>
+                                <button class="edit-btn" onclick="openEditOutfitById('${idStr}')">✏️ Editar</button>
+                                <button class="delete-btn" onclick="deleteOutfitById('${idStr}', '${nombreEscaped}')">🗑 Eliminar</button>
                             </div>
                         </div>
                     </div>
@@ -3131,6 +3152,20 @@
 
             container.innerHTML = '';
             container.appendChild(grid);
+            animateCards(container);
+        }
+
+        // String-safe wrappers to handle both numeric and Date.now() ids
+        function openEditOutfitById(idStr) {
+            const savedOutfits = JSON.parse(localStorage.getItem('customOutfits')) || [];
+            const outfit = savedOutfits.find(o => String(o.id) === idStr);
+            if (outfit) openEditOutfit(outfit.id);
+        }
+
+        function deleteOutfitById(idStr, nombre) {
+            const savedOutfits = JSON.parse(localStorage.getItem('customOutfits')) || [];
+            const outfit = savedOutfits.find(o => String(o.id) === idStr);
+            if (outfit) deleteOutfit(outfit.id, nombre);
         }
 
         function deleteOutfit(id, nombre) {
@@ -4071,6 +4106,14 @@
 
             document.getElementById('calDetailCurrent').textContent = `Outfit registrado: ${outfit.nombre}`;
             renderCalendar();
+            // Refresh outfit cards so usage counter updates immediately
+            const activeFilter = document.querySelector('#tab-sugeridos .filter-btn.active');
+            if (activeFilter) {
+                const ft = activeFilter.textContent;
+                const filterType = ft.includes('Todos') ? 'todos' : ft.includes('Formal') ? 'formal' : ft.includes('Elegante') ? 'elegante-sport' : ft.includes('Casual') ? 'casual' : 'todos';
+                renderOutfits(filterType);
+            }
+            renderCustomOutfits();
 
             // Toast
             const toast = document.getElementById('randomSuccessToast');
@@ -4087,6 +4130,14 @@
             document.getElementById('calDetailCurrent').textContent = 'Sin outfit registrado';
             document.getElementById('calDetailSelect').value = '';
             renderCalendar();
+            // Refresh outfit cards so usage counter updates immediately
+            const activeFilter = document.querySelector('#tab-sugeridos .filter-btn.active');
+            if (activeFilter) {
+                const ft = activeFilter.textContent;
+                const filterType = ft.includes('Todos') ? 'todos' : ft.includes('Formal') ? 'formal' : ft.includes('Elegante') ? 'elegante-sport' : ft.includes('Casual') ? 'casual' : 'todos';
+                renderOutfits(filterType);
+            }
+            renderCustomOutfits();
         }
 
         // ============ TRAIN WIDGET ============
