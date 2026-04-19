@@ -1802,6 +1802,102 @@
         }
         .cal-detail-save:hover { background: #0f2438; }
 
+        /* ── WEATHER MODAL ── */
+        .weather-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.45);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1100;
+            animation: fadeIn 0.2s ease;
+        }
+        .weather-overlay.open { display: flex; }
+        .weather-modal-dialog {
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            width: min(380px, 94vw);
+            max-height: 88vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+            animation: slideUp 0.22s ease;
+        }
+        .weather-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+        .weather-modal-title {
+            font-weight: 700;
+            color: #1a3a52;
+            font-size: 1.05em;
+        }
+        .weather-modal-sub {
+            font-size: 0.8em;
+            color: #999;
+            margin-top: 2px;
+        }
+        .weather-hourly-list {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .weather-hour-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 9px 12px;
+            border-radius: 10px;
+            background: #f8f9fa;
+            font-size: 0.9em;
+        }
+        .weather-hour-row.now {
+            background: #eef3f8;
+            border-left: 3px solid #1a3a52;
+        }
+        .weather-hour-row.past {
+            opacity: 0.45;
+        }
+        .weather-hour-time {
+            font-weight: 700;
+            color: #1a3a52;
+            min-width: 38px;
+            font-size: 0.88em;
+        }
+        .weather-hour-emoji {
+            font-size: 1.2em;
+            min-width: 24px;
+            text-align: center;
+        }
+        .weather-hour-temp {
+            font-weight: 700;
+            color: #333;
+            min-width: 34px;
+        }
+        .weather-hour-rain {
+            font-size: 0.78em;
+            color: #4a90b8;
+            font-weight: 600;
+        }
+        .weather-modal-outfit-btn {
+            width: 100%;
+            margin-top: 14px;
+            padding: 11px;
+            background: #1a3a52;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.88em;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .weather-modal-outfit-btn:hover { background: #0f2438; }
+
         /* ── TRAIN WIDGET ── */
         .train-fab {
             position: fixed;
@@ -2030,7 +2126,7 @@
     <div class="container">
         <header>
             <div class="header-widgets">
-                <div class="outfit-day-widget" id="outfitDayWidget" onclick="showWeatherRecommendations()">
+                <div class="outfit-day-widget" id="outfitDayWidget" onclick="openWeatherModal()">
                     <div id="outfitDayMannequin"></div>
                     <div class="outfit-day-info">
                         <span class="outfit-day-label">Outfit del día</span>
@@ -2058,6 +2154,25 @@
                 </div>
                 <div class="train-updated" id="trainUpdated"></div>
                 <button class="train-refresh" onclick="fetchTrains()">↻ Actualizar</button>
+            </div>
+        </div>
+
+        <!-- WEATHER MODAL -->
+        <div class="weather-overlay" id="weatherOverlay" onclick="closeWeatherModal(event)">
+            <div class="weather-modal-dialog">
+                <div class="weather-modal-header">
+                    <div>
+                        <div class="weather-modal-title" id="weatherModalTitle">☀️ Hoy en Haarlem</div>
+                        <div class="weather-modal-sub" id="weatherModalSub">Evolución del día</div>
+                    </div>
+                    <button class="train-close" onclick="closeWeatherModal()">✕</button>
+                </div>
+                <div class="weather-hourly-list" id="weatherHourlyList">
+                    <div class="train-error">Cargando...</div>
+                </div>
+                <button class="weather-modal-outfit-btn" onclick="closeWeatherModal(); showWeatherRecommendations()">
+                    🧥 Ver outfits recomendados para hoy
+                </button>
             </div>
         </div>
 
@@ -3071,9 +3186,6 @@
             const container = document.getElementById('customOutfitsContainer');
             const savedOutfits = JSON.parse(localStorage.getItem('customOutfits')) || [];
 
-            console.log('[Mis Outfits] savedOutfits count:', savedOutfits.length);
-            savedOutfits.forEach((o, i) => console.log(`  [${i}] id=${o.id} nombre=${o.nombre} formalidad=${o.formalidad} prendas=${JSON.stringify(o.prendas)}`));
-
             if (savedOutfits.length === 0) {
                 container.innerHTML = '<div class="empty-state"><h2>Todavía no creaste ningún outfit</h2><p>Usá el botón "+ Nuevo outfit" para empezar 👕</p></div>';
                 return;
@@ -3083,70 +3195,33 @@
             grid.className = 'outfits-grid';
 
             savedOutfits.forEach(outfit => {
-                // Guard: skip malformed entries missing required fields
-                if (!outfit || !outfit.id || !outfit.nombre) {
-                    console.warn('[Mis Outfits] Skipping malformed outfit:', outfit);
-                    return;
-                }
+                if (!outfit || !outfit.id || !outfit.nombre) return;
 
-                // Ensure prendas exists with fallbacks
-                const prendas = outfit.prendas || {};
-                const pantalon = prendas.pantalon || '—';
-                const camisa   = prendas.camisa   || '—';
-                const abrigo   = prendas.abrigo   || '—';
-                const zapatos  = prendas.zapatos  || '—';
-                const notas    = outfit.notas || '';
-                const formalidad = outfit.formalidad || 'casual';
+                // Ensure prendas fallbacks so createOutfitCard doesn't crash
+                outfit.prendas = outfit.prendas || {};
+                outfit.prendas.pantalon = outfit.prendas.pantalon || '—';
+                outfit.prendas.camisa   = outfit.prendas.camisa   || '—';
+                outfit.prendas.abrigo   = outfit.prendas.abrigo   || '—';
+                outfit.prendas.zapatos  = outfit.prendas.zapatos  || '—';
+                outfit.notas            = outfit.notas || '';
+                outfit.formalidad       = outfit.formalidad || 'casual';
 
-                const card = document.createElement('div');
-                card.className = 'outfit-card show custom';
-                card.dataset.formality = formalidad;
+                // Build card using same function as predefined outfits
+                const card = createOutfitCard(outfit);
+                card.classList.add('custom');
 
-                const formalidadLabel = formalidad === 'elegante-sport'
-                    ? 'Elegante Sport'
-                    : formalidad === 'formal'
-                    ? 'Formal'
-                    : 'Casual';
-
-                // Use string id to avoid issues with large Date.now() ids in onclick
-                const idStr = String(outfit.id);
+                // Add edit + delete buttons at the bottom of outfit-content
+                const idStr        = String(outfit.id);
                 const nombreEscaped = outfit.nombre.replace(/'/g, "\\'").replace(/"/g, '&quot;');
-
-                card.innerHTML = `
-                    <div class="custom-badge">TU OUTFIT</div>
-                    <button class="pencil-btn" onclick="event.stopPropagation(); openEditOutfitById('${idStr}')" title="Editar outfit">✎</button>
-                    <div class="outfit-header">
-                        <div class="outfit-title">${outfit.nombre}</div>
-                        <div class="outfit-context">${outfit.contexto || ''}</div>
-                        ${renderColorDots(outfit)}
-                        <span class="formality-badge ${formalidad}" style="margin-top:8px; display:inline-block;">${formalidadLabel}</span>
-                    </div>
-                    <div class="outfit-content">
-                        <div class="prenda-grupo">
-                            <span class="prenda-tipo">Pantalón</span>
-                            <div class="prenda-nombre">${pantalon}</div>
-                        </div>
-                        <div class="prenda-grupo">
-                            <span class="prenda-tipo">Camisa</span>
-                            <div class="prenda-nombre">${camisa}</div>
-                        </div>
-                        <div class="prenda-grupo">
-                            <span class="prenda-tipo">Abrigo</span>
-                            <div class="prenda-nombre">${abrigo}</div>
-                        </div>
-                        <div class="prenda-grupo">
-                            <span class="prenda-tipo">Zapatos</span>
-                            <div class="prenda-nombre">${zapatos}</div>
-                        </div>
-                        <div class="outfit-bottom">
-                            <div class="outfit-notes">${notas}</div>
-                            <div class="outfit-actions-inline">
-                                <button class="edit-btn" onclick="openEditOutfitById('${idStr}')">✏️ Editar</button>
-                                <button class="delete-btn" onclick="deleteOutfitById('${idStr}', '${nombreEscaped}')">🗑 Eliminar</button>
-                            </div>
-                        </div>
-                    </div>
+                const actionsDiv   = document.createElement('div');
+                actionsDiv.className = 'outfit-actions-inline';
+                actionsDiv.style.cssText = 'display:flex; gap:8px; padding: 0 20px 16px;';
+                actionsDiv.innerHTML = `
+                    <button class="edit-btn" style="flex:1" onclick="openEditOutfitById('${idStr}')">✏️ Editar</button>
+                    <button class="delete-btn" style="flex:1" onclick="deleteOutfitById('${idStr}', '${nombreEscaped}')">🗑 Eliminar</button>
                 `;
+                card.appendChild(actionsDiv);
+
                 grid.appendChild(card);
             });
 
@@ -3704,6 +3779,74 @@
             setTimeout(() => toast.classList.remove('show'), 2500);
         }
 
+        // ============ WEATHER MODAL ============
+        function openWeatherModal() {
+            document.getElementById('weatherOverlay').classList.add('open');
+            renderHourlyWeather();
+        }
+
+        function closeWeatherModal(e) {
+            if (e && e.target !== document.getElementById('weatherOverlay')) return;
+            document.getElementById('weatherOverlay').classList.remove('open');
+        }
+
+        function renderHourlyWeather() {
+            const list    = document.getElementById('weatherHourlyList');
+            const title   = document.getElementById('weatherModalTitle');
+            const sub     = document.getElementById('weatherModalSub');
+            const emoji   = getWeatherEmoji(currentWeatherCondition);
+            const tempStr = currentMaxTemp !== null ? `${currentMaxTemp}° / ${currentMinTemp}°` : '';
+
+            title.textContent = `${emoji} Hoy en ${currentLocation || 'Haarlem'}`;
+            sub.textContent   = tempStr ? `Máx ${currentMaxTemp}° · Mín ${currentMinTemp}°` : 'Evolución del día';
+
+            if (!hourlyWeatherData) {
+                list.innerHTML = '<div class="train-error">Sin datos horarios disponibles.</div>';
+                return;
+            }
+
+            const times  = hourlyWeatherData.time || [];
+            const temps  = hourlyWeatherData.temperature_2m || [];
+            const codes  = hourlyWeatherData.weathercode || [];
+            const rains  = hourlyWeatherData.precipitation_probability || [];
+
+            const now        = new Date();
+            const currentHour = now.getHours();
+
+            // Show hours from 6am to 22pm, step every 2 hours
+            const rows = [];
+            for (let i = 0; i < times.length; i++) {
+                const hour = new Date(times[i]).getHours();
+                if (hour < 6 || hour > 22) continue;
+                if (hour % 2 !== 0) continue;
+
+                const temp      = Math.round(temps[i]);
+                const code      = codes[i];
+                const rain      = rains[i] || 0;
+                const isPast    = hour < currentHour;
+                const isNow     = hour === currentHour || hour === currentHour - (currentHour % 2 === 0 ? 0 : 1);
+                const hourEmoji = getWeatherEmoji(getWeatherDescription(code));
+                const rowClass  = isPast ? 'weather-hour-row past' : isNow ? 'weather-hour-row now' : 'weather-hour-row';
+                const nowLabel  = isNow ? ' <span style="font-size:0.72em;color:#1a3a52;font-weight:700;">AHORA</span>' : '';
+                const rainLabel = rain >= 10 ? `<span class="weather-hour-rain">💧 ${rain}%</span>` : '';
+
+                rows.push(`<div class="${rowClass}">
+                    <span class="weather-hour-time">${String(hour).padStart(2,'0')}:00${nowLabel}</span>
+                    <span class="weather-hour-emoji">${hourEmoji}</span>
+                    <span class="weather-hour-temp">${temp}°</span>
+                    ${rainLabel}
+                </div>`);
+            }
+
+            list.innerHTML = rows.length ? rows.join('') : '<div class="train-error">Sin datos para hoy.</div>';
+
+            // Scroll to current hour
+            setTimeout(() => {
+                const nowRow = list.querySelector('.weather-hour-row.now');
+                if (nowRow) nowRow.scrollIntoView({ block: 'center', behavior: 'smooth' });
+            }, 100);
+        }
+
         // ============ WEATHER ============
         let currentLocation = null;
         let currentWeatherCondition = null;
@@ -3719,6 +3862,8 @@
             'Londres': { lat: 51.5074, lng: -0.1278 }
         };
 
+        let hourlyWeatherData = null; // store hourly data for modal
+
         function fetchWeather(location = 'Amsterdam') {
             const coords = weatherLocations[location];
             
@@ -3727,8 +3872,7 @@
                 return;
             }
 
-            // Usar Open-Meteo API (sin autenticación, sin CORS)
-            const url = `https://api.open-meteo.com/v1/forecast?latitude=${coords.lat}&longitude=${coords.lng}&daily=weathercode,temperature_2m_max,temperature_2m_min&temperature_unit=celsius&timezone=auto`;
+            const url = `https://api.open-meteo.com/v1/forecast?latitude=${coords.lat}&longitude=${coords.lng}&daily=weathercode,temperature_2m_max,temperature_2m_min&hourly=temperature_2m,weathercode,precipitation_probability&temperature_unit=celsius&timezone=auto&forecast_days=1`;
             
             fetch(url)
                 .then(response => response.json())
@@ -3741,6 +3885,7 @@
                     currentLocation = location;
                     currentMaxTemp = maxTemp;
                     currentMinTemp = minTemp;
+                    hourlyWeatherData = data.hourly || null;
                     updateWeatherDisplay(maxTemp, minTemp, description, location);
                 })
                 .catch(error => {
@@ -4198,8 +4343,8 @@
         }
 
         function formatArrival(isoString) {
-            // Add 5 min walk from Utrecht Centraal to office
-            const d = new Date(new Date(isoString).getTime() + 5 * 60000);
+            // Add 10 min walk from Utrecht Centraal to office
+            const d = new Date(new Date(isoString).getTime() + 10 * 60000);
             return d.toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' });
         }
 
