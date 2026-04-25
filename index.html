@@ -768,6 +768,24 @@
             border-color: #1565c0;
         }
 
+        .btn-snapshot {
+            flex: 1;
+            padding: 12px;
+            background: #1a3a52;
+            color: white;
+            border: 1px solid #1a3a52;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9em;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.2s;
+        }
+        .btn-snapshot:hover {
+            background: #0f2438;
+            border-color: #0f2438;
+        }
+
         /* EDIT MODAL */
         .edit-overlay {
             position: fixed;
@@ -1905,6 +1923,13 @@
             border-radius: 12px;
             margin-bottom: 2px;
         }
+        .weather-outfit-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            gap: 8px;
+        }
         .weather-outfit-divider {
             font-size: 0.7em;
             font-weight: 700;
@@ -2215,7 +2240,10 @@
                 </div>
                 <div class="weather-outfit-section" id="weatherOutfitSection" style="display:none">
                     <div class="weather-outfit-divider">Outfit del día</div>
-                    <div class="weather-outfit-name" id="weatherOutfitName"></div>
+                    <div class="weather-outfit-header">
+                        <div class="weather-outfit-name" id="weatherOutfitName"></div>
+                        <div id="weatherOutfitMannequin"></div>
+                    </div>
                     <div class="weather-outfit-prendas" id="weatherOutfitPrendas"></div>
                 </div>
                 <button class="weather-modal-outfit-btn" onclick="closeWeatherModal(); showWeatherRecommendations()">
@@ -2245,10 +2273,10 @@
         <!-- TAB: SUGERIDOS -->
         <div class="tab-content active" id="tab-sugeridos">
             <div class="filters">
-                <button class="filter-btn active" onclick="filterOutfits('todos')">Todos (17)</button>
-                <button class="filter-btn" onclick="filterOutfits('formal')">Formal (6)</button>
-                <button class="filter-btn" onclick="filterOutfits('elegante-sport')">Elegante Sport (6)</button>
-                <button class="filter-btn" onclick="filterOutfits('casual')">Casual (5)</button>
+                <button class="filter-btn active" id="filterBtn-todos" onclick="filterOutfits('todos')">Todos (17)</button>
+                <button class="filter-btn" id="filterBtn-formal" onclick="filterOutfits('formal')">Formal (6)</button>
+                <button class="filter-btn" id="filterBtn-elegante-sport" onclick="filterOutfits('elegante-sport')">Elegante Sport (6)</button>
+                <button class="filter-btn" id="filterBtn-casual" onclick="filterOutfits('casual')">Casual (5)</button>
                 <button class="filter-btn" onclick="filterOutfits('favoritos')">⭐ Favoritos</button>
                 <button class="filter-btn" onclick="filterOutfits('masusado')">🔥 Más usado</button>
             </div>
@@ -2292,6 +2320,7 @@
                                 <option value="Campera Patagonia bordeau">Patagonia roja/bordeau</option>
                                 <option value="Sweater UNIQLO azul">UNIQLO azul</option>
                                 <option value="Sweater UNIQLO celeste">UNIQLO celeste oscuro</option>
+                                <option value="Sweater Tommy Hilfiger azul oscuro">Tommy Hilfiger Cotton Cable azul</option>
                                 <option value="Quarter-zip Springfield gris">Quarter-zip gris Springfield</option>
                                 <option value="Quarter-zip Polo gris claro">Quarter-zip gris claro Polo</option>
                                 <option value="Quarter-zip Polo azul">Quarter-zip azul Polo</option>
@@ -2461,6 +2490,7 @@
                 <div class="stats-buttons">
                     <button class="btn-export" onclick="exportStats()">📥 Exportar datos</button>
                     <button class="btn-reset" onclick="resetAllStats()">🔄 Resetear contadores</button>
+                    <button class="btn-snapshot" onclick="saveSnapshot()">💾 Guardar snapshot</button>
                 </div>
             </div>
         </div>
@@ -2727,6 +2757,34 @@
                 },
                 notas: "Las texturas (haspeado + quarter-zip) dan sofisticación a un outfit casual. Smart.",
                 custom: false
+            },
+            {
+                id: 17,
+                nombre: "Burgundy Touch",
+                formalidad: "casual",
+                contexto: "Días con color pero sin ser agresivo, personal pero elegante",
+                prendas: {
+                    pantalon: "Pantalón gris claro",
+                    camisa: "Camisa blanca",
+                    abrigo: "Quarter-zip Polo bordeau",
+                    zapatos: "Adidas Spezial beige"
+                },
+                notas: "El bordeau + Adidas Spezial es una combo europea sofisticada. Diferente sin ser riesgoso.",
+                custom: false
+            },
+            {
+                id: 18,
+                nombre: "Tommy Cable",
+                formalidad: "elegante-sport",
+                contexto: "Días de reuniones internas o trabajo tranquilo en oficina",
+                prendas: {
+                    pantalon: "Pantalón gris oscuro",
+                    camisa: "Camisa blanca",
+                    abrigo: "Sweater Tommy Hilfiger azul oscuro",
+                    zapatos: "Zapatos marrones"
+                },
+                notas: "El cable knit de Tommy le da textura y carácter. Azul marino sobre gris es una combo clásica y europea.",
+                custom: false
             }
         ];
 
@@ -2741,7 +2799,8 @@
             { keywords: ['pantalón azul', 'levis azules'],                       color: '#1E3A5F' },
             { keywords: ['uniqlo azul', 'patagonia azul', 'polo azul',
                           'brooksfield azul', 'quarter-zip polo azul',
-                          'sweater uniqlo azul', 'chaleco patagonia azul'],      color: '#1E3A5F' },
+                          'sweater uniqlo azul', 'chaleco patagonia azul',
+                          'tommy hilfiger azul oscuro'],                          color: '#1E3A5F' },
             { keywords: ['azul/blanco'],                                         color: '#1E3A5F' },
             { keywords: ['azul'],                                                color: '#1E3A5F' },
             { keywords: ['celeste/blanco', 'celeste clara', 'celeste líneas',
@@ -2800,6 +2859,13 @@
             const noAbrigo  = outfit.prendas.abrigo.toLowerCase().includes('sin abrigo');
             const esChaleco = outfit.prendas.abrigo.toLowerCase().includes('chaleco');
 
+            // Sweaters de cuello redondo → no V cutout, cuello redondo del color del sweater
+            const esCrewneck = !noAbrigo && !esChaleco && (
+                outfit.prendas.abrigo.toLowerCase().includes('uniqlo') ||
+                outfit.prendas.abrigo.toLowerCase().includes('tommy hilfiger') ||
+                outfit.prendas.abrigo.toLowerCase().includes('brooksfield')
+            );
+
             // Chaleco → mangas muestran color de camisa, no del abrigo
             const mangaColor = esChaleco ? c.camisa : c.abrigo;
             const mangaDark  = esChaleco ? camisaDark : abrigoDark;
@@ -2812,7 +2878,23 @@
   <rect x="59" y="42" width="7" height="38" rx="3" fill="${camisaDark}" opacity="0.18"/>
   <!-- Arms camisa -->
   <rect x="12" y="43" width="13" height="28" rx="5" fill="${c.camisa}"/>
-  <rect x="65" y="43" width="13" height="28" rx="5" fill="${c.camisa}"/>` : `
+  <rect x="65" y="43" width="13" height="28" rx="5" fill="${c.camisa}"/>` : esCrewneck ? `
+  <!-- SWEATER cuello redondo: torso completo, sin V -->
+  <rect x="24" y="42" width="42" height="38" rx="5" fill="${c.abrigo}"/>
+  <rect x="24" y="42" width="7" height="38" rx="3" fill="${abrigoDark}" opacity="0.2"/>
+  <rect x="59" y="42" width="7" height="38" rx="3" fill="${abrigoDark}" opacity="0.2"/>
+  <!-- Camisa asomando: franja + puntas de cuello encima del sweater -->
+  <rect x="37" y="37" width="16" height="8" rx="2" fill="${c.camisa}"/>
+  <polygon points="40,38 37,44 42,43" fill="${c.camisa}"/>
+  <polygon points="50,38 53,44 48,43" fill="${c.camisa}"/>
+  <line x1="37" y1="43" x2="42" y2="43" stroke="${camisaDark}" stroke-width="0.6" opacity="0.5"/>
+  <line x1="53" y1="43" x2="48" y2="43" stroke="${camisaDark}" stroke-width="0.6" opacity="0.5"/>
+  <!-- Arms -->
+  <rect x="12" y="43" width="13" height="28" rx="5" fill="${c.abrigo}"/>
+  <rect x="65" y="43" width="13" height="28" rx="5" fill="${c.abrigo}"/>
+  <!-- Cuffs -->
+  <rect x="12" y="65" width="13" height="6" rx="3" fill="${abrigoLight}" opacity="0.55"/>
+  <rect x="65" y="65" width="13" height="6" rx="3" fill="${abrigoLight}" opacity="0.55"/>` : `
   <!-- ABRIGO con V cutout -->
   <polygon points="24,42 24,80 45,80 45,55 38,42" fill="${c.abrigo}"/>
   <polygon points="66,42 66,80 45,80 45,55 52,42" fill="${c.abrigo}"/>
@@ -2840,11 +2922,12 @@
 
   <!-- CAMISA: base layer (always drawn, visible in V and collar) -->
   <rect x="26" y="38" width="38" height="42" rx="4" fill="${c.camisa}"/>
-  <!-- Camisa collar lapels (stick up above sweater neckline) -->
+  <!-- Camisa collar lapels: only for V-neck or open collar, not crewneck -->
+  ${!esCrewneck && !noAbrigo ? `
   <polygon points="45,30 39,42 45,40" fill="${c.camisa}"/>
   <polygon points="45,30 51,42 45,40" fill="${c.camisa}"/>
   <line x1="45" y1="30" x2="39" y2="42" stroke="${camisaDark}" stroke-width="0.7" opacity="0.5"/>
-  <line x1="45" y1="30" x2="51" y2="42" stroke="${camisaDark}" stroke-width="0.7" opacity="0.5"/>
+  <line x1="45" y1="30" x2="51" y2="42" stroke="${camisaDark}" stroke-width="0.7" opacity="0.5"/>` : ''}
 
   ${abrigoLayers}
 
@@ -2909,11 +2992,14 @@
         // ============ SUGGESTED OUTFITS ============
         function applyOverrides(outfitList) {
             const overrides = JSON.parse(localStorage.getItem('outfitOverrides')) || {};
-            return outfitList.map(o => {
-                if (!overrides[o.id]) return o;
-                const ov = overrides[o.id];
-                return { ...o, ...ov, prendas: { ...o.prendas, ...ov.prendas } };
-            });
+            const deleted   = JSON.parse(localStorage.getItem('deletedOutfitIds')) || [];
+            return outfitList
+                .filter(o => !deleted.includes(o.id))
+                .map(o => {
+                    if (!overrides[o.id]) return o;
+                    const ov = overrides[o.id];
+                    return { ...o, ...ov, prendas: { ...o.prendas, ...ov.prendas } };
+                });
         }
 
         function renderOutfits(filtro = 'todos') {
@@ -3187,22 +3273,26 @@
         }
 
         function updateFilterCounts() {
-            const allOutfits = applyOverrides([...outfits]);
             const customOutfits = JSON.parse(localStorage.getItem('customOutfits')) || [];
-            allOutfits.push(...customOutfits);
+            const allOutfits = [...applyOverrides([...outfits]), ...customOutfits];
 
-            const formalCount = allOutfits.filter(o => o.formalidad === 'formal').length;
-            const eleganteSportCount = allOutfits.filter(o => o.formalidad === 'elegante-sport').length;
-            const casualCount = allOutfits.filter(o => o.formalidad === 'casual').length;
-            const totalCount = allOutfits.length;
+            const counts = {
+                todos:            allOutfits.length,
+                formal:           allOutfits.filter(o => o.formalidad === 'formal').length,
+                'elegante-sport': allOutfits.filter(o => o.formalidad === 'elegante-sport').length,
+                casual:           allOutfits.filter(o => o.formalidad === 'casual').length,
+            };
 
-            // Actualizar textos de los botones
-            document.querySelectorAll('#tab-sugeridos .filter-btn').forEach(btn => {
-                const text = btn.textContent;
-                if (text.includes('Todos')) btn.textContent = `Todos (${totalCount})`;
-                else if (text.includes('Formal ')) btn.textContent = `Formal (${formalCount})`;
-                else if (text.includes('Elegante')) btn.textContent = `Elegante Sport (${eleganteSportCount})`;
-                else if (text.includes('Casual')) btn.textContent = `Casual (${casualCount})`;
+            const labels = {
+                todos: 'Todos',
+                formal: 'Formal',
+                'elegante-sport': 'Elegante Sport',
+                casual: 'Casual',
+            };
+
+            Object.keys(counts).forEach(key => {
+                const btn = document.getElementById(`filterBtn-${key}`);
+                if (btn) btn.textContent = `${labels[key]} (${counts[key]})`;
             });
         }
 
@@ -3305,9 +3395,22 @@
         function confirmDeleteOutfit(id) {
             closeDeleteDialog();
             let savedOutfits = JSON.parse(localStorage.getItem('customOutfits')) || [];
-            savedOutfits = savedOutfits.filter(o => o.id !== id);
-            localStorage.setItem('customOutfits', JSON.stringify(savedOutfits));
-            renderCustomOutfits();
+            const isCustom = savedOutfits.some(o => o.id === id);
+
+            if (isCustom) {
+                // Remove custom outfit
+                savedOutfits = savedOutfits.filter(o => o.id !== id);
+                localStorage.setItem('customOutfits', JSON.stringify(savedOutfits));
+                renderCustomOutfits();
+            } else {
+                // Track deleted predefined outfit ID
+                const deleted = JSON.parse(localStorage.getItem('deletedOutfitIds')) || [];
+                if (!deleted.includes(id)) {
+                    deleted.push(id);
+                    localStorage.setItem('deletedOutfitIds', JSON.stringify(deleted));
+                }
+                renderOutfits();
+            }
 
             const toast = document.getElementById('deleteSuccessToast');
             toast.classList.add('show');
@@ -3571,6 +3674,7 @@
                             <option value="Campera Patagonia bordeau" ${outfit.prendas.abrigo === 'Campera Patagonia bordeau' ? 'selected' : ''}>Campera Patagonia bordeau</option>
                             <option value="Sweater UNIQLO azul" ${outfit.prendas.abrigo === 'Sweater UNIQLO azul' ? 'selected' : ''}>Sweater UNIQLO azul</option>
                             <option value="Sweater UNIQLO celeste" ${outfit.prendas.abrigo === 'Sweater UNIQLO celeste' ? 'selected' : ''}>Sweater UNIQLO celeste</option>
+                            <option value="Sweater Tommy Hilfiger azul oscuro" ${outfit.prendas.abrigo === 'Sweater Tommy Hilfiger azul oscuro' ? 'selected' : ''}>Tommy Hilfiger Cotton Cable azul</option>
                             <option value="Quarter-zip Springfield gris" ${outfit.prendas.abrigo === 'Quarter-zip Springfield gris' ? 'selected' : ''}>Quarter-zip Springfield gris</option>
                             <option value="Quarter-zip Polo gris claro" ${outfit.prendas.abrigo === 'Quarter-zip Polo gris claro' ? 'selected' : ''}>Quarter-zip Polo gris claro</option>
                             <option value="Quarter-zip Polo azul" ${outfit.prendas.abrigo === 'Quarter-zip Polo azul' ? 'selected' : ''}>Quarter-zip Polo azul</option>
@@ -3876,8 +3980,9 @@
 
             // Outfit del día section
             const outfitSection = document.getElementById('weatherOutfitSection');
-            const outfitName    = document.getElementById('weatherOutfitName');
-            const outfitPrendas = document.getElementById('weatherOutfitPrendas');
+            const outfitName     = document.getElementById('weatherOutfitName');
+            const outfitPrendas  = document.getElementById('weatherOutfitPrendas');
+            const outfitMannequin = document.getElementById('weatherOutfitMannequin');
             if (todayOutfitPick) {
                 const p = todayOutfitPick.prendas;
                 const items = [
@@ -3887,6 +3992,7 @@
                     { tipo: 'Zapatos',  val: p.zapatos  },
                 ];
                 outfitName.textContent = todayOutfitPick.nombre;
+                outfitMannequin.innerHTML = renderMannequin(todayOutfitPick);
                 outfitPrendas.innerHTML = items.map(item =>
                     `<div class="weather-outfit-prenda">
                         <span class="weather-outfit-prenda-tipo">${item.tipo}</span>
@@ -3980,15 +4086,74 @@
 
         let todayOutfitPick = null;
 
+        function getRecentAbrigoColors(days = 2) {
+            // Returns set of abrigo color keywords used in the last N days
+            const calendar = JSON.parse(localStorage.getItem('calendarOutfits')) || {};
+            const customOutfits = JSON.parse(localStorage.getItem('customOutfits')) || [];
+            const allOutfits = [...applyOverrides([...outfits]), ...customOutfits];
+            const colors = new Set();
+
+            for (let i = 1; i <= days; i++) {
+                const d = new Date();
+                d.setDate(d.getDate() - i);
+                const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+                const entry = calendar[key];
+                if (!entry) continue;
+                const o = allOutfits.find(x => String(x.id) === String(entry.id));
+                if (!o) continue;
+                // Extract dominant color keyword from abrigo
+                const abrigo = (o.prendas.abrigo || '').toLowerCase();
+                if (abrigo.includes('azul') || abrigo.includes('navy')) colors.add('azul');
+                if (abrigo.includes('gris')) colors.add('gris');
+                if (abrigo.includes('negro')) colors.add('negro');
+                if (abrigo.includes('bordeau') || abrigo.includes('bordo')) colors.add('bordeau');
+                if (abrigo.includes('beige') || abrigo.includes('camel')) colors.add('beige');
+                if (abrigo.includes('blanco')) colors.add('blanco');
+                if (abrigo.includes('verde')) colors.add('verde');
+                if (abrigo.includes('celeste')) colors.add('celeste');
+            }
+            return colors;
+        }
+
+        function abrigoMatchesColor(abrigo, colorSet) {
+            const a = abrigo.toLowerCase();
+            if (colorSet.has('azul') && (a.includes('azul') || a.includes('navy'))) return true;
+            if (colorSet.has('gris') && a.includes('gris')) return true;
+            if (colorSet.has('negro') && a.includes('negro')) return true;
+            if (colorSet.has('bordeau') && (a.includes('bordeau') || a.includes('bordo'))) return true;
+            if (colorSet.has('beige') && (a.includes('beige') || a.includes('camel'))) return true;
+            if (colorSet.has('blanco') && a.includes('blanco')) return true;
+            if (colorSet.has('verde') && a.includes('verde')) return true;
+            if (colorSet.has('celeste') && a.includes('celeste')) return true;
+            return false;
+        }
+
         function updateOutfitOfDay(condition, maxTemp, minTemp) {
             if (!condition || condition === 'error') return;
 
-            const recommended = getWeatherRecommendations(condition, maxTemp);
-            if (!recommended || recommended.length === 0) return;
+            let pool = getWeatherRecommendations(condition, maxTemp);
+            if (!pool || pool.length === 0) return;
 
             const today = new Date();
+            const dayOfWeek = today.getDay(); // 0=Dom, 1=Lun, 2=Mar, 3=Mié, 4=Jue, 5=Vie, 6=Sáb
+            const isOfficeDay = dayOfWeek === 1 || dayOfWeek === 3; // Lunes o Miércoles
+
+            // Regla 1: días de oficina → excluir casual
+            if (isOfficeDay) {
+                const filtered = pool.filter(o => o.formalidad !== 'casual');
+                if (filtered.length > 0) pool = filtered;
+            }
+
+            // Regla 2: evitar colores de abrigo usados en los últimos 2 días
+            const recentColors = getRecentAbrigoColors(2);
+            if (recentColors.size > 0) {
+                const filtered = pool.filter(o => !abrigoMatchesColor(o.prendas.abrigo, recentColors));
+                if (filtered.length > 0) pool = filtered; // solo aplica si hay alternativas
+            }
+
+            // Date seed para consistencia durante el día
             const seed = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
-            const pick = recommended[seed % recommended.length];
+            const pick = pool[seed % pool.length];
             todayOutfitPick = pick;
 
             const widget = document.getElementById('outfitDayWidget');
@@ -4599,10 +4764,67 @@
             alert(`localStorage 'customOutfits':\n\n${outfits.length} outfit(s) encontrado(s).\n\n${outfits.length > 0 ? outfits.map(o => `• ${o.nombre} (${o.formalidad})`).join('\n') : 'Vacío.'}`);
         }
 
+        // ============ SNAPSHOT ============
+        function saveSnapshot() {
+            // Collect all persistent data from localStorage
+            const snapshot = {
+                customOutfits:    JSON.parse(localStorage.getItem('customOutfits'))    || [],
+                outfitOverrides:  JSON.parse(localStorage.getItem('outfitOverrides'))  || {},
+                deletedOutfitIds: JSON.parse(localStorage.getItem('deletedOutfitIds')) || [],
+                calendarOutfits:  JSON.parse(localStorage.getItem('calendarOutfits'))  || {},
+                favorites:        JSON.parse(localStorage.getItem('favorites'))         || [],
+                usageStats:       JSON.parse(localStorage.getItem('usageStats'))        || {},
+            };
+
+            // Get current HTML source
+            const html = document.documentElement.outerHTML;
+
+            // Build the restore script — runs before anything else, seeds localStorage
+            const restoreScript = `<script id="snapshot-restore">
+(function() {
+    var snap = ${JSON.stringify(snapshot, null, 2)};
+    // Only restore if localStorage is empty (fresh install) or snapshot is newer
+    var snapKey = 'snapshotVersion';
+    var snapVer = ${Date.now()};
+    var stored  = parseInt(localStorage.getItem(snapKey) || '0');
+    if (stored < snapVer) {
+        Object.entries(snap).forEach(function(kv) {
+            if (kv[1] !== null && kv[1] !== undefined) {
+                localStorage.setItem(kv[0], JSON.stringify(kv[1]));
+            }
+        });
+        localStorage.setItem(snapKey, snapVer);
+    }
+})();
+<\/script>`;
+
+            // Remove any previous snapshot-restore block, then inject after <head>
+            const cleaned = html.replace(/<script id="snapshot-restore">[\s\S]*?<\/script>/g, '');
+            const final   = cleaned.replace('<head>', '<head>\n    ' + restoreScript);
+
+            // Download
+            const blob = new Blob([final], { type: 'text/html;charset=utf-8' });
+            const url  = URL.createObjectURL(blob);
+            const a    = document.createElement('a');
+            const now  = new Date();
+            const dateStr = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}`;
+            a.href     = url;
+            a.download = `Outfits_snapshot_${dateStr}.html`;
+            a.click();
+            URL.revokeObjectURL(url);
+
+            // Toast
+            const toast = document.getElementById('randomSuccessToast');
+            toast.textContent = '💾 Snapshot guardado';
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2500);
+        }
+
         // ============ INIT ============
         renderOutfits();
-        renderCustomOutfits(); // pre-load so outfits are ready when tab is opened
+        renderCustomOutfits();
         updateStats();
+        updateFilterCounts();
         fetchWeather('Haarlem');
         initTrainFab();
         fetchTrains();
