@@ -444,6 +444,22 @@
             letter-spacing: 0.6px;
         }
 
+        .last-used-label {
+            font-size: 0.75em;
+            font-weight: 600;
+            color: #888;
+            background: #f0f0f0;
+            border-radius: 10px;
+            padding: 3px 9px;
+            white-space: nowrap;
+        }
+
+        .last-used-label.never {
+            color: #bbb;
+            background: #f8f8f8;
+            font-weight: 500;
+        }
+
         .formal {
             background: #1565c0;
             color: white;
@@ -1648,6 +1664,60 @@
         }
         .cal-overlay.open { display: flex; }
 
+        /* Recent outfits carousel */
+        .cal-recent-strip {
+            margin-bottom: 14px;
+        }
+        .cal-recent-title {
+            font-size: 0.72em;
+            font-weight: 700;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            margin-bottom: 8px;
+        }
+        .cal-recent-scroll {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 6px;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        .cal-recent-scroll::-webkit-scrollbar { display: none; }
+        .cal-recent-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            flex-shrink: 0;
+            cursor: default;
+        }
+        .cal-recent-mannequin {
+            background: #f4f2ef;
+            border-radius: 12px;
+            padding: 6px 8px;
+            border: 1px solid #e8e4df;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .cal-recent-day {
+            font-size: 0.72em;
+            font-weight: 700;
+            color: #888;
+            text-align: center;
+        }
+        .cal-recent-name {
+            font-size: 0.65em;
+            color: #aaa;
+            text-align: center;
+            max-width: 56px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
         .cal-dialog {
             background: white;
             border-radius: 20px;
@@ -1898,9 +1968,29 @@
             min-width: 34px;
         }
         .weather-hour-rain {
-            font-size: 0.78em;
-            color: #4a90b8;
-            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            flex: 1;
+        }
+        .weather-rain-bar-track {
+            flex: 1;
+            height: 5px;
+            background: #e8edf2;
+            border-radius: 3px;
+            overflow: hidden;
+            min-width: 48px;
+        }
+        .weather-rain-bar-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+        .weather-rain-pct {
+            font-size: 0.75em;
+            font-weight: 700;
+            min-width: 28px;
+            text-align: right;
         }
         .weather-modal-outfit-btn {
             width: 100%;
@@ -2280,8 +2370,8 @@
                         <div id="weatherOutfitMannequin"></div>
                     </div>
                     <div class="weather-outfit-prendas" id="weatherOutfitPrendas"></div>
-                    <div class="jacket-indicator" id="jacketIndicator" style="display:none"></div>
                 </div>
+                <div class="jacket-indicator" id="jacketIndicator" style="display:none"></div>
                 <button class="weather-modal-outfit-btn" onclick="closeWeatherModal(); showWeatherRecommendations()">
                     🧥 Ver outfits recomendados para hoy
                 </button>
@@ -2546,6 +2636,10 @@
                 <span class="cal-month-label" id="calMonthLabel"></span>
                 <button class="cal-nav" onclick="calShiftMonth(1)">›</button>
                 <button class="cal-close" onclick="closeCalendar()">✕</button>
+            </div>
+            <div class="cal-recent-strip" id="calRecentStrip" style="display:none;">
+                <div class="cal-recent-title">Últimos usados</div>
+                <div class="cal-recent-scroll" id="calRecentScroll"></div>
             </div>
             <div class="cal-weekdays">
                 <span>Lu</span><span>Ma</span><span>Mi</span><span>Ju</span><span>Vi</span><span>Sa</span><span>Do</span>
@@ -2872,7 +2966,7 @@
             };
         }
 
-        function renderMannequin(outfit) {
+        function renderMannequin(outfit, size) {
             const c = getOutfitColors(outfit);
 
             function lighten(hex, amt) {
@@ -2977,7 +3071,8 @@
   <rect x="12" y="65" width="13" height="6" rx="3" fill="${mangaLight}" opacity="0.55"/>
   <rect x="65" y="65" width="13" height="6" rx="3" fill="${mangaLight}" opacity="0.55"/>`;
 
-            return `<svg width="37" height="54" viewBox="0 0 90 130" xmlns="http://www.w3.org/2000/svg">
+            const _w = size || 37; const _h = size ? Math.round(size * 54/37) : 54;
+            return `<svg width="${_w}" height="${_h}" viewBox="0 0 90 130" xmlns="http://www.w3.org/2000/svg">
   <!-- Legs / Pantalón -->
   <rect x="28" y="76" width="14" height="36" rx="3" fill="${c.pantalon}"/>
   <rect x="48" y="76" width="14" height="36" rx="3" fill="${c.pantalon}"/>
@@ -3216,8 +3311,12 @@
             const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
             const isFavorite = favorites.includes(outfit.id);
 
-            // Contar usos desde el calendario
+            // Contar usos y último uso desde el calendario
             const usageCount = getCalendarUsageCount(outfit.id);
+            const lastUsedLabel = getLastUsedLabel(outfit.id);
+            const lastUsedHTML = lastUsedLabel
+                ? `<span class="last-used-label">${lastUsedLabel}</span>`
+                : `<span class="last-used-label never">Sin usos aún</span>`;
 
             card.innerHTML = `
                 <div class="card-actions">
@@ -3234,7 +3333,10 @@
                         <div class="outfit-title">${outfit.nombre}</div>
                         <div class="outfit-context">${outfit.contexto}</div>
                         ${renderColorDots(outfit)}
-                        <span class="formality-badge ${outfit.formalidad}" style="margin-top:8px; display:inline-block;">${formalidadLabel}</span>
+                        <div style="display:flex; align-items:center; gap:8px; margin-top:8px; flex-wrap:wrap;">
+                            <span class="formality-badge ${outfit.formalidad}">${formalidadLabel}</span>
+                            ${lastUsedHTML}
+                        </div>
                     </div>
                     <div class="outfit-mini-mannequin">
                         ${renderMannequin(outfit)}
@@ -3268,6 +3370,25 @@
         function getCalendarUsageCount(outfitId) {
             const data = JSON.parse(localStorage.getItem('calendarOutfits')) || {};
             return Object.values(data).filter(entry => String(entry.id) === String(outfitId)).length;
+        }
+
+        function getLastUsedLabel(outfitId) {
+            const data = JSON.parse(localStorage.getItem('calendarOutfits')) || {};
+            const dates = Object.entries(data)
+                .filter(([, entry]) => String(entry.id) === String(outfitId))
+                .map(([dateStr]) => new Date(dateStr));
+            if (!dates.length) return null;
+            const latest = new Date(Math.max(...dates));
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            latest.setHours(0, 0, 0, 0);
+            const diffDays = Math.round((today - latest) / 86400000);
+            if (diffDays === 0) return 'Usado hoy';
+            if (diffDays === 1) return 'Hace 1 día';
+            if (diffDays < 7) return `Hace ${diffDays} días`;
+            if (diffDays < 14) return 'Hace 1 semana';
+            if (diffDays < 30) return `Hace ${Math.floor(diffDays / 7)} semanas`;
+            return 'Hace más de un mes';
         }
 
         function incrementUsage(event, outfitId) {
@@ -4049,13 +4170,20 @@
                 const hourEmoji = getWeatherEmoji(getWeatherDescription(code));
                 const rowClass  = isPast ? 'weather-hour-row past' : isNow ? 'weather-hour-row now' : 'weather-hour-row';
                 const nowLabel  = isNow ? ' <span style="font-size:0.72em;color:#1a3a52;font-weight:700;">AHORA</span>' : '';
-                const rainLabel = rain >= 10 ? `<span class="weather-hour-rain">💧 ${rain}%</span>` : '';
+                const rainColor = rain >= 70 ? '#1565c0' : rain >= 40 ? '#2196f3' : rain >= 15 ? '#64b5f6' : '#b3d9f7';
+                const rainBar = `<div class="weather-hour-rain">
+                    <span style="font-size:1em;line-height:1;">💧</span>
+                    <div class="weather-rain-bar-track">
+                        <div class="weather-rain-bar-fill" style="width:${rain}%;background:${rainColor};"></div>
+                    </div>
+                    <span class="weather-rain-pct" style="color:${rain >= 40 ? '#1565c0' : '#aaa'};">${rain}%</span>
+                </div>`;
 
                 rows.push(`<div class="${rowClass}">
                     <span class="weather-hour-time">${String(hour).padStart(2,'0')}:00${nowLabel}</span>
                     <span class="weather-hour-emoji">${hourEmoji}</span>
                     <span class="weather-hour-temp">${temp}°</span>
-                    ${rainLabel}
+                    ${rainBar}
                 </div>`);
             }
 
@@ -4496,12 +4624,50 @@
             localStorage.setItem('calendarOutfits', JSON.stringify(data));
         }
 
+        function renderRecentStrip() {
+            const data = calGetData();
+            const strip = document.getElementById('calRecentStrip');
+            const scroll = document.getElementById('calRecentScroll');
+
+            // Get all entries sorted by date descending, take last 5
+            const sorted = Object.entries(data)
+                .sort((a, b) => b[0].localeCompare(a[0]))
+                .slice(0, 5);
+
+            if (!sorted.length) {
+                strip.style.display = 'none';
+                return;
+            }
+
+            const customOutfits = JSON.parse(localStorage.getItem('customOutfits')) || [];
+            const allOutfits = [...applyOverrides([...outfits]), ...customOutfits];
+
+            scroll.innerHTML = sorted.map(([dateStr, entry]) => {
+                const outfit = allOutfits.find(o => String(o.id) === String(entry.id));
+                if (!outfit) return '';
+                const d = new Date(dateStr + 'T12:00:00');
+                const today = new Date();
+                const isThisMonth = d.getMonth() === today.getMonth() && d.getFullYear() === today.getFullYear();
+                const dayLabel = isThisMonth
+                    ? String(d.getDate())
+                    : d.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
+                return `<div class="cal-recent-item" title="${outfit.nombre} — ${dateStr}">
+                    <div class="cal-recent-mannequin">${renderMannequin(outfit, 44)}</div>
+                    <div class="cal-recent-day">${dayLabel}</div>
+                    <div class="cal-recent-name">${outfit.nombre}</div>
+                </div>`;
+            }).join('');
+
+            strip.style.display = 'block';
+        }
+
         function openCalendar() {
             const now = new Date();
             calYear = now.getFullYear();
             calMonth = now.getMonth();
             document.getElementById('calOverlay').classList.add('open');
             renderCalendar();
+            renderRecentStrip();
         }
 
         function closeCalendar(e) {
@@ -4619,6 +4785,7 @@
 
             document.getElementById('calDetailCurrent').textContent = `Outfit registrado: ${outfit.nombre}`;
             renderCalendar();
+            renderRecentStrip();
             // Refresh outfit cards so usage counter updates immediately
             const activeFilter = document.querySelector('#tab-sugeridos .filter-btn.active');
             if (activeFilter) {
@@ -4643,6 +4810,7 @@
             document.getElementById('calDetailCurrent').textContent = 'Sin outfit registrado';
             document.getElementById('calDetailSelect').value = '';
             renderCalendar();
+            renderRecentStrip();
             // Refresh outfit cards so usage counter updates immediately
             const activeFilter = document.querySelector('#tab-sugeridos .filter-btn.active');
             if (activeFilter) {
