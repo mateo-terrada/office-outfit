@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="Rabobank Outfits">
+    <meta name="apple-mobile-web-app-title" content="Office Outfits">
     <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect fill='%23111111' width='180' height='180' rx='36'/><path d='M35 45 L35 148 Q35 154 41 154 L139 154 Q145 154 145 148 L145 45 L122 35 L90 58 L58 35 Z' fill='white'/><path d='M90 58 L58 35 L46 43 L66 66 Z' fill='%23cccccc'/><path d='M90 58 L122 35 L134 43 L114 66 Z' fill='%23cccccc'/><polygon points='90,62 80,74 90,71 100,74' fill='%23111111'/><polygon points='80,74 100,74 95,128 90,135 85,128' fill='%23111111'/><circle cx='68' cy='100' r='4' fill='%23bbbbbb'/><circle cx='112' cy='100' r='4' fill='%23bbbbbb'/></svg>">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%23111111' width='100' height='100' rx='20'/><path d='M18 25 L18 82 Q18 86 22 86 L78 86 Q82 86 82 82 L82 25 L67 19 L50 32 L33 19 Z' fill='white'/><path d='M50 32 L33 19 L26 24 L37 37 Z' fill='%23cccccc'/><path d='M50 32 L67 19 L74 24 L63 37 Z' fill='%23cccccc'/><polygon points='50,34 44,42 50,40 56,42' fill='%23111111'/><polygon points='44,42 56,42 53,71 50,75 47,71' fill='%23111111'/></svg>">
-    <title>Rabobank Outfits | Teo's Office Style</title>
+    <title>Office Outfits | Teo's Office Style</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
@@ -185,7 +185,7 @@
             content: '';
             display: block;
             height: 3px;
-            width: 60%;
+            width: 100%;
             margin: 6px auto 0;
             background: linear-gradient(90deg, #1a3a52, #4a90b8, transparent);
             border-radius: 2px;
@@ -1037,6 +1037,8 @@
         .color-dot {
             width: 14px;
             height: 14px;
+            min-width: 14px;
+            min-height: 14px;
             border-radius: 50%;
             border: 2px solid rgba(0,0,0,0.12);
             flex-shrink: 0;
@@ -1896,41 +1898,9 @@
             min-width: 34px;
         }
         .weather-hour-rain {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            margin-left: auto;
-            flex-shrink: 0;
-        }
-        .weather-hour-rain-label {
-            font-size: 0.76em;
+            font-size: 0.78em;
             color: #4a90b8;
-            font-weight: 700;
-            min-width: 30px;
-            text-align: right;
-        }
-        .weather-hour-rain-label.dry {
-            color: #bbb;
-            font-weight: 500;
-        }
-        .weather-hour-rain-bar-track {
-            width: 54px;
-            height: 5px;
-            background: #e0e8f0;
-            border-radius: 3px;
-            overflow: hidden;
-        }
-        .weather-hour-rain-bar-fill {
-            height: 100%;
-            border-radius: 3px;
-            background: #4a90b8;
-            transition: width 0.3s ease;
-        }
-        .weather-hour-rain-bar-fill.heavy {
-            background: #1565c0;
-        }
-        .weather-hour-rain-bar-fill.dry {
-            background: #d0dde8;
+            font-weight: 600;
         }
         .weather-modal-outfit-btn {
             width: 100%;
@@ -1961,6 +1931,25 @@
             justify-content: space-between;
             margin-bottom: 8px;
             gap: 8px;
+        }
+
+        .jacket-indicator {
+            margin-top: 10px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.83em;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+        .jacket-indicator.needs-jacket {
+            background: #e3f0fb;
+            color: #1565c0;
+        }
+        .jacket-indicator.no-jacket {
+            background: #e8f5e9;
+            color: #2e7d32;
         }
         .weather-outfit-divider {
             font-size: 0.7em;
@@ -2143,7 +2132,21 @@
             border-radius: 12px;
             border-left: 4px solid #1a3a52;
         }
-        .train-row.delayed { border-left-color: #e65100; }
+        .train-row.sweet-spot {
+            border-left-color: #1a3a52;
+            background: #eef3f8;
+            position: relative;
+        }
+        .train-sweet-badge {
+            font-size: 0.7em;
+            font-weight: 700;
+            background: #1a3a52;
+            color: white;
+            border-radius: 6px;
+            padding: 2px 7px;
+            margin-left: 4px;
+            letter-spacing: 0.3px;
+        }
         .train-row.cancelled {
             border-left-color: #c62828;
             opacity: 0.7;
@@ -2235,7 +2238,7 @@
                     </div>
                 </div>
             </div>
-            <h1>🏦 Rabobank Outfits</h1>
+            <h1>Office Outfits</h1>
             <p class="subtitle">Tu guardarropas profesional para el traineeship</p>
         </header>
 
@@ -2277,6 +2280,7 @@
                         <div id="weatherOutfitMannequin"></div>
                     </div>
                     <div class="weather-outfit-prendas" id="weatherOutfitPrendas"></div>
+                    <div class="jacket-indicator" id="jacketIndicator" style="display:none"></div>
                 </div>
                 <button class="weather-modal-outfit-btn" onclick="closeWeatherModal(); showWeatherRecommendations()">
                     🧥 Ver outfits recomendados para hoy
@@ -2833,13 +2837,15 @@
                           'brooksfield azul', 'quarter-zip polo azul',
                           'sweater uniqlo azul', 'chaleco patagonia azul',
                           'tommy hilfiger azul oscuro'],                          color: '#1E3A5F' },
-            { keywords: ['azul/blanco'],                                         color: '#1E3A5F' },
+            { keywords: ['azul/blanco'],                                         color: '#E8EEF5' },
             { keywords: ['azul'],                                                color: '#1E3A5F' },
-            { keywords: ['celeste/blanco', 'celeste clara', 'celeste líneas',
-                          'celeste brooksfield', 'uniqlo celeste'],              color: '#7BAFD4' },
-            { keywords: ['celeste'],                                             color: '#7BAFD4' },
-            { keywords: ['pantalón gris claro', 'polo gris claro', 'patagonia gris'], color: '#9E9E9E' },
-            { keywords: ['pantalón gris oscuro', 'springfield gris'],           color: '#3D3D3D' },
+            { keywords: ['celeste/blanco'],                                       color: '#F0F6FC' },
+            { keywords: ['celeste líneas', 'celeste lineas'],                     color: '#4A7FA5' },
+            { keywords: ['celeste clara', 'celeste brooksfield',
+                          'uniqlo celeste'],                                       color: '#7BAFD4' },
+            { keywords: ['celeste'],                                              color: '#7BAFD4' },
+            { keywords: ['pantalón gris oscuro', 'springfield gris',
+                          'polo gris claro', 'patagonia gris'],                  color: '#6B6B6B' },
             { keywords: ['gris jaspeada', 'gris'],                              color: '#6B6B6B' },
             { keywords: ['camisa blanca', 'tiger blancas', 'blanco', 'blancas'], color: '#E0E0E0' },
             { keywords: ['pantalón negro', 'polar brooksfield negro',
@@ -2887,8 +2893,40 @@
             const skin     = '#C8935A';
             const skinDark = '#A87040';
 
-            // "Sin abrigo" → camisa es el torso completo
             const noAbrigo  = outfit.prendas.abrigo.toLowerCase().includes('sin abrigo');
+            const camisaLower = (outfit.prendas.camisa || '').toLowerCase();
+            const esRayas         = camisaLower.includes('rayas azul') || camisaLower.includes('rayas azul/blanco');
+            const esRayasCeleste  = camisaLower.includes('celeste/blanco') || camisaLower.includes('rayas celeste');
+            const esRayasLineas   = camisaLower.includes('celeste líneas') || camisaLower.includes('celeste lineas');
+
+            // Stripe overlays — each shirt type gets its own color/direction
+            const camisaStripes =
+                esRayas ? `
+  <line x1="31" y1="38" x2="31" y2="80" stroke="#7BAFD4" stroke-width="0.9" opacity="0.55"/>
+  <line x1="36" y1="38" x2="36" y2="80" stroke="#7BAFD4" stroke-width="0.9" opacity="0.55"/>
+  <line x1="41" y1="38" x2="41" y2="80" stroke="#7BAFD4" stroke-width="0.9" opacity="0.55"/>
+  <line x1="46" y1="38" x2="46" y2="80" stroke="#7BAFD4" stroke-width="0.9" opacity="0.55"/>
+  <line x1="51" y1="38" x2="51" y2="80" stroke="#7BAFD4" stroke-width="0.9" opacity="0.55"/>
+  <line x1="56" y1="38" x2="56" y2="80" stroke="#7BAFD4" stroke-width="0.9" opacity="0.55"/>
+  <line x1="61" y1="38" x2="61" y2="80" stroke="#7BAFD4" stroke-width="0.9" opacity="0.55"/>` :
+                esRayasCeleste ? `
+  <!-- Rayas celeste suaves sobre fondo blanco -->
+  <line x1="31" y1="38" x2="31" y2="80" stroke="#7BAFD4" stroke-width="0.9" opacity="0.45"/>
+  <line x1="36" y1="38" x2="36" y2="80" stroke="#7BAFD4" stroke-width="0.9" opacity="0.45"/>
+  <line x1="41" y1="38" x2="41" y2="80" stroke="#7BAFD4" stroke-width="0.9" opacity="0.45"/>
+  <line x1="46" y1="38" x2="46" y2="80" stroke="#7BAFD4" stroke-width="0.9" opacity="0.45"/>
+  <line x1="51" y1="38" x2="51" y2="80" stroke="#7BAFD4" stroke-width="0.9" opacity="0.45"/>
+  <line x1="56" y1="38" x2="56" y2="80" stroke="#7BAFD4" stroke-width="0.9" opacity="0.45"/>
+  <line x1="61" y1="38" x2="61" y2="80" stroke="#7BAFD4" stroke-width="0.9" opacity="0.45"/>` :
+                esRayasLineas ? `
+  <!-- Rayas blancas sobre fondo celeste oscuro -->
+  <line x1="31" y1="38" x2="31" y2="80" stroke="#ffffff" stroke-width="1" opacity="0.4"/>
+  <line x1="36" y1="38" x2="36" y2="80" stroke="#ffffff" stroke-width="1" opacity="0.4"/>
+  <line x1="41" y1="38" x2="41" y2="80" stroke="#ffffff" stroke-width="1" opacity="0.4"/>
+  <line x1="46" y1="38" x2="46" y2="80" stroke="#ffffff" stroke-width="1" opacity="0.4"/>
+  <line x1="51" y1="38" x2="51" y2="80" stroke="#ffffff" stroke-width="1" opacity="0.4"/>
+  <line x1="56" y1="38" x2="56" y2="80" stroke="#ffffff" stroke-width="1" opacity="0.4"/>
+  <line x1="61" y1="38" x2="61" y2="80" stroke="#ffffff" stroke-width="1" opacity="0.4"/>` : '';
             const esChaleco = outfit.prendas.abrigo.toLowerCase().includes('chaleco');
 
             // Sweaters de cuello redondo → no V cutout, cuello redondo del color del sweater
@@ -2954,6 +2992,7 @@
 
   <!-- CAMISA: base layer (always drawn, visible in V and collar) -->
   <rect x="26" y="38" width="38" height="42" rx="4" fill="${c.camisa}"/>
+  ${camisaStripes}
   <!-- Camisa collar lapels: only for V-neck or open collar, not crewneck -->
   ${!esCrewneck && !noAbrigo ? `
   <polygon points="45,30 39,42 45,40" fill="${c.camisa}"/>
@@ -2983,16 +3022,23 @@
         }
 
         function extractColors(outfit) {
-            // Evaluate each prenda separately so one item can't trigger two color rules
             const prendas = Object.values(outfit.prendas);
             const found = [];
             for (const prenda of prendas) {
                 const text = prenda.toLowerCase();
                 for (const rule of colorRules) {
                     if (found.length >= 4) break;
-                    if (rule.keywords.some(kw => text.includes(kw)) && !found.includes(rule.color)) {
-                        found.push(rule.color);
-                        break; // only one color per prenda
+                    if (rule.keywords.some(kw => text.includes(kw)) && !found.find(f => f.color === rule.color)) {
+                        // Detect stripe type
+                        let stripeColor = null;
+                        if (text.includes('rayas azul') || text.includes('azul/blanco'))
+                            stripeColor = '#7BAFD4';
+                        else if (text.includes('celeste/blanco') || text.includes('rayas celeste'))
+                            stripeColor = '#7BAFD4';
+                        else if (text.includes('celeste líneas') || text.includes('celeste lineas'))
+                            stripeColor = '#ffffff';
+                        found.push({ color: rule.color, stripeColor });
+                        break;
                     }
                 }
                 if (found.length >= 4) break;
@@ -3003,9 +3049,14 @@
         function renderColorDots(outfit) {
             const colors = extractColors(outfit);
             if (colors.length === 0) return '';
-            const dots = colors.map(c =>
-                `<span class="color-dot" style="background:${c};"></span>`
-            ).join('');
+            const dots = colors.map(({ color, stripeColor }) => {
+                if (stripeColor) {
+                    // Use CSS repeating-linear-gradient for stripes — works reliably in innerHTML
+                    const bg = `repeating-linear-gradient(to right, ${color} 0px, ${color} 2px, ${stripeColor} 2px, ${stripeColor} 3px, ${color} 3px, ${color} 5px)`;
+                    return `<span class="color-dot" style="background:${bg};"></span>`;
+                }
+                return `<span class="color-dot" style="background:${color};"></span>`;
+            }).join('');
             return `<div class="color-dots">${dots}</div>`;
         }
 
@@ -3998,14 +4049,7 @@
                 const hourEmoji = getWeatherEmoji(getWeatherDescription(code));
                 const rowClass  = isPast ? 'weather-hour-row past' : isNow ? 'weather-hour-row now' : 'weather-hour-row';
                 const nowLabel  = isNow ? ' <span style="font-size:0.72em;color:#1a3a52;font-weight:700;">AHORA</span>' : '';
-                const rainFillClass = rain >= 60 ? 'heavy' : rain < 5 ? 'dry' : '';
-                const rainLabelClass = rain < 5 ? 'dry' : '';
-                const rainLabel = `<div class="weather-hour-rain">
-                    <span class="weather-hour-rain-label ${rainLabelClass}">💧 ${rain}%</span>
-                    <div class="weather-hour-rain-bar-track">
-                        <div class="weather-hour-rain-bar-fill ${rainFillClass}" style="width:${Math.min(rain,100)}%"></div>
-                    </div>
-                </div>`;
+                const rainLabel = rain >= 10 ? `<span class="weather-hour-rain">💧 ${rain}%</span>` : '';
 
                 rows.push(`<div class="${rowClass}">
                     <span class="weather-hour-time">${String(hour).padStart(2,'0')}:00${nowLabel}</span>
@@ -4043,6 +4087,45 @@
                 outfitSection.style.display = 'none';
             }
 
+            // Jacket indicator: avg temp in 8-10am and 18-20pm ranges, or heavy rain
+            const jacketEl = document.getElementById('jacketIndicator');
+            if (jacketEl && temps.length > 0) {
+                const precip = hourlyWeatherData.precipitation || [];
+                const morningTemps  = [];
+                const eveningTemps  = [];
+                let heavyRain = false;
+
+                for (let i = 0; i < times.length; i++) {
+                    const h = new Date(times[i]).getHours();
+                    const mm = precip[i] || 0;
+                    if (h >= 8  && h <= 10) {
+                        morningTemps.push(temps[i]);
+                        if (mm > 2) heavyRain = true;
+                    }
+                    if (h >= 18 && h <= 20) {
+                        eveningTemps.push(temps[i]);
+                        if (mm > 2) heavyRain = true;
+                    }
+                }
+
+                const allTemps = [...morningTemps, ...eveningTemps];
+                if (allTemps.length > 0) {
+                    const avg = allTemps.reduce((a, b) => a + b, 0) / allTemps.length;
+                    const coldEnough  = avg < 12;
+                    const needsJacket = coldEnough || heavyRain;
+                    const morningAvg  = morningTemps.length ? Math.round(morningTemps.reduce((a,b) => a+b,0) / morningTemps.length) : null;
+                    const eveningAvg  = eveningTemps.length ? Math.round(eveningTemps.reduce((a,b) => a+b,0) / eveningTemps.length) : null;
+                    const tempInfo    = [morningAvg !== null ? `${morningAvg}° mañana` : '', eveningAvg !== null ? `${eveningAvg}° tarde` : ''].filter(Boolean).join(' · ');
+                    const reason      = !coldEnough && heavyRain ? '🌧️ lluvia intensa' : tempInfo;
+
+                    jacketEl.className = `jacket-indicator ${needsJacket ? 'needs-jacket' : 'no-jacket'}`;
+                    jacketEl.style.display = 'flex';
+                    jacketEl.innerHTML = needsJacket
+                        ? `🧥 Llevá campera — ${reason}`
+                        : `✅ Sin campera — ${tempInfo}`;
+                }
+            }
+
             // Scroll to current hour
             setTimeout(() => {
                 const nowRow = list.querySelector('.weather-hour-row.now');
@@ -4075,7 +4158,7 @@
                 return;
             }
 
-            const url = `https://api.open-meteo.com/v1/forecast?latitude=${coords.lat}&longitude=${coords.lng}&daily=weathercode,temperature_2m_max,temperature_2m_min&hourly=temperature_2m,weathercode,precipitation_probability&temperature_unit=celsius&timezone=auto&forecast_days=1`;
+            const url = `https://api.open-meteo.com/v1/forecast?latitude=${coords.lat}&longitude=${coords.lng}&daily=weathercode,temperature_2m_max,temperature_2m_min&hourly=temperature_2m,weathercode,precipitation_probability,precipitation&temperature_unit=celsius&timezone=auto&forecast_days=1`;
             
             fetch(url)
                 .then(response => response.json())
@@ -4357,52 +4440,6 @@
             });
         }
 
-        function getSmartFilteredOutfits(condition, maxTemp) {
-            let pool = getWeatherRecommendations(condition, maxTemp);
-            if (!pool || pool.length === 0) return { pool: [], rules: [] };
-
-            const today = new Date();
-            const dayOfWeek = today.getDay();
-            const isOfficeDay = dayOfWeek === 1 || dayOfWeek === 3; // Lun / Mié
-            const isFriday    = dayOfWeek === 5;
-            const appliedRules = [];
-
-            // Regla: días de oficina → sin casual
-            if (isOfficeDay) {
-                const filtered = pool.filter(o => o.formalidad !== 'casual');
-                if (filtered.length > 0) { pool = filtered; appliedRules.push('sin casual (día de oficina)'); }
-            }
-
-            // Regla: viernes → sin formal
-            if (isFriday) {
-                const filtered = pool.filter(o => o.formalidad !== 'formal');
-                if (filtered.length > 0) { pool = filtered; appliedRules.push('sin formal (viernes)'); }
-            }
-
-            // Regla: evitar colores de abrigo de últimos 2 días
-            const recentColors = getRecentAbrigoColors(2);
-            if (recentColors.size > 0) {
-                const filtered = pool.filter(o => !abrigoMatchesColor(o.prendas.abrigo, recentColors));
-                if (filtered.length > 0) { pool = filtered; appliedRules.push('sin colores de abrigo repetidos'); }
-            }
-
-            // Regla: evitar outfits usados en últimos 5 días
-            const calendar = JSON.parse(localStorage.getItem('calendarOutfits')) || {};
-            const recentIds = new Set();
-            for (let i = 1; i <= 5; i++) {
-                const d = new Date();
-                d.setDate(d.getDate() - i);
-                const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-                if (calendar[key]) recentIds.add(String(calendar[key].id));
-            }
-            if (recentIds.size > 0) {
-                const filtered = pool.filter(o => !recentIds.has(String(o.id)));
-                if (filtered.length > 0) { pool = filtered; appliedRules.push('sin outfits de los últimos 5 días'); }
-            }
-
-            return { pool, rules: appliedRules };
-        }
-
         function showWeatherRecommendations() {
             if (!currentWeatherCondition) {
                 alert('Esperando clima... clickeá en el widget ☀️ arriba a la derecha');
@@ -4419,11 +4456,11 @@
             allOutfits.push(...customOutfits);
             const total = allOutfits.length;
 
-            const { pool: recommended, rules } = getSmartFilteredOutfits(currentWeatherCondition, currentMaxTemp);
+            const recommended = getWeatherRecommendations(currentWeatherCondition, currentMaxTemp);
             const excluded = total - recommended.length;
 
             if (!recommended || recommended.length === 0) {
-                grid.innerHTML = '<div class="empty-state"><h2>Sin recomendaciones</h2><p>Probá con otro clima o actualizá los criterios.</p></div>';
+                grid.innerHTML = '<div class="empty-state"><h2>Sin recomendaciones</h2><p>Probá con otro clima o actualiza.</p></div>';
                 return;
             }
 
@@ -4431,9 +4468,8 @@
             banner.style.cssText = 'grid-column:1/-1; background:#e3f2fd; padding:16px 20px; border-radius:12px; margin-bottom:20px; color:#1565c0; font-weight:600; text-align:center;';
 
             const explanation = getWeatherExplanation(currentWeatherCondition, currentMaxTemp);
-            const rulesNote = rules.length > 0 ? `<br><span style="font-weight:400; font-size:0.82em; color:#1976d2;">· ${rules.join(' · ')}</span>` : '';
-            const countNote = `<br><span style="font-weight:400; font-size:0.9em;">${recommended.length} outfit${recommended.length > 1 ? 's' : ''} recomendado${recommended.length > 1 ? 's' : ''} de ${total}${excluded > 0 ? ` (${excluded} descartado${excluded > 1 ? 's' : ''})` : ''}</span>`;
-            banner.innerHTML = `${explanation}${rulesNote}${countNote}`;
+            const excludedNote = excluded > 0 ? ` (${excluded} outfit${excluded > 1 ? 's' : ''} descartado${excluded > 1 ? 's' : ''} por el clima)` : '';
+            banner.innerHTML = `${explanation}<br><span style="font-weight:400; font-size:0.9em;">${recommended.length} outfit${recommended.length > 1 ? 's' : ''} recomendado${recommended.length > 1 ? 's' : ''}${excludedNote}</span>`;
             grid.appendChild(banner);
 
             recommended.forEach(outfit => {
@@ -4754,7 +4790,19 @@
             const type1      = first.product?.shortCategoryName || first.product?.categoryCode || 'IC';
             const type2      = isDirect ? null : (last.product?.shortCategoryName || last.product?.categoryCode || 'IC');
 
-            return { depPlanned, depActual, arrActual, delay, cancelled, transfer, track, trackChanged, track2, track2Changed, type1, type2, isDirect };
+            // Through-train detection: same platform, transfer gap < 6 min
+            let isThrough = false;
+            if (!isDirect && track2) {
+                const arrFirst  = first.destination?.actualDateTime || first.destination?.plannedDateTime;
+                const depSecond = last.origin?.actualDateTime    || last.origin?.plannedDateTime;
+                const gapMins   = arrFirst && depSecond
+                    ? Math.round((new Date(depSecond) - new Date(arrFirst)) / 60000)
+                    : 99;
+                const sameTrack = String(track2) === String(first.destination?.actualTrack || first.destination?.plannedTrack || '');
+                isThrough = sameTrack && gapMins <= 6;
+            }
+
+            return { depPlanned, depActual, arrActual, delay, cancelled, transfer, track, trackChanged, track2, track2Changed, type1, type2, isDirect, isThrough };
         }
 
         function renderTrainFab(trips) {
@@ -4811,24 +4859,43 @@
 
             sub.textContent = `${trips.length} próximos viajes`;
 
-            list.innerHTML = trips.map(trip => {
+            // Find sweet spot: first trip with total arrival (incl. 10min walk) between 8:50 and 9:00
+            let sweetSpotIndex = -1;
+            trips.forEach((trip, i) => {
+                if (sweetSpotIndex !== -1) return;
+                const t = parseTripTimes(trip);
+                if (!t || t.cancelled) return;
+                const arrWithWalk = new Date(new Date(t.arrActual).getTime() + 10 * 60000);
+                const h = arrWithWalk.getHours();
+                const m = arrWithWalk.getMinutes();
+                const totalMins = h * 60 + m;
+                if (totalMins >= 8 * 60 + 50 && totalMins <= 9 * 60) sweetSpotIndex = i;
+            });
+
+            list.innerHTML = trips.map((trip, i) => {
                 const t = parseTripTimes(trip);
                 if (!t) return '';
 
+                const isSweetSpot = i === sweetSpotIndex;
                 const depTime  = formatTime(t.depActual);
                 const arrTime  = formatArrival(t.arrActual);
                 const mins     = minutesUntil(t.depActual);
                 const minsLabel = mins <= 0 ? 'Ya' : mins === 1 ? '1 min' : `${mins} min`;
-                const rowClass  = t.cancelled ? 'cancelled' : t.delay > 0 ? 'delayed' : '';
+                const rowClass  = t.cancelled ? 'cancelled' : t.delay > 0 ? 'delayed' : isSweetSpot ? 'sweet-spot' : '';
                 const timeClass = t.cancelled ? 'cancelled' : t.delay > 0 ? 'delayed' : '';
                 const delayLabel = t.delay > 0 && !t.cancelled ? ` <span style="color:#e65100">+${t.delay}'</span>` : '';
                 const cancelLabel = t.cancelled ? ' <span style="color:#c62828">✗</span>' : '';
+                const sweetLabel = isSweetSpot ? `<span class="train-sweet-badge">⭐ Sugerido</span>` : '';
+
+                const throughLabel = t.isThrough
+                    ? `<span title="Mismo tren — podés quedarte sentado" style="font-size:0.75em; background:#e8f5e9; color:#2e7d32; font-weight:700; border-radius:6px; padding:2px 6px; margin-left:4px;">🪑 Quedáte</span>`
+                    : '';
 
                 return `<div class="train-row ${rowClass}">
                     <div class="train-time ${timeClass}">${depTime}${delayLabel}${cancelLabel}</div>
                     <div class="train-info">
                         <div class="train-dest">${depTime} → ${arrTime} · Utrecht C</div>
-                        <div class="train-meta">${t.isDirect ? t.type1 + ' · Directo' : t.type1 + '+' + t.type2 + ' · via ' + t.transfer} · ${minsLabel}</div>
+                        <div class="train-meta">${t.isDirect ? t.type1 + ' · Directo' : t.type1 + '+' + t.type2 + ' · via ' + t.transfer} · ${minsLabel}${sweetLabel}${throughLabel}</div>
                     </div>
                     <div style="display:flex; flex-direction:column; gap:3px; align-items:flex-end;">
                         <div class="train-platform ${t.trackChanged ? 'changed' : ''}">${t.track}</div>
