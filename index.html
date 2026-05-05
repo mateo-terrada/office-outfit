@@ -250,39 +250,74 @@
 
         .filters {
             display: flex;
-            gap: 15px;
+            align-items: center;
+            gap: 10px;
             margin-bottom: 30px;
-            flex-wrap: wrap;
             justify-content: center;
         }
 
+        /* Segmented control */
+        .tab-btn.logros-tab-gold {
+            background: linear-gradient(135deg, #b8860b, #ffd700, #b8860b);
+            color: #1a1208;
+            font-weight: 800;
+            border: none;
+            box-shadow: 0 2px 10px rgba(184,134,11,0.35);
+        }
+        .tab-btn.logros-tab-gold:hover {
+            background: linear-gradient(135deg, #c89820, #ffe040, #c89820);
+            box-shadow: 0 4px 14px rgba(184,134,11,0.5);
+            transform: translateY(-1px);
+        }
+
+        .filter-segment {
+            display: flex;
+            background: rgba(255,255,255,0.75);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.9);
+            border-radius: 12px;
+            padding: 4px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+            gap: 2px;
+        }
+
         .filter-btn {
-            padding: 9px 20px;
-            border: 1.5px solid #ddd;
-            background: white;
-            border-radius: 25px;
+            padding: 8px 16px;
+            border: none;
+            background: transparent;
+            border-radius: 9px;
             cursor: pointer;
-            font-size: 0.88em;
+            font-size: 0.85em;
             font-weight: 600;
             font-family: 'DM Sans', sans-serif;
             transition: all 0.2s ease;
-            color: #555;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+            color: #777;
+            white-space: nowrap;
         }
 
         .filter-btn:hover {
-            border-color: #1a3a52;
             color: #1a3a52;
-            background: #f0f4f7;
-            transform: translateY(-1px);
-            box-shadow: 0 3px 8px rgba(26,58,82,0.12);
+            background: rgba(26,58,82,0.06);
         }
 
         .filter-btn.active {
             background: #1a3a52;
             color: white;
-            border-color: #1a3a52;
-            box-shadow: 0 3px 10px rgba(26,58,82,0.25);
+            box-shadow: 0 2px 8px rgba(26,58,82,0.25);
+        }
+
+        .filter-segment-divider {
+            width: 1px;
+            background: rgba(0,0,0,0.08);
+            margin: 4px 2px;
+            border-radius: 1px;
+            align-self: stretch;
+        }
+
+        @media (max-width: 500px) {
+            .filters { width: 100%; }
+            .filter-segment { width: 100%; }
+            .filter-btn { flex: 1; padding: 8px 6px; font-size: 0.82em; }
         }
 
         .outfits-grid {
@@ -1276,23 +1311,6 @@
         }
 
         /* Random Outfit */
-        .random-btn {
-            padding: 12px 24px;
-            border: 2px solid #e67e22;
-            background: linear-gradient(135deg, #f39c12, #e67e22);
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.95em;
-            font-weight: 600;
-            color: white;
-            transition: all 0.3s ease;
-        }
-
-        .random-btn:hover {
-            background: linear-gradient(135deg, #e67e22, #d35400);
-            border-color: #d35400;
-            transform: scale(1.03);
-        }
 
         .weather-btn {
             padding: 12px 24px;
@@ -1313,205 +1331,7 @@
             transform: scale(1.03);
         }
 
-        .random-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            animation: fadeIn 0.2s ease;
-        }
 
-        .random-dialog {
-            background: white;
-            border-radius: 16px;
-            padding: 30px;
-            max-width: 500px;
-            width: 90%;
-            text-align: center;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            animation: slideUp 0.2s ease;
-        }
-
-        .random-dialog h3 {
-            color: #1a3a52;
-            margin-bottom: 6px;
-            font-size: 1.2em;
-        }
-
-        .random-dialog p {
-            color: #666;
-            margin-bottom: 20px;
-            font-size: 0.9em;
-        }
-
-        .random-category-btns {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-bottom: 18px;
-        }
-
-        .random-cat-btn {
-            padding: 14px;
-            border: 2px solid #e0e0e0;
-            background: white;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 1em;
-            font-weight: 600;
-            transition: all 0.2s;
-            color: #333;
-        }
-
-        .random-cat-btn:hover {
-            border-color: #e67e22;
-            color: #e67e22;
-            background: #fff8f0;
-        }
-
-        .random-cat-btn.selected {
-            border-color: #e67e22;
-            background: #e67e22;
-            color: white;
-        }
-
-        .random-result {
-            text-align: left;
-            margin-top: 20px;
-        }
-
-        .random-result .outfit-title {
-            text-align: center;
-            font-size: 1.3em;
-            margin-bottom: 5px;
-        }
-
-        .random-result .formality-badge {
-            display: block;
-            text-align: center;
-            margin-bottom: 18px;
-            width: fit-content;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .random-result .prenda-grupo {
-            margin-bottom: 14px;
-        }
-
-        .random-result .color-dots {
-            justify-content: center;
-            margin-bottom: 16px;
-        }
-
-        .random-dialog .dialog-buttons {
-            display: flex;
-            gap: 12px;
-            margin-top: 20px;
-        }
-
-        .random-dialog .btn-cancel {
-            flex: 1;
-            padding: 12px;
-            background: #f5f5f5;
-            color: #333;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.9em;
-            transition: background 0.2s;
-        }
-
-        .random-dialog .btn-cancel:hover {
-            background: #e0e0e0;
-        }
-
-        .btn-random-generate {
-            flex: 1;
-            padding: 12px;
-            background: #e67e22;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.9em;
-            transition: background 0.2s;
-        }
-
-        .btn-random-generate:hover {
-            background: #d35400;
-        }
-
-        .btn-random-generate:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-        }
-
-        .btn-save-random {
-            flex: 1;
-            padding: 12px;
-            background: #1a3a52;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.9em;
-            transition: background 0.2s;
-        }
-
-        .btn-save-random:hover {
-            background: #0f2438;
-        }
-
-        .btn-retry-random {
-            flex: 1;
-            padding: 12px;
-            background: #f39c12;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.9em;
-            transition: background 0.2s;
-        }
-
-        .btn-retry-random:hover {
-            background: #e67e22;
-        }
-
-        .random-success-toast {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background: #2e7d32;
-            color: white;
-            padding: 14px 24px;
-            border-radius: 14px;
-            font-weight: 600;
-            font-size: 0.95em;
-            box-shadow: 0 6px 24px rgba(46,125,50,0.4);
-            z-index: 1001;
-            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            pointer-events: none;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .random-success-toast.show {
-            transform: translateX(-50%) translateY(0);
-        }
 
         @media (max-width: 768px) {
             .outfits-grid {
@@ -1520,14 +1340,6 @@
 
             h1 {
                 font-size: 1.8em;
-            }
-
-            .filters {
-                flex-direction: column;
-            }
-
-            .filter-btn {
-                width: 100%;
             }
 
             .form-row {
@@ -1663,6 +1475,61 @@
             animation: fadeIn 0.2s ease;
         }
         .cal-overlay.open { display: flex; }
+
+        /* Recent outfit popup */
+        .cal-recent-popup {
+            position: fixed;
+            z-index: 9999;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+            padding: 16px;
+            width: 230px;
+            border: 1px solid rgba(0,0,0,0.07);
+            animation: popupFadeIn 0.15s ease;
+            pointer-events: auto;
+        }
+        @keyframes popupFadeIn {
+            from { opacity: 0; transform: translateY(6px) scale(0.97); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .cal-recent-popup-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .cal-recent-popup-title {
+            font-weight: 700;
+            color: #1a3a52;
+            font-size: 0.95em;
+            flex: 1;
+        }
+        .cal-recent-popup-date {
+            font-size: 0.75em;
+            color: #999;
+            margin-bottom: 10px;
+        }
+        .cal-recent-popup-prenda {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.78em;
+            padding: 4px 0;
+            border-bottom: 1px solid #f4f4f4;
+            gap: 8px;
+        }
+        .cal-recent-popup-prenda:last-child { border-bottom: none; }
+        .cal-recent-popup-tipo {
+            color: #aaa;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            flex-shrink: 0;
+        }
+        .cal-recent-popup-val {
+            color: #333;
+            text-align: right;
+        }
 
         /* Recent outfits carousel */
         .cal-recent-strip {
@@ -2313,6 +2180,237 @@
             }
         }
 
+
+        /* ══ ACHIEVEMENTS FAB ══ */
+        .achievements-fab {
+            position: fixed;
+            bottom: 92px;
+            left: 28px;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #b8860b, #ffd700);
+            color: white;
+            border: none;
+            font-size: 1.35em;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(184,134,11,0.4);
+            transition: all 0.2s ease;
+            z-index: 900;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .achievements-fab:hover {
+            transform: scale(1.08);
+            box-shadow: 0 6px 20px rgba(184,134,11,0.55);
+        }
+        .achievements-fab-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: #e53935;
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.58em;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid white;
+            display: none;
+        }
+
+        /* ══ ACHIEVEMENTS VITRINA ══ */
+        .vitrina-cabinet {
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.07);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+        .vitrina-empty {
+            text-align: center;
+            color: rgba(255,255,255,0.2);
+            font-size: 0.8em;
+            padding: 28px 16px;
+            font-style: italic;
+            background: linear-gradient(180deg, #1a1f2e, #0f1420);
+        }
+        .vitrina-shelf {
+            position: relative;
+            padding: 12px 12px 20px;
+            background: linear-gradient(180deg, #1a1f2e 0%, #0f1420 70%, #131928 100%);
+        }
+        .vitrina-shelf + .vitrina-shelf { border-top: 1px solid rgba(255,255,255,0.05); }
+        .vitrina-shelf::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 24px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, transparent 100%);
+            pointer-events: none;
+        }
+        .vitrina-shelf::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0; height: 6px;
+            background: linear-gradient(180deg, #2a3040, #1a2030);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+        }
+        .vitrina-shelf-label {
+            font-size: 0.6em;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            opacity: 0.6;
+        }
+        .vitrina-shelf.tier-bronce .vitrina-shelf-label  { color: #e8a84a; }
+        .vitrina-shelf.tier-plata .vitrina-shelf-label   { color: #d4d4d4; }
+        .vitrina-shelf.tier-oro .vitrina-shelf-label     { color: #ffd700; }
+        .vitrina-shelf.tier-platino .vitrina-shelf-label { color: #b9f2ff; }
+        .vitrina-shelf-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            position: relative;
+            z-index: 1;
+        }
+        .vitrina-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            cursor: default;
+        }
+        .vitrina-item.locked {
+            opacity: 0.12;
+            filter: grayscale(1) blur(2.5px);
+            pointer-events: none;
+        }
+        .vitrina-medal-wrap {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .vitrina-medal-wrap svg {
+            width: 100%;
+            height: 100%;
+            transition: transform 0.2s;
+            filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5));
+        }
+        .vitrina-item:not(.locked):hover .vitrina-medal-wrap svg {
+            transform: scale(1.1) translateY(-3px);
+        }
+        .vitrina-medal-wrap::after {
+            content: '';
+            position: absolute;
+            bottom: -4px; left: 50%;
+            transform: translateX(-50%);
+            width: 60%; height: 8px;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .vitrina-item.tier-bronce .vitrina-medal-wrap::after  { background: radial-gradient(ellipse, rgba(205,127,50,0.5), transparent 70%); }
+        .vitrina-item.tier-plata .vitrina-medal-wrap::after   { background: radial-gradient(ellipse, rgba(180,180,180,0.4), transparent 70%); }
+        .vitrina-item.tier-oro .vitrina-medal-wrap::after     { background: radial-gradient(ellipse, rgba(255,215,0,0.55), transparent 70%); }
+        .vitrina-item.tier-platino .vitrina-medal-wrap::after { background: radial-gradient(ellipse, rgba(100,220,255,0.6), transparent 70%); }
+        .vitrina-name {
+            font-size: 0.56em;
+            font-weight: 600;
+            color: rgba(255,255,255,0.4);
+            text-align: center;
+            line-height: 1.2;
+            width: 100%;
+        }
+        .vitrina-item.tier-oro:not(.locked) .vitrina-name     { color: rgba(255,215,0,0.65); }
+        .vitrina-item.tier-platino:not(.locked) .vitrina-name { color: rgba(150,235,255,0.7); }
+        @keyframes shimmer {
+            0%,100% { filter: drop-shadow(0 2px 12px rgba(100,220,255,0.7)); }
+            50%      { filter: drop-shadow(0 2px 18px rgba(100,220,255,1)); }
+        }
+        .vitrina-item.tier-platino:not(.locked) .vitrina-medal-wrap svg { animation: shimmer 2.8s ease-in-out infinite; }
+            50%      { opacity:.82; filter: drop-shadow(0 2px 18px rgba(100,220,255,1)); }
+        }
+        .vitrina-item.tier-platino .vitrina-medal-svg { animation: shimmer 2.8s ease-in-out infinite; }
+
+        
+
+        
+
+
+        /* ══ LOGROS MODAL ══ */
+        .logros-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.45);
+            display: none; align-items: center; justify-content: center;
+            z-index: 1100; animation: fadeIn 0.2s ease;
+        }
+        .logros-overlay.open { display: flex; }
+        .logros-dialog {
+            background: white; border-radius: 20px; padding: 22px;
+            width: min(460px, 96vw); max-height: 88vh; overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.25); animation: slideUp 0.22s ease;
+        }
+        .logros-header {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;
+        }
+        .logros-title { font-weight: 800; color: #1a3a52; font-size: 1.1em; }
+        .logros-crunchies-badge {
+            background: linear-gradient(135deg, #1a3a52, #2d6a8a); color: white;
+            border-radius: 20px; padding: 5px 12px; font-size: 0.78em; font-weight: 700;
+        }
+        .logros-tabs {
+            display: flex; margin: 12px 0; background: #f4f2ef;
+            border-radius: 10px; padding: 3px;
+        }
+        .logros-tab-btn {
+            flex: 1; padding: 8px 6px; border: none; background: transparent;
+            border-radius: 8px; cursor: pointer; font-size: 0.8em; font-weight: 700;
+            font-family: 'DM Sans', sans-serif; color: #888; transition: all 0.2s;
+        }
+        .logros-tab-btn.active { background: #1a3a52; color: white; box-shadow: 0 2px 8px rgba(26,58,82,0.25); }
+        .logros-section { display: none; }
+        .logros-section.active { display: block; }
+        .logros-progress-header {
+            background: #f8f8f8; border-radius: 12px; padding: 14px;
+            margin-bottom: 12px; display: flex; align-items: center; gap: 12px;
+        }
+        .logros-progress-circle { width: 52px; height: 52px; flex-shrink: 0; position: relative; }
+        .logros-progress-circle svg { transform: rotate(-90deg); }
+        .logros-progress-pct {
+            position: absolute; inset: 0; display: flex; align-items: center;
+            justify-content: center; font-size: 0.75em; font-weight: 800; color: #1a3a52;
+        }
+        .logros-progress-title { font-weight: 700; color: #1a3a52; font-size: 0.92em; }
+        .logros-progress-sub { font-size: 0.75em; color: #999; margin-top: 2px; }
+        .logros-achievement-item {
+            display: flex; align-items: center; gap: 11px; padding: 10px 12px;
+            border-radius: 12px; margin-bottom: 6px; background: #fafafa;
+            border: 1.5px solid #f0f0f0; position: relative;
+        }
+        .logros-achievement-item.unlocked {
+            background: linear-gradient(135deg, #fffdf0, #fff8dc); border-color: #f0d060;
+        }
+        .logros-achievement-medal { width: 44px; height: 44px; flex-shrink: 0; filter: grayscale(1) opacity(0.25); transition: filter 0.3s; }
+        .logros-achievement-item.unlocked .logros-achievement-medal { filter: none; }
+        .logros-achievement-info { flex: 1; min-width: 0; }
+        .logros-achievement-name { font-weight: 700; color: #aaa; font-size: 0.86em; margin-bottom: 1px; }
+        .logros-achievement-item.unlocked .logros-achievement-name { color: #1a3a52; }
+        .logros-achievement-desc { font-size: 0.72em; color: #aaa; margin-bottom: 4px; }
+        .logros-achievement-bar-wrap { background: #ececec; border-radius: 4px; height: 4px; overflow: hidden; }
+        .logros-achievement-item.unlocked .logros-achievement-bar-wrap { background: #f0e0a0; }
+        .logros-achievement-bar-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, #b8860b, #ffd700); }
+        .logros-achievement-pct { font-size: 0.67em; color: #bbb; margin-top: 2px; }
+        .logros-achievement-item.unlocked .logros-achievement-pct { color: #b8860b; font-weight: 700; }
+        .logros-achievement-reward { font-size: 0.67em; text-align: right; color: #ccc; flex-shrink: 0; max-width: 64px; line-height: 1.3; }
+        .logros-achievement-item.unlocked .logros-achievement-reward { color: #b8860b; font-weight: 600; }
+        .logros-section-label { font-size: 0.68em; font-weight: 800; color: #bbb; text-transform: uppercase; letter-spacing: 1px; margin: 14px 0 7px; }
+
     </style>
 </head>
 <body>
@@ -2392,19 +2490,22 @@
         <div class="tabs">
             <button class="tab-btn active" onclick="switchTab('sugeridos')">Outfits Sugeridos</button>
             <button class="tab-btn" onclick="switchTab('mios')">Mis Outfits</button>
-            <button class="random-btn" onclick="openRandomOutfit()">🎲 Outfit al Azar</button>
+            <button class="tab-btn logros-tab-gold" onclick="openLogros()" style="position:relative;">🏆 Logros<span id="achievementsBadge" style="display:none;position:absolute;top:-4px;right:-4px;background:#e53935;color:white;border-radius:50%;width:16px;height:16px;font-size:0.55em;font-weight:800;display:none;align-items:center;justify-content:center;border:2px solid white;"></span></button>
             <button class="weather-btn" onclick="showWeatherRecommendations()">🌤️ Por Clima</button>
         </div>
 
         <!-- TAB: SUGERIDOS -->
         <div class="tab-content active" id="tab-sugeridos">
             <div class="filters">
-                <button class="filter-btn active" id="filterBtn-todos" onclick="filterOutfits('todos')">Todos (17)</button>
-                <button class="filter-btn" id="filterBtn-formal" onclick="filterOutfits('formal')">Formal (6)</button>
-                <button class="filter-btn" id="filterBtn-elegante-sport" onclick="filterOutfits('elegante-sport')">Elegante Sport (6)</button>
-                <button class="filter-btn" id="filterBtn-casual" onclick="filterOutfits('casual')">Casual (5)</button>
-                <button class="filter-btn" onclick="filterOutfits('favoritos')">⭐ Favoritos</button>
-                <button class="filter-btn" onclick="filterOutfits('masusado')">🔥 Más usado</button>
+                <div class="filter-segment">
+                    <button class="filter-btn active" id="filterBtn-todos" onclick="filterOutfits('todos')">Todos</button>
+                    <button class="filter-btn" id="filterBtn-formal" onclick="filterOutfits('formal')">Formal</button>
+                    <button class="filter-btn" id="filterBtn-elegante-sport" onclick="filterOutfits('elegante-sport')">Elegante</button>
+                    <button class="filter-btn" id="filterBtn-casual" onclick="filterOutfits('casual')">Casual</button>
+                    <div class="filter-segment-divider"></div>
+                    <button class="filter-btn" id="filterIconBtn-favoritos" onclick="filterOutfits('favoritos')" title="Favoritos">⭐</button>
+                    <button class="filter-btn" id="filterIconBtn-masusado" onclick="filterOutfits('masusado')" title="Más usado">🔥</button>
+                </div>
             </div>
 
             <!-- FILTRO POR PRENDA (DESPLEGABLE) -->
@@ -2623,10 +2724,13 @@
     </div>
 
     <div id="deleteSuccessToast" class="delete-success-toast">🗑 Outfit eliminado</div>
-    <div id="randomSuccessToast" class="random-success-toast">✓ Outfit guardado en "Mis Outfits"</div>
 
     <!-- CALENDAR FAB -->
     <button class="cal-fab" onclick="openCalendar()" title="Calendario de outfits">📅</button>
+
+
+
+
 
     <!-- CALENDAR MODAL -->
     <div class="cal-overlay" id="calOverlay" onclick="closeCalendar(event)">
@@ -3432,7 +3536,13 @@
 
         function filterOutfits(filtro) {
             document.querySelectorAll('#tab-sugeridos .filter-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
+            const idMap = {
+                'favoritos': 'filterIconBtn-favoritos',
+                'masusado':  'filterIconBtn-masusado',
+            };
+            const btnId = idMap[filtro] || ('filterBtn-' + filtro);
+            const btn = document.getElementById(btnId);
+            if (btn) btn.classList.add('active');
             renderOutfits(filtro);
         }
 
@@ -3477,27 +3587,7 @@
         }
 
         function updateFilterCounts() {
-            const customOutfits = JSON.parse(localStorage.getItem('customOutfits')) || [];
-            const allOutfits = [...applyOverrides([...outfits]), ...customOutfits];
-
-            const counts = {
-                todos:            allOutfits.length,
-                formal:           allOutfits.filter(o => o.formalidad === 'formal').length,
-                'elegante-sport': allOutfits.filter(o => o.formalidad === 'elegante-sport').length,
-                casual:           allOutfits.filter(o => o.formalidad === 'casual').length,
-            };
-
-            const labels = {
-                todos: 'Todos',
-                formal: 'Formal',
-                'elegante-sport': 'Elegante Sport',
-                casual: 'Casual',
-            };
-
-            Object.keys(counts).forEach(key => {
-                const btn = document.getElementById(`filterBtn-${key}`);
-                if (btn) btn.textContent = `${labels[key]} (${counts[key]})`;
-            });
+            // No-op: counts removed, labels are static in HTML
         }
 
         function toggleCreateForm() {
@@ -3622,123 +3712,6 @@
         }
 
         // ============ RANDOM OUTFIT ============
-        let randomSelectedCategory = null;
-        let lastRandomOutfit = null;
-
-        function openRandomOutfit() {
-            randomSelectedCategory = null;
-            lastRandomOutfit = null;
-            const overlay = document.createElement('div');
-            overlay.className = 'random-overlay';
-            overlay.id = 'randomOverlay';
-            overlay.innerHTML = `
-                <div class="random-dialog">
-                    <div style="font-size: 2.5em; margin-bottom: 10px;">🎲</div>
-                    <h3>Outfit al Azar</h3>
-                    <p>Elegí una categoría y se elige un outfit random de los existentes</p>
-                    <div class="random-category-btns" id="randomCatBtns">
-                        <button class="random-cat-btn" onclick="selectRandomCategory('formal', this)">Formal</button>
-                        <button class="random-cat-btn" onclick="selectRandomCategory('elegante-sport', this)">Elegante Sport</button>
-                        <button class="random-cat-btn" onclick="selectRandomCategory('casual', this)">Casual</button>
-                    </div>
-                    <div id="randomResultArea"></div>
-                    <div class="dialog-buttons">
-                        <button class="btn-cancel" onclick="closeRandomDialog()">Cerrar</button>
-                        <button class="btn-random-generate" id="btnGenerate" onclick="generateRandomOutfit()" disabled>Generar 🎲</button>
-                    </div>
-                </div>
-            `;
-            document.body.appendChild(overlay);
-            overlay.addEventListener('click', function(e) {
-                if (e.target === overlay) closeRandomDialog();
-            });
-        }
-
-        function selectRandomCategory(cat, btn) {
-            randomSelectedCategory = cat;
-            lastRandomOutfit = null;
-            document.getElementById('randomResultArea').innerHTML = '';
-            document.querySelectorAll('#randomCatBtns .random-cat-btn').forEach(b => b.classList.remove('selected'));
-            btn.classList.add('selected');
-            const genBtn = document.getElementById('btnGenerate');
-            genBtn.disabled = false;
-            genBtn.textContent = 'Generar 🎲';
-        }
-
-        function generateRandomOutfit() {
-            const cat = randomSelectedCategory;
-            if (!cat) return;
-
-            const formalidadLabel = cat === 'elegante-sport'
-                ? 'Elegante Sport'
-                : cat === 'formal'
-                ? 'Formal'
-                : 'Casual';
-
-            // Pick from existing predefined outfits only
-            const outfitsDeCat = outfits.filter(o => o.formalidad === cat && !o.custom);
-            if (outfitsDeCat.length === 0) return;
-            const outfitElegido = outfitsDeCat[Math.floor(Math.random() * outfitsDeCat.length)];
-
-            lastRandomOutfit = {
-                ...outfitElegido,
-                id: Date.now(),
-                contexto: 'Generado al azar',
-                custom: true
-            };
-
-            const dotsHTML = renderColorDots(outfitElegido);
-
-            const resultArea = document.getElementById('randomResultArea');
-            resultArea.innerHTML = `
-                <div class="random-result">
-                    <div class="outfit-title">🎲 ${outfitElegido.nombre}</div>
-                    <span class="formality-badge ${cat}">${formalidadLabel}</span>
-                    ${dotsHTML}
-                    <div class="prenda-grupo" style="margin-top:14px;">
-                        <span class="prenda-tipo">Pantalón</span>
-                        <div class="prenda-nombre">${outfitElegido.prendas.pantalon}</div>
-                    </div>
-                    <div class="prenda-grupo">
-                        <span class="prenda-tipo">Camisa</span>
-                        <div class="prenda-nombre">${outfitElegido.prendas.camisa}</div>
-                    </div>
-                    <div class="prenda-grupo">
-                        <span class="prenda-tipo">Abrigo</span>
-                        <div class="prenda-nombre">${outfitElegido.prendas.abrigo}</div>
-                    </div>
-                    <div class="prenda-grupo">
-                        <span class="prenda-tipo">Zapatos</span>
-                        <div class="prenda-nombre">${outfitElegido.prendas.zapatos}</div>
-                    </div>
-                    <div class="outfit-notes" style="margin-top:10px; padding-top:10px; border-top:1px solid #f0f0f0; font-size:0.9em; color:#666; font-style:italic;">${outfitElegido.notas}</div>
-                </div>
-            `;
-
-            const buttonsDiv = document.querySelector('.random-dialog .dialog-buttons');
-            buttonsDiv.innerHTML = `
-                <button class="btn-cancel" onclick="closeRandomDialog()">Cerrar</button>
-                <button class="btn-retry-random" onclick="generateRandomOutfit()">Otro 🎲</button>
-                <button class="btn-save-random" onclick="saveRandomOutfit()">Guardar 💾</button>
-            `;
-        }
-
-        function saveRandomOutfit() {
-            if (!lastRandomOutfit) return;
-            let savedOutfits = JSON.parse(localStorage.getItem('customOutfits')) || [];
-            savedOutfits.push(lastRandomOutfit);
-            localStorage.setItem('customOutfits', JSON.stringify(savedOutfits));
-            closeRandomDialog();
-
-            const toast = document.getElementById('randomSuccessToast');
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 2500);
-        }
-
-        function closeRandomDialog() {
-            const overlay = document.getElementById('randomOverlay');
-            if (overlay) overlay.remove();
-        }
 
         // ============ PRENDA FILTER ============
         let prendaFilterActive = false;
@@ -4624,15 +4597,80 @@
             localStorage.setItem('calendarOutfits', JSON.stringify(data));
         }
 
+        let _recentPopupEl = null;
+
+        function closeRecentPopup() {
+            if (_recentPopupEl) { _recentPopupEl.remove(); _recentPopupEl = null; }
+        }
+
+        function openRecentPopup(event, outfitId, dateStr, dayLabel) {
+            event.stopPropagation();
+            closeRecentPopup();
+
+            const customOutfits = JSON.parse(localStorage.getItem('customOutfits')) || [];
+            const allOutfits = [...applyOverrides([...outfits]), ...customOutfits];
+            const outfit = allOutfits.find(o => String(o.id) === String(outfitId));
+            if (!outfit) return;
+
+            const formalidadLabel = outfit.formalidad === 'elegante-sport' ? 'Elegante Sport'
+                : outfit.formalidad === 'formal' ? 'Formal' : 'Casual';
+
+            const p = outfit.prendas;
+            const prendas = [
+                { tipo: 'Pantalón', val: p.pantalon },
+                { tipo: 'Camisa',   val: p.camisa   },
+                { tipo: 'Abrigo',   val: p.abrigo   },
+                { tipo: 'Zapatos',  val: p.zapatos  },
+            ];
+
+            const popup = document.createElement('div');
+            popup.className = 'cal-recent-popup';
+            popup.innerHTML = `
+                <div class="cal-recent-popup-header">
+                    <div>${renderMannequin(outfit, 36)}</div>
+                    <div>
+                        <div class="cal-recent-popup-title">${outfit.nombre}</div>
+                        <span class="formality-badge ${outfit.formalidad}" style="font-size:0.68em; padding:2px 8px;">${formalidadLabel}</span>
+                    </div>
+                </div>
+                <div class="cal-recent-popup-date">📅 Usado el ${dayLabel}</div>
+                ${prendas.map(pr => `
+                    <div class="cal-recent-popup-prenda">
+                        <span class="cal-recent-popup-tipo">${pr.tipo}</span>
+                        <span class="cal-recent-popup-val">${pr.val}</span>
+                    </div>`).join('')}
+            `;
+
+            // Position near the clicked element
+            document.body.appendChild(popup);
+            _recentPopupEl = popup;
+
+            const rect = event.currentTarget.getBoundingClientRect();
+            const popW = 230, popH = popup.offsetHeight;
+            let top = rect.bottom + 8;
+            let left = rect.left + rect.width / 2 - popW / 2;
+
+            // Keep within viewport
+            if (left < 8) left = 8;
+            if (left + popW > window.innerWidth - 8) left = window.innerWidth - popW - 8;
+            if (top + popH > window.innerHeight - 8) top = rect.top - popH - 8;
+
+            popup.style.top = top + 'px';
+            popup.style.left = left + 'px';
+
+            // Close on outside click
+            setTimeout(() => document.addEventListener('click', closeRecentPopup, { once: true }), 0);
+        }
+
         function renderRecentStrip() {
             const data = calGetData();
             const strip = document.getElementById('calRecentStrip');
             const scroll = document.getElementById('calRecentScroll');
 
-            // Get all entries sorted by date descending, take last 5
+            // Get all entries sorted by date descending, take last 20
             const sorted = Object.entries(data)
                 .sort((a, b) => b[0].localeCompare(a[0]))
-                .slice(0, 5);
+                .slice(0, 20);
 
             if (!sorted.length) {
                 strip.style.display = 'none';
@@ -4647,11 +4685,10 @@
                 if (!outfit) return '';
                 const d = new Date(dateStr + 'T12:00:00');
                 const today = new Date();
-                const isThisMonth = d.getMonth() === today.getMonth() && d.getFullYear() === today.getFullYear();
-                const dayLabel = isThisMonth
-                    ? String(d.getDate())
-                    : d.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
-                return `<div class="cal-recent-item" title="${outfit.nombre} — ${dateStr}">
+                const dayLabel = d.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
+                const oid = outfit.id;
+                const odate = dateStr;
+                return `<div class="cal-recent-item" onclick="openRecentPopup(event, ${oid}, '${odate}', '${dayLabel}')">
                     <div class="cal-recent-mannequin">${renderMannequin(outfit, 44)}</div>
                     <div class="cal-recent-day">${dayLabel}</div>
                     <div class="cal-recent-name">${outfit.nombre}</div>
@@ -4795,11 +4832,8 @@
             }
             renderCustomOutfits();
 
-            // Toast
-            const toast = document.getElementById('randomSuccessToast');
-            toast.textContent = `📅 ${outfit.nombre} guardado`;
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 2000);
+            showToast(`📅 ${outfit.nombre} guardado`);
+            updateAchievementsBadge();
         }
 
         function calClearDay() {
@@ -5141,7 +5175,7 @@
 <\/script>`;
 
             // Remove any previous snapshot-restore block, then inject after <head>
-            const cleaned = html.replace(/<script id="snapshot-restore">[\s\S]*?<\/script>/g, '');
+            const cleaned = html.replace(new RegExp('<scr' + 'ipt id="snapshot-restore">[\\s\\S]*?<\\/scr' + 'ipt>', 'g'), '');
             const final   = cleaned.replace('<head>', '<head>\n    ' + restoreScript);
 
             // Download
@@ -5156,15 +5190,1145 @@
             URL.revokeObjectURL(url);
 
             // Toast
-            const toast = document.getElementById('randomSuccessToast');
-            toast.textContent = '💾 Snapshot guardado';
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 2500);
+            showToast('💾 Snapshot guardado');
+        }
+
+
+        // ══════════════════════════════════════════
+        // LOGROS PAGE
+        // ══════════════════════════════════════════
+
+        const ACHIEVEMENTS = [
+            // ── BRONCE ──────────────────────────────
+            {
+                id: 'first_log', tier: 'Bronce', name: 'Primer Día',
+                desc: 'Registrá tu primer outfit en el calendario.',
+                medal: '🥉', svgColor: '#cd7f32',
+                check: (s) => s.totalLogs >= 1,
+                progress: (s) => ({ val: Math.min(s.totalLogs, 1), max: 1 }),
+            },
+            {
+                id: 'first_fav', tier: 'Bronce', name: 'Favorito',
+                desc: 'Marcá al menos un outfit como favorito.',
+                medal: '🥉', svgColor: '#cd7f32',
+                check: (s) => s.favCount >= 1,
+                progress: (s) => ({ val: Math.min(s.favCount, 1), max: 1 }),
+            },
+            {
+                id: 'used_all_formalities', tier: 'Bronce', name: 'El Camaleón',
+                desc: 'Usá al menos una vez cada nivel de formalidad.',
+                medal: '🥉', svgColor: '#cd7f32',
+                check: (s) => s.usedFormalidad.formal >= 1 && s.usedFormalidad['elegante-sport'] >= 1 && s.usedFormalidad.casual >= 1,
+                progress: (s) => ({ val: [s.usedFormalidad.formal, s.usedFormalidad['elegante-sport'], s.usedFormalidad.casual].filter(x => x >= 1).length, max: 3 }),
+            },
+            {
+                id: 'workweek_logged', tier: 'Bronce', name: 'Semana Completa',
+                desc: 'Registrá los 5 días laborales de una misma semana.',
+                medal: '🥉', svgColor: '#cd7f32',
+                check: (s) => s.fullWorkweek,
+                progress: (s) => ({ val: s.bestWorkweekDays, max: 5 }),
+            },
+            {
+                id: 'vest_debut', tier: 'Bronce', name: 'Chaleco al Poder',
+                desc: 'Usá un outfit con chaleco Patagonia por primera vez.',
+                medal: '🥉', svgColor: '#cd7f32',
+                check: (s) => s.vestCount >= 1,
+                progress: (s) => ({ val: Math.min(s.vestCount, 1), max: 1 }),
+            },
+            // ── PLATA ────────────────────────────────
+            {
+                id: 'workstreak_5', tier: 'Plata', name: 'En Racha',
+                desc: 'Registrá 5 días laborales consecutivos (lunes a viernes).',
+                medal: '🥈', svgColor: '#aaa9ad',
+                check: (s) => s.maxWorkStreak >= 5,
+                progress: (s) => ({ val: Math.min(s.maxWorkStreak, 5), max: 5 }),
+            },
+            {
+                id: 'bordeaux_week', tier: 'Plata', name: 'Semana Bordeau',
+                desc: 'Usá prendas bordeau 5 veces en una semana.',
+                medal: '🥈', svgColor: '#aaa9ad',
+                check: (s) => s.bordeauxWeek,
+                progress: (s) => ({ val: s.bordeauxWeekBest, max: 5 }),
+            },
+            {
+                id: 'no_repeat_7', tier: 'Plata', name: 'Sin Repetir',
+                desc: 'Usá 7 outfits distintos en 7 días laborales seguidos.',
+                medal: '🥈', svgColor: '#aaa9ad',
+                check: (s) => s.maxUniqueWorkStreak >= 7,
+                progress: (s) => ({ val: Math.min(s.maxUniqueWorkStreak, 7), max: 7 }),
+            },
+            {
+                id: 'patagonia_fan', tier: 'Plata', name: 'Patagonia Fan',
+                desc: 'Usá prendas Patagonia 5 veces.',
+                medal: '🥈', svgColor: '#aaa9ad',
+                check: (s) => s.patagoniaCount >= 5,
+                progress: (s) => ({ val: Math.min(s.patagoniaCount, 5), max: 5 }),
+            },
+            {
+                id: 'all_formalities_week', tier: 'Plata', name: 'Versátil',
+                desc: 'Usá los 3 niveles de formalidad en una misma semana.',
+                medal: '🥈', svgColor: '#aaa9ad',
+                check: (s) => s.allFormalitiesInWeek,
+                progress: (s) => ({ val: s.allFormalitiesInWeek ? 3 : s.formalitiesThisWeek, max: 3 }),
+            },
+            {
+                id: 'vest_both', tier: 'Plata', name: 'Gris y Azul',
+                desc: 'Usá el chaleco gris y el azul al menos una vez cada uno.',
+                medal: '🥈', svgColor: '#aaa9ad',
+                check: (s) => s.vestGris >= 1 && s.vestAzul >= 1,
+                progress: (s) => ({ val: (s.vestGris >= 1 ? 1 : 0) + (s.vestAzul >= 1 ? 1 : 0), max: 2 }),
+            },
+            {
+                id: 'vest_regular', tier: 'Plata', name: 'Chaleco Regular',
+                desc: 'Usá chaleco 8 veces a lo largo del tiempo.',
+                medal: '🥈', svgColor: '#aaa9ad',
+                check: (s) => s.vestCount >= 8,
+                progress: (s) => ({ val: Math.min(s.vestCount, 8), max: 8 }),
+            },
+            // ── ORO ──────────────────────────────────
+            {
+                id: 'full_formal_week', tier: 'Oro', name: 'Wall Street Week',
+                desc: 'Usá outfits formales toda una semana laboral (5 días).',
+                medal: '🥇', svgColor: '#ffd700',
+                check: (s) => s.maxFormalWorkStreak >= 5,
+                progress: (s) => ({ val: Math.min(s.maxFormalWorkStreak, 5), max: 5 }),
+            },
+            {
+                id: 'full_casual_week_unique', tier: 'Oro', name: 'Casual Incógnito',
+                desc: 'Usá outfits casuales distintos toda una semana laboral.',
+                medal: '🥇', svgColor: '#ffd700',
+                check: (s) => s.casualUniqueWeek,
+                progress: (s) => ({ val: s.casualUniqueWeekBest, max: 5 }),
+            },
+            {
+                id: 'workstreak_10', tier: 'Oro', name: 'Racha Dorada',
+                desc: 'Registrá 10 días laborales consecutivos.',
+                medal: '🥇', svgColor: '#ffd700',
+                check: (s) => s.maxWorkStreak >= 10,
+                progress: (s) => ({ val: Math.min(s.maxWorkStreak, 10), max: 10 }),
+            },
+            {
+                id: 'all_outfits_used', tier: 'Oro', name: 'Colección Completa',
+                desc: 'Usá todos tus outfits al menos una vez.',
+                medal: '🥇', svgColor: '#ffd700',
+                check: (s) => s.allOutfitsUsed,
+                progress: (s) => ({ val: s.uniqueOutfitsUsed, max: s.totalOutfits }),
+            },
+            {
+                id: 'monochrome_master', tier: 'Oro', name: 'Monocromático',
+                desc: 'Usá 3 veces outfits con camisa y pantalón del mismo tono.',
+                medal: '🥇', svgColor: '#ffd700',
+                check: (s) => s.monochromeCount >= 3,
+                progress: (s) => ({ val: Math.min(s.monochromeCount, 3), max: 3 }),
+            },
+            // ── PLATINO ──────────────────────────────
+            {
+                id: 'workstreak_20', tier: 'Platino', name: 'Un Mes Imparable',
+                desc: 'Registrá 20 días laborales consecutivos.',
+                medal: '💎', svgColor: '#b9f2ff',
+                check: (s) => s.maxWorkStreak >= 20,
+                progress: (s) => ({ val: Math.min(s.maxWorkStreak, 20), max: 20 }),
+            },
+            {
+                id: 'bordeaux_loyalist', tier: 'Platino', name: 'Bordeau Loyalist',
+                desc: 'Usá prendas bordeau 20 veces en total.',
+                medal: '💎', svgColor: '#b9f2ff',
+                check: (s) => s.bordeauxTotal >= 20,
+                progress: (s) => ({ val: Math.min(s.bordeauxTotal, 20), max: 20 }),
+            },
+            {
+                id: 'four_seasons', tier: 'Platino', name: 'Cuatro Estaciones',
+                desc: 'Registrá outfits en las 4 estaciones del año.',
+                medal: '💎', svgColor: '#b9f2ff',
+                check: (s) => s.seasonsCovered >= 4,
+                progress: (s) => ({ val: s.seasonsCovered, max: 4 }),
+            },
+            {
+                id: 'elegante_sport_domination', tier: 'Platino', name: 'The Sophisticate',
+                desc: 'Elegante Sport como tu estilo dominante: más de 30 veces y mayoría.',
+                medal: '💎', svgColor: '#b9f2ff',
+                check: (s) => s.usedFormalidad['elegante-sport'] >= 30 && s.usedFormalidad['elegante-sport'] > s.usedFormalidad.formal && s.usedFormalidad['elegante-sport'] > s.usedFormalidad.casual,
+                progress: (s) => ({ val: Math.min(s.usedFormalidad['elegante-sport'], 30), max: 30 }),
+            },
+        ];
+
+        const TIER_ORDER = ['Bronce', 'Plata', 'Oro', 'Platino'];
+
+        function debugUnlockAll() {
+            const unlocked = {};
+            const today = new Date().toISOString().slice(0,10);
+            ACHIEVEMENTS.forEach(a => { unlocked[a.id] = today; });
+            localStorage.setItem('unlockedAchievements', JSON.stringify(unlocked));
+            updateAchievementsBadge();
+            renderLogrosPage();
+        }
+        function debugClearAll() {
+            localStorage.removeItem('unlockedAchievements');
+            updateAchievementsBadge();
+            renderLogrosPage();
+        }
+
+        function computeAchievementStats() {
+            const calendar = calGetData();
+            const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+            const customOutfits = JSON.parse(localStorage.getItem('customOutfits')) || [];
+            const allOutfits = [...applyOverrides([...outfits]), ...customOutfits];
+
+            const entries = Object.entries(calendar).sort((a,b) => a[0].localeCompare(b[0]));
+            const totalLogs = entries.length;
+
+            // helpers
+            const isWorkday = (dateStr) => { const d = new Date(dateStr + 'T12:00:00'); const day = d.getDay(); return day >= 1 && day <= 5; };
+            const weekKey   = (dateStr) => { const d = new Date(dateStr + 'T12:00:00'); const mon = new Date(d); mon.setDate(d.getDate() - ((d.getDay()+6)%7)); return mon.toISOString().slice(0,10); };
+
+            // formalidad usage
+            const usedFormalidad = { formal: 0, 'elegante-sport': 0, casual: 0 };
+            let patagoniaCount = 0, bordeauxTotal = 0, monochromeCount = 0;
+            const usedIds = new Set();
+            const monthsLogged = new Set();
+
+            entries.forEach(([dateStr, entry]) => {
+                const o = allOutfits.find(x => String(x.id) === String(entry.id));
+                if (!o) return;
+                usedFormalidad[o.formalidad] = (usedFormalidad[o.formalidad] || 0) + 1;
+                usedIds.add(String(o.id));
+                if (o.prendas.abrigo && o.prendas.abrigo.toLowerCase().includes('patagonia')) patagoniaCount++;
+
+                // bordeau
+                const allPrendas = Object.values(o.prendas).join(' ').toLowerCase();
+                if (allPrendas.includes('bordeau') || allPrendas.includes('bordeaux')) bordeauxTotal++;
+
+                // monochrome: camisa and pantalon same tone
+                const camisa = (o.prendas.camisa || '').toLowerCase();
+                const pantalon = (o.prendas.pantalon || '').toLowerCase();
+                const sameBlue = (camisa.includes('azul') || camisa.includes('celeste')) && (pantalon.includes('azul'));
+                const sameGrey = (camisa.includes('gris') || camisa.includes('jaspe')) && (pantalon.includes('gris'));
+                if (sameBlue || sameGrey) monochromeCount++;
+
+                // months
+                monthsLogged.add(dateStr.slice(0, 7));
+            });
+
+            // seasons: NL — winter=dec/jan/feb, spring=mar/apr/may, summer=jun/jul/aug, autumn=sep/oct/nov
+            const seasonMonths = { spring: ['03','04','05'], summer: ['06','07','08'], autumn: ['09','10','11'], winter: ['12','01','02'] };
+            const seasonsCovered = Object.values(seasonMonths).filter(months => [...monthsLogged].some(m => months.includes(m.slice(5)))).length;
+
+            // workday streak
+            const workEntries = entries.filter(([d]) => isWorkday(d));
+            let maxWorkStreak = 0, curWorkStreak = 0, prevWorkDate = null;
+            workEntries.forEach(([dateStr]) => {
+                const d = new Date(dateStr + 'T12:00:00');
+                if (prevWorkDate) {
+                    const diff = Math.round((d - prevWorkDate) / 86400000);
+                    // consecutive workdays: diff 1 (tue-fri) or 3 (fri→mon)
+                    const consecutive = diff === 1 || (diff === 3 && prevWorkDate.getDay() === 5);
+                    curWorkStreak = consecutive ? curWorkStreak + 1 : 1;
+                } else { curWorkStreak = 1; }
+                maxWorkStreak = Math.max(maxWorkStreak, curWorkStreak);
+                prevWorkDate = d;
+            });
+
+            // unique outfit workday streak
+            let maxUniqueWorkStreak = 0, curUnique = 0, prevUniqueDate = null, recentIds = [];
+            workEntries.forEach(([dateStr, entry]) => {
+                const d = new Date(dateStr + 'T12:00:00');
+                const id = String(entry.id);
+                if (prevUniqueDate) {
+                    const diff = Math.round((d - prevUniqueDate) / 86400000);
+                    const consecutive = diff === 1 || (diff === 3 && prevUniqueDate.getDay() === 5);
+                    if (consecutive && !recentIds.includes(id)) { curUnique++; recentIds.push(id); }
+                    else { curUnique = 1; recentIds = [id]; }
+                } else { curUnique = 1; recentIds = [id]; }
+                maxUniqueWorkStreak = Math.max(maxUniqueWorkStreak, curUnique);
+                prevUniqueDate = d;
+            });
+
+            // full workweek (5 days same week)
+            const weekDays = {};
+            workEntries.forEach(([dateStr]) => { const wk = weekKey(dateStr); weekDays[wk] = (weekDays[wk] || 0) + 1; });
+            const bestWorkweekDays = Math.max(0, ...Object.values(weekDays));
+            const fullWorkweek = bestWorkweekDays >= 5;
+
+            // bordeau week (5 bordeau uses in any 7-day window)
+            let bordeauxWeek = false, bordeauxWeekBest = 0;
+            const bordeauxEntries = entries.filter(([, e]) => {
+                const o = allOutfits.find(x => String(x.id) === String(e.id));
+                return o && Object.values(o.prendas).join(' ').toLowerCase().match(/bordeau|bordeaux/);
+            });
+            // group by week
+            const bordeauxByWeek = {};
+            bordeauxEntries.forEach(([d]) => { const wk = weekKey(d); bordeauxByWeek[wk] = (bordeauxByWeek[wk] || 0) + 1; });
+            const maxBordeauxWeek = Math.max(0, ...Object.values(bordeauxByWeek));
+            bordeauxWeekBest = Math.min(maxBordeauxWeek, 5);
+            bordeauxWeek = maxBordeauxWeek >= 5;
+
+            // all 3 formalities in any calendar week
+            let allFormalitiesInWeek = false, formalitiesThisWeek = 0;
+            const formalByWeek = {};
+            entries.forEach(([dateStr, entry]) => {
+                const wk = weekKey(dateStr);
+                const o = allOutfits.find(x => String(x.id) === String(entry.id));
+                if (!o) return;
+                if (!formalByWeek[wk]) formalByWeek[wk] = new Set();
+                formalByWeek[wk].add(o.formalidad);
+            });
+            const maxFormalVariety = Math.max(0, ...Object.values(formalByWeek).map(s => s.size));
+            allFormalitiesInWeek = maxFormalVariety >= 3;
+            formalitiesThisWeek = maxFormalVariety;
+
+            // formal workday streak
+            let maxFormalWorkStreak = 0, curFormal = 0, prevFormalDate = null;
+            workEntries.forEach(([dateStr, entry]) => {
+                const d = new Date(dateStr + 'T12:00:00');
+                const o = allOutfits.find(x => String(x.id) === String(entry.id));
+                const isFormal = o && o.formalidad === 'formal';
+                if (isFormal) {
+                    if (prevFormalDate) {
+                        const diff = Math.round((d - prevFormalDate) / 86400000);
+                        const consecutive = diff === 1 || (diff === 3 && prevFormalDate.getDay() === 5);
+                        curFormal = consecutive ? curFormal + 1 : 1;
+                    } else { curFormal = 1; }
+                    maxFormalWorkStreak = Math.max(maxFormalWorkStreak, curFormal);
+                    prevFormalDate = d;
+                } else { curFormal = 0; prevFormalDate = null; }
+            });
+
+            // casual unique week: 5 distinct casual outfits in same workweek
+            let casualUniqueWeek = false, casualUniqueWeekBest = 0;
+            const casualByWeek = {};
+            workEntries.forEach(([dateStr, entry]) => {
+                const wk = weekKey(dateStr);
+                const o = allOutfits.find(x => String(x.id) === String(entry.id));
+                if (!o || o.formalidad !== 'casual') return;
+                if (!casualByWeek[wk]) casualByWeek[wk] = new Set();
+                casualByWeek[wk].add(String(o.id));
+            });
+            const maxCasualUnique = Math.max(0, ...Object.values(casualByWeek).map(s => s.size));
+            casualUniqueWeekBest = Math.min(maxCasualUnique, 5);
+            casualUniqueWeek = maxCasualUnique >= 5;
+
+            // vest (chaleco) stats
+            let vestCount = 0, vestGris = 0, vestAzul = 0;
+            entries.forEach(([, entry]) => {
+                const o = allOutfits.find(x => String(x.id) === String(entry.id));
+                if (!o) return;
+                const abrigo = (o.prendas.abrigo || '').toLowerCase();
+                if (!abrigo.includes('chaleco')) return;
+                vestCount++;
+                if (abrigo.includes('gris')) vestGris++;
+                if (abrigo.includes('azul')) vestAzul++;
+            });
+
+            return {
+                totalLogs, usedFormalidad, patagoniaCount, bordeauxTotal, monochromeCount, vestCount, vestGris, vestAzul,
+                favCount: favorites.length,
+                maxWorkStreak, maxUniqueWorkStreak,
+                bestWorkweekDays, fullWorkweek,
+                bordeauxWeek, bordeauxWeekBest,
+                allFormalitiesInWeek, formalitiesThisWeek,
+                maxFormalWorkStreak,
+                casualUniqueWeek, casualUniqueWeekBest,
+                seasonsCovered, vestGris, vestAzul,
+                allOutfitsUsed: usedIds.size >= allOutfits.length && allOutfits.length > 0,
+                uniqueOutfitsUsed: usedIds.size,
+                totalOutfits: allOutfits.length,
+            };
+        }
+
+        function getUnlockedAchievements() {
+            return JSON.parse(localStorage.getItem('unlockedAchievements')) || {};
+        }
+
+        function checkAndUnlockAchievements() {
+            const stats = computeAchievementStats();
+            const unlocked = getUnlockedAchievements();
+            let newUnlocks = 0;
+            ACHIEVEMENTS.forEach(a => {
+                if (!unlocked[a.id] && a.check(stats)) {
+                    unlocked[a.id] = new Date().toISOString().slice(0,10);
+                    newUnlocks++;
+                }
+            });
+            if (newUnlocks) localStorage.setItem('unlockedAchievements', JSON.stringify(unlocked));
+            return newUnlocks;
+        }
+
+        function updateAchievementsBadge() {
+            checkAndUnlockAchievements();
+            const unlocked = getUnlockedAchievements();
+            const total = ACHIEVEMENTS.length;
+            const done = Object.keys(unlocked).length;
+            const badge = document.getElementById('achievementsBadge');
+            if (badge) {
+                const remaining = total - done;
+                badge.style.display = remaining < total ? 'flex' : 'none';
+                badge.textContent = done;
+            }
+        }
+
+
+        // ══════════════════════════════════════════
+        // LOGROS PAGE
+        // ══════════════════════════════════════════
+
+        // Map each achievement id → office item
+
+
+
+        // ── ITEM SVGs for vitrina ─────────────────────────────────────────────
+        const ITEM_SVGS = {
+
+first_log: `<svg viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="mg_fl" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#e0dcd6"/><stop offset="50%" stop-color="#f8f6f2"/><stop offset="100%" stop-color="#ccc8c2"/></linearGradient><linearGradient id="cof_fl" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#2a1a0a"/><stop offset="100%" stop-color="#1a0d04"/></linearGradient><linearGradient id="stm_fl" x1="0%" y1="100%" x2="0%" y2="0%"><stop offset="0%" stop-color="#c0b8ac" stop-opacity="0.7"/><stop offset="100%" stop-color="#c0b8ac" stop-opacity="0"/></linearGradient></defs>
+<ellipse cx="60" cy="128" rx="36" ry="7" fill="#1a1208" opacity="0.1"/>
+<path d="M24,52 L96,52 L90,118 L30,118 Z" fill="url(#mg_fl)" stroke="#c4c0ba" stroke-width="0.8"/>
+<path d="M96,52 L106,58 L100,122 L90,118 Z" fill="#c4c0ba" stroke="#b0aca6" stroke-width="0.6"/>
+<ellipse cx="60" cy="118" rx="36" ry="7" fill="#ccc8c2" stroke="#b4b0aa" stroke-width="0.8"/>
+<ellipse cx="60" cy="51" rx="38" ry="8" fill="#ece8e2" stroke="#c4c0ba" stroke-width="1"/>
+<ellipse cx="60" cy="49" rx="32" ry="6" fill="url(#cof_fl)"/>
+<ellipse cx="54" cy="48" rx="9" ry="3" fill="#4a2808" opacity="0.5"/>
+<path d="M90,68 Q126,68 126,92 Q126,118 90,114" fill="none" stroke="#d4d0ca" stroke-width="10" stroke-linecap="round"/>
+<path d="M90,74 Q118,74 118,92 Q118,112 90,108" fill="none" stroke="#f0ece6" stroke-width="4" stroke-linecap="round"/>
+<path d="M24,66 L96,66 L102,72 L24,72 Z" fill="#c8a020" opacity="0.75"/>
+<path d="M27,106 L93,106 L99,112 L27,112 Z" fill="#c8a020" opacity="0.65"/>
+<text x="60" y="92" text-anchor="middle" font-size="9" fill="#b8900c" font-family="serif">★</text>
+<text x="60" y="100" text-anchor="middle" font-size="6" font-weight="700" fill="#8B6914" font-family="Georgia,serif">WORLD'S BEST</text>
+<text x="60" y="108" text-anchor="middle" font-size="5" fill="#8B6914" font-family="Georgia,serif">ANALYST</text>
+<path d="M42,54 L40,116" stroke="white" stroke-width="3" stroke-linecap="round" opacity="0.2"/>
+<path d="M36,44 Q33,32 36,22 Q39,12 36,2" fill="none" stroke="url(#stm_fl)" stroke-width="2" stroke-linecap="round"/>
+<path d="M60,42 Q64,28 60,18 Q56,8 60,-2" fill="none" stroke="url(#stm_fl)" stroke-width="2" stroke-linecap="round"/>
+<path d="M82,44 Q86,32 82,22 Q78,12 82,2" fill="none" stroke="url(#stm_fl)" stroke-width="2" stroke-linecap="round"/>
+</svg>`,
+
+first_fav: `<svg viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="pt_ff" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#ffe566"/><stop offset="100%" stop-color="#f5c800"/></linearGradient><linearGradient id="ps_ff" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#d4a800"/><stop offset="100%" stop-color="#b89000"/></linearGradient><linearGradient id="pf_ff" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#ffd700"/><stop offset="100%" stop-color="#e8c000"/></linearGradient></defs>
+<ellipse cx="60" cy="130" rx="44" ry="7" fill="#1a1208" opacity="0.08"/>
+<polygon points="28,60 92,60 76,95 12,95" fill="url(#pt_ff)" stroke="#e0c000" stroke-width="0.8"/>
+<polygon points="12,95 76,95 76,128 12,128" fill="url(#pf_ff)" stroke="#d4b000" stroke-width="0.8"/>
+<polygon points="76,95 92,60 92,92 76,128" fill="url(#ps_ff)" stroke="#b89000" stroke-width="0.8"/>
+<line x1="20" y1="108" x2="68" y2="108" stroke="#c8a000" stroke-width="0.8" opacity="0.7"/>
+<line x1="20" y1="116" x2="68" y2="116" stroke="#c8a000" stroke-width="0.8" opacity="0.6"/>
+<line x1="20" y1="124" x2="64" y2="124" stroke="#c8a000" stroke-width="0.7" opacity="0.5"/>
+<text x="44" y="106" text-anchor="middle" font-size="9" font-weight="700" fill="#8B6400" font-family="Georgia,serif">EBITDA</text>
+<polygon points="68,95 76,95 72,107" fill="#d4a800" opacity="0.6"/>
+</svg>`,
+
+used_all_formalities: `<svg viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg">
+<ellipse cx="60" cy="128" rx="42" ry="8" fill="#1a1208" opacity="0.1"/>
+<circle cx="60" cy="76" r="46" fill="#c41818" stroke="#901010" stroke-width="1"/>
+<ellipse cx="46" cy="58" rx="20" ry="16" fill="#e83030" opacity="0.6"/>
+<ellipse cx="40" cy="52" rx="7" ry="6" fill="#f06060" opacity="0.7"/>
+<ellipse cx="76" cy="96" rx="18" ry="14" fill="#800808" opacity="0.45"/>
+<ellipse cx="60" cy="120" rx="40" ry="6" fill="#b01414" opacity="0.5"/>
+<g transform="translate(60,76)">
+<rect x="-14" y="-11" width="3" height="16" fill="white" opacity="0.85" rx="1"/>
+<rect x="-6" y="-11" width="3" height="16" fill="white" opacity="0.85" rx="1"/>
+<rect x="2" y="-11" width="3" height="16" fill="white" opacity="0.85" rx="1"/>
+<rect x="10" y="-11" width="3" height="16" fill="white" opacity="0.85" rx="1"/>
+<polygon points="-18,-11 18,-11 0,-21" fill="white" opacity="0.85"/>
+<rect x="-18" y="5" width="36" height="4" fill="white" opacity="0.85" rx="1"/>
+</g>
+</svg>`,
+
+workweek_logged: `<svg viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="pot_wl" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#8B5e2a"/><stop offset="100%" stop-color="#6a4418"/></linearGradient></defs>
+<ellipse cx="60" cy="130" rx="36" ry="7" fill="#1a1208" opacity="0.1"/>
+<polygon points="28,94 92,94 86,126 34,126" fill="url(#pot_wl)" stroke="#5a3010" stroke-width="0.8"/>
+<polygon points="92,94 104,88 98,120 86,126" fill="#5a3812" stroke="#4a2808" stroke-width="0.6"/>
+<ellipse cx="60" cy="93" rx="36" ry="8" fill="#7a4e20" stroke="#5a3810" stroke-width="0.8"/>
+<ellipse cx="60" cy="92" rx="30" ry="6" fill="#2a1c08"/>
+<line x1="60" y1="91" x2="60" y2="46" stroke="#2d6e1a" stroke-width="4" stroke-linecap="round"/>
+<path d="M60,72 Q40,60 30,44" fill="none" stroke="#2d6e1a" stroke-width="3" stroke-linecap="round"/>
+<path d="M60,62 Q80,48 90,34" fill="none" stroke="#2d6e1a" stroke-width="3" stroke-linecap="round"/>
+<path d="M60,52 Q44,42 36,28" fill="none" stroke="#2d6e1a" stroke-width="2.5" stroke-linecap="round"/>
+<ellipse cx="22" cy="38" rx="18" ry="10" fill="#2e8c1a" transform="rotate(-30,22,38)" stroke="#1e6c0e" stroke-width="0.8"/>
+<ellipse cx="92" cy="28" rx="18" ry="10" fill="#2e8c1a" transform="rotate(25,92,28)" stroke="#1e6c0e" stroke-width="0.8"/>
+<ellipse cx="32" cy="22" rx="15" ry="8" fill="#2e8c1a" transform="rotate(-40,32,22)" stroke="#1e6c0e" stroke-width="0.8"/>
+<ellipse cx="60" cy="36" rx="14" ry="8" fill="#36a420" transform="rotate(5,60,36)" stroke="#1e7810" stroke-width="0.8"/>
+<rect x="36" y="108" width="48" height="13" rx="3" fill="#c8a030" opacity="0.85"/>
+<text x="60" y="118" text-anchor="middle" font-size="7" font-weight="700" fill="#5a3800" font-family="Georgia,serif">GROWTH</text>
+</svg>`,
+
+vest_debut: `<svg viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="vf_vd" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#b8b8bc"/><stop offset="100%" stop-color="#949498"/></linearGradient><linearGradient id="vs_vd" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#787880"/><stop offset="100%" stop-color="#606068"/></linearGradient><linearGradient id="pl_vd" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#7a5428"/><stop offset="50%" stop-color="#a07840"/><stop offset="100%" stop-color="#6a4420"/></linearGradient></defs>
+<ellipse cx="60" cy="132" rx="32" ry="6" fill="#1a1208" opacity="0.1"/>
+<ellipse cx="32" cy="124" rx="8" ry="3" fill="#5a3818" stroke="#3a2008" stroke-width="0.5"/>
+<ellipse cx="88" cy="124" rx="8" ry="3" fill="#5a3818" stroke="#3a2008" stroke-width="0.5"/>
+<rect x="28" y="14" width="7" height="110" rx="3" fill="url(#pl_vd)" stroke="#5a3818" stroke-width="0.7"/>
+<rect x="85" y="14" width="7" height="110" rx="3" fill="url(#pl_vd)" stroke="#5a3818" stroke-width="0.7"/>
+<rect x="22" y="10" width="76" height="9" rx="5" fill="#8a6030" stroke="#5a3818" stroke-width="0.8"/>
+<path d="M60,18 Q60,28 51,33 Q42,38 42,28" fill="none" stroke="#a0a0a4" stroke-width="2" stroke-linecap="round"/>
+<path d="M60,18 Q60,28 69,33 Q78,38 78,28" fill="none" stroke="#a0a0a4" stroke-width="2" stroke-linecap="round"/>
+<polygon points="38,28 82,28 78,38 42,38" fill="#c4c4c8" stroke="#848488" stroke-width="0.8"/>
+<polygon points="42,38 78,38 80,42 40,42" fill="#b0b0b4" stroke="#848488" stroke-width="0.8"/>
+<polygon points="38,38 82,38 76,108 44,108" fill="url(#vf_vd)" stroke="#848488" stroke-width="0.8"/>
+<polygon points="82,38 92,33 86,103 76,108" fill="url(#vs_vd)" stroke="#606068" stroke-width="0.7"/>
+<polygon points="56,28 64,28 60,42" fill="#8a8a90" stroke="#707078" stroke-width="0.8"/>
+<line x1="60" y1="42" x2="59" y2="106" stroke="#707078" stroke-width="1.5" opacity="0.7"/>
+<rect x="43" y="50" width="14" height="10" rx="1.5" fill="#a4a4aa" stroke="#848488" stroke-width="0.6"/>
+<text x="50" y="58" text-anchor="middle" font-size="7" font-weight="700" fill="#5a5a62" font-family="Arial">P</text>
+</svg>`,
+
+workstreak_5: `<svg viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="cs_w5" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#2a3e52"/><stop offset="100%" stop-color="#1a2e40"/></linearGradient></defs>
+<ellipse cx="60" cy="132" rx="48" ry="8" fill="#1a1208" opacity="0.1"/>
+<polygon points="20,72 100,72 92,92 12,92" fill="url(#cs_w5)" stroke="#0f2030" stroke-width="0.8"/>
+<polygon points="100,72 112,66 104,86 92,92" fill="#162838" stroke="#0a1c2c" stroke-width="0.6"/>
+<ellipse cx="60" cy="71" rx="42" ry="9" fill="#2e4258" stroke="#1e3248" stroke-width="0.8"/>
+<line x1="24" y1="76" x2="96" y2="76" stroke="#3a5268" stroke-width="0.6" opacity="0.5"/>
+<line x1="22" y1="80" x2="96" y2="80" stroke="#3a5268" stroke-width="0.6" opacity="0.5"/>
+<line x1="22" y1="84" x2="96" y2="84" stroke="#3a5268" stroke-width="0.5" opacity="0.4"/>
+<polygon points="16,20 104,20 96,68 8,68" fill="#1e3248" stroke="#0f2030" stroke-width="0.8"/>
+<polygon points="104,20 116,14 108,62 96,68" fill="#162838" stroke="#0a1c2c" stroke-width="0.6"/>
+<ellipse cx="60" cy="19" rx="44" ry="9" fill="#243c52" stroke="#162c40" stroke-width="0.8"/>
+<line x1="20" y1="28" x2="94" y2="28" stroke="#2e4a60" stroke-width="0.7" opacity="0.5"/>
+<line x1="18" y1="36" x2="94" y2="36" stroke="#2e4a60" stroke-width="0.7" opacity="0.5"/>
+<line x1="18" y1="44" x2="94" y2="44" stroke="#2e4a60" stroke-width="0.6" opacity="0.4"/>
+<line x1="18" y1="52" x2="94" y2="52" stroke="#2e4a60" stroke-width="0.6" opacity="0.4"/>
+<line x1="18" y1="60" x2="94" y2="60" stroke="#2e4a60" stroke-width="0.5" opacity="0.35"/>
+<polygon points="8,48 20,44 20,68 8,72" fill="#1a3248" stroke="#0f2030" stroke-width="0.8"/>
+<polygon points="100,52 112,48 112,72 100,76" fill="#1a3248" stroke="#0f2030" stroke-width="0.8"/>
+<line x1="60" y1="92" x2="58" y2="120" stroke="#2a2a2a" stroke-width="5" stroke-linecap="round"/>
+<line x1="36" y1="116" x2="84" y2="116" stroke="#2a2a2a" stroke-width="4" stroke-linecap="round"/>
+<line x1="60" y1="116" x2="48" y2="130" stroke="#2a2a2a" stroke-width="3.5" stroke-linecap="round"/>
+<line x1="60" y1="116" x2="72" y2="130" stroke="#2a2a2a" stroke-width="3.5" stroke-linecap="round"/>
+<ellipse cx="36" cy="117" rx="5" ry="3" fill="#1a1a1a"/>
+<ellipse cx="84" cy="117" rx="5" ry="3" fill="#1a1a1a"/>
+<ellipse cx="48" cy="131" rx="5" ry="3" fill="#1a1a1a"/>
+<ellipse cx="72" cy="131" rx="5" ry="3" fill="#1a1a1a"/>
+</svg>`,
+
+bordeaux_week: `<svg viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="bb_bw" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#2a4a18"/><stop offset="40%" stop-color="#3a6422"/><stop offset="100%" stop-color="#1e3810"/></linearGradient><linearGradient id="bs_bw" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#1a3010"/><stop offset="100%" stop-color="#102008"/></linearGradient><linearGradient id="lbl_bw" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#f0e8c8"/><stop offset="100%" stop-color="#d8cc98"/></linearGradient><linearGradient id="foil_bw" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#b89010"/><stop offset="50%" stop-color="#f0d040"/><stop offset="100%" stop-color="#a07808"/></linearGradient><linearGradient id="nk_bw" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#c8a020"/><stop offset="40%" stop-color="#f0d040"/><stop offset="100%" stop-color="#a08010"/></linearGradient></defs>
+<ellipse cx="60" cy="132" rx="24" ry="6" fill="#1a1208" opacity="0.12"/>
+<ellipse cx="60" cy="126" rx="20" ry="5" fill="#1e3810" stroke="#142808" stroke-width="0.8"/>
+<path d="M40,126 L40,72 Q40,64 60,64 Q80,64 80,72 L80,126 Z" fill="url(#bb_bw)" stroke="#1e3810" stroke-width="0.8"/>
+<path d="M80,126 L80,72 Q80,64 88,66 L88,122 Z" fill="url(#bs_bw)" stroke="#142808" stroke-width="0.6"/>
+<path d="M40,72 Q40,58 50,52 Q60,47 70,52 Q80,58 80,72" fill="url(#bb_bw)" stroke="#1e3810" stroke-width="0.8"/>
+<path d="M80,72 Q80,58 88,61 L84,50 Q74,44 70,52" fill="url(#bs_bw)" stroke="#142808" stroke-width="0.6"/>
+<rect x="54" y="22" width="12" height="30" rx="3" fill="url(#nk_bw)" stroke="#906808" stroke-width="0.8"/>
+<ellipse cx="60" cy="22" rx="9" ry="3.5" fill="url(#foil_bw)" stroke="#906808" stroke-width="0.7"/>
+<rect x="48" y="18" width="24" height="10" rx="3" fill="url(#foil_bw)" stroke="#906808" stroke-width="0.8"/>
+<ellipse cx="60" cy="18" rx="9" ry="3" fill="#d4b030" stroke="#906808" stroke-width="0.7"/>
+<ellipse cx="60" cy="30" rx="11" ry="3" fill="none" stroke="#a07808" stroke-width="0.8" opacity="0.7"/>
+<rect x="44" y="80" width="32" height="36" rx="2" fill="url(#lbl_bw)" stroke="#c8b060" stroke-width="0.8"/>
+<rect x="46" y="82" width="28" height="32" rx="1" fill="none" stroke="#a89040" stroke-width="0.5"/>
+<rect x="44" y="80" width="32" height="9" rx="2" fill="#1a1a1a"/>
+<text x="60" y="87.5" text-anchor="middle" font-size="5" font-weight="700" fill="white" font-family="Georgia,serif">Moët</text>
+<text x="60" y="97" text-anchor="middle" font-size="7" font-weight="700" fill="#1e3810" font-family="Georgia,serif">12</text>
+<text x="60" y="104" text-anchor="middle" font-size="4" fill="#5a4010" font-family="Georgia,serif">CHAMPAGNE</text>
+<text x="60" y="111" text-anchor="middle" font-size="8" fill="#c8a820">♛</text>
+<path d="M44,76 L44,124" stroke="white" stroke-width="2" stroke-linecap="round" opacity="0.18"/>
+</svg>`,
+
+no_repeat_7: `<svg viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="bf_nr" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#f8f8f6"/><stop offset="100%" stop-color="#eeeee8"/></linearGradient></defs>
+<ellipse cx="60" cy="132" rx="54" ry="7" fill="#1a1208" opacity="0.07"/>
+<polygon points="10,118 110,118 108,126 12,126" fill="#7a5428" stroke="#5a3818" stroke-width="0.7"/>
+<line x1="26" y1="118" x2="16" y2="130" stroke="#6a4420" stroke-width="3" stroke-linecap="round"/>
+<line x1="94" y1="118" x2="104" y2="130" stroke="#6a4420" stroke-width="3" stroke-linecap="round"/>
+<polygon points="4,8 116,8 112,116 8,116" fill="#d0d0cc" stroke="#b0b0ac" stroke-width="0.8"/>
+<polygon points="2,6 114,6 110,114 6,114" fill="url(#bf_nr)" stroke="#c8c8c4" stroke-width="1"/>
+<rect x="2" y="2" width="116" height="7" rx="2" fill="#7a5428" stroke="#5a3818" stroke-width="0.7"/>
+<rect x="2" y="2" width="5" height="115" rx="2" fill="#7a5428" stroke="#5a3818" stroke-width="0.7"/>
+<rect x="113" y="2" width="5" height="115" rx="2" fill="#6a4820" stroke="#4a3010" stroke-width="0.7"/>
+<rect x="2" y="108" width="116" height="7" rx="2" fill="#7a5428" stroke="#5a3818" stroke-width="0.7"/>
+<rect x="8" y="104" width="104" height="8" rx="2" fill="#8a6030" stroke="#6a4820" stroke-width="0.6"/>
+<rect x="18" y="105" width="6" height="6" rx="1.5" fill="#2244cc"/>
+<rect x="28" y="105" width="6" height="6" rx="1.5" fill="#cc2222"/>
+<text x="60" y="22" text-anchor="middle" font-size="9" font-weight="700" fill="#1a2244" font-family="Arial">DCF Model</text>
+<line x1="10" y1="25" x2="110" y2="25" stroke="#2244cc" stroke-width="0.8" opacity="0.5"/>
+<rect x="10" y="70" width="9" height="28" rx="1" fill="#4466ee" opacity="0.7"/>
+<rect x="24" y="58" width="9" height="40" rx="1" fill="#4466ee" opacity="0.75"/>
+<rect x="38" y="46" width="9" height="52" rx="1" fill="#4466ee" opacity="0.8"/>
+<rect x="52" y="36" width="9" height="62" rx="1" fill="#4466ee" opacity="0.85"/>
+<rect x="66" y="26" width="9" height="72" rx="1" fill="#2244cc" opacity="0.9"/>
+<line x1="8" y1="100" x2="110" y2="100" stroke="#888" stroke-width="0.6"/>
+<text x="14" y="42" font-size="6" fill="#cc2222" font-family="Arial">NPV=Σ FCF/(1+r)ⁿ</text>
+<rect x="76" y="30" width="30" height="22" fill="#ffe060" stroke="#e0c000" stroke-width="0.5"/>
+<text x="91" y="40" text-anchor="middle" font-size="5.5" fill="#8B6400" font-family="Arial">WACC</text>
+<text x="91" y="48" text-anchor="middle" font-size="5.5" fill="#8B6400" font-family="Arial">8.5%</text>
+</svg>`,
+
+patagonia_fan: `<svg viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="pl2_pf" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#7a5428"/><stop offset="50%" stop-color="#a07840"/><stop offset="100%" stop-color="#6a4420"/></linearGradient></defs>
+<ellipse cx="60" cy="132" rx="36" ry="6" fill="#1a1208" opacity="0.1"/>
+<ellipse cx="32" cy="124" rx="8" ry="3" fill="#5a3818"/>
+<ellipse cx="88" cy="124" rx="8" ry="3" fill="#5a3818"/>
+<rect x="28" y="10" width="7" height="114" rx="3" fill="url(#pl2_pf)" stroke="#5a3818" stroke-width="0.7"/>
+<rect x="85" y="10" width="7" height="114" rx="3" fill="url(#pl2_pf)" stroke="#5a3818" stroke-width="0.7"/>
+<rect x="22" y="6" width="76" height="9" rx="5" fill="#8a6030" stroke="#5a3818" stroke-width="0.8"/>
+<rect x="22" y="68" width="76" height="7" rx="4" fill="#7a5428" stroke="#5a3818" stroke-width="0.7"/>
+<polygon points="28,14 92,14 88,68 32,68" fill="#5a1e30" opacity="0.45" stroke="#3a1020" stroke-width="0.5"/>
+<polygon points="30,14 90,14 86,68 34,68" fill="#808088" opacity="0.65" stroke="#606068" stroke-width="0.5"/>
+<path d="M60,9 Q60,18 52,22 Q44,26 44,18" fill="none" stroke="#a0a0a4" stroke-width="1.5" stroke-linecap="round"/>
+<path d="M60,9 Q60,18 68,22 Q76,26 76,18" fill="none" stroke="#a0a0a4" stroke-width="1.5" stroke-linecap="round"/>
+<polygon points="36,18 84,18 80,68 40,68" fill="#2a4a7a" stroke="#1a3060" stroke-width="0.8"/>
+<polygon points="84,18 92,14 88,64 80,68" fill="#1e3868" stroke="#0e1c40" stroke-width="0.6"/>
+<polygon points="52,18 68,18 60,32" fill="#142450" stroke="#0e1c40" stroke-width="0.7"/>
+<line x1="60" y1="32" x2="59" y2="66" stroke="#3a5888" stroke-width="1.2" opacity="0.7"/>
+<rect x="40" y="34" width="12" height="8" rx="1.5" fill="#1e3868" stroke="#2a4878" stroke-width="0.6"/>
+<text x="46" y="40" text-anchor="middle" font-size="7" font-weight="700" fill="#c8a040" font-family="Arial">P</text>
+<circle cx="42" cy="96" r="5" fill="#7B2D42" stroke="#5a1e30" stroke-width="0.6"/>
+<circle cx="60" cy="96" r="5" fill="#a0a0a8" stroke="#808088" stroke-width="0.6"/>
+<circle cx="78" cy="96" r="5" fill="#2a4a7a" stroke="#1a3060" stroke-width="0.6"/>
+</svg>`,
+
+all_formalities_week: `<svg viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="fw_af" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#8a6828"/><stop offset="100%" stop-color="#6a4e18"/></linearGradient></defs>
+<ellipse cx="60" cy="132" rx="52" ry="7" fill="#1a1208" opacity="0.07"/>
+<polygon points="6,6 114,6 110,128 10,128" fill="#7a5428" stroke="#5a3818" stroke-width="1"/>
+<polygon points="10,10 110,10 106,124 14,124" fill="#f8f4e8" stroke="#c8c0a0" stroke-width="0.8"/>
+<polygon points="16,16 104,16 100,118 20,118" fill="#f0ece0" stroke="#d4ccb0" stroke-width="0.6"/>
+<rect x="10" y="10" width="100" height="16" fill="#1a1a1a"/>
+<text x="60" y="21" text-anchor="middle" font-size="7.5" font-weight="700" fill="white" font-family="Georgia,serif">THE WALL STREET</text>
+<text x="60" y="28" text-anchor="middle" font-size="5.5" fill="white" font-family="Georgia,serif" letter-spacing="2">JOURNAL</text>
+<line x1="16" y1="34" x2="104" y2="34" stroke="#c8c0a8" stroke-width="0.5"/>
+<text x="60" y="40" text-anchor="middle" font-size="5" fill="#888" font-family="Georgia,serif">Monday, May 5, 2025</text>
+<line x1="16" y1="43" x2="104" y2="43" stroke="#c8c0a8" stroke-width="0.5"/>
+<text x="60" y="52" text-anchor="middle" font-size="7" font-weight="700" fill="#1a1a1a" font-family="Georgia,serif">Markets Rally</text>
+<text x="60" y="61" text-anchor="middle" font-size="7" font-weight="700" fill="#1a1a1a" font-family="Georgia,serif">on Strong GDP</text>
+<line x1="18" y1="67" x2="58" y2="67" stroke="#c8c0a8" stroke-width="3" stroke-linecap="round" opacity="0.3"/>
+<line x1="18" y1="74" x2="58" y2="74" stroke="#c8c0a8" stroke-width="3" stroke-linecap="round" opacity="0.3"/>
+<line x1="18" y1="81" x2="54" y2="81" stroke="#c8c0a8" stroke-width="3" stroke-linecap="round" opacity="0.25"/>
+<line x1="64" y1="67" x2="100" y2="67" stroke="#c8c0a8" stroke-width="3" stroke-linecap="round" opacity="0.3"/>
+<line x1="64" y1="74" x2="100" y2="74" stroke="#c8c0a8" stroke-width="3" stroke-linecap="round" opacity="0.3"/>
+<polyline points="18,108 28,100 38,104 50,92 62,96 74,84 86,88 98,80" fill="none" stroke="#1a3a52" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<line x1="18" y1="112" x2="100" y2="112" stroke="#c8c0a8" stroke-width="0.5"/>
+<polygon points="88,116 104,116 102,124 90,124" fill="#e8e0c8" opacity="0.6"/>
+</svg>`,
+
+vest_both: `<svg viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="rt_vb" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#8B2020"/><stop offset="50%" stop-color="#a82828"/><stop offset="100%" stop-color="#7a1818"/></linearGradient><linearGradient id="rf_vb" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#c83030"/><stop offset="100%" stop-color="#8B1818"/></linearGradient></defs>
+<ellipse cx="60" cy="132" rx="72" ry="10" fill="#1a1208" opacity="0.08"/>
+<polygon points="6,96 114,96 96,116 -12,116" fill="url(#rt_vb)" stroke="#6a1010" stroke-width="1"/>
+<polygon points="-12,116 96,116 94,124 -14,124" fill="url(#rf_vb)" stroke="#6a1010" stroke-width="0.8"/>
+<polygon points="96,116 114,96 112,104 94,124" fill="#901818" stroke="#6a1010" stroke-width="0.6"/>
+<polygon points="14,100 106,100 90,112 -2,112" fill="none" stroke="#f0c840" stroke-width="1.5"/>
+<polygon points="18,102 102,102 88,110 4,110" fill="none" stroke="#f0c840" stroke-width="0.6" opacity="0.5"/>
+<ellipse cx="52" cy="108" rx="24" ry="8" fill="#7a1010" stroke="#f0c840" stroke-width="1"/>
+<ellipse cx="52" cy="108" rx="16" ry="5.5" fill="none" stroke="#f0c840" stroke-width="0.7"/>
+<polygon points="52,103 58,108 52,113 46,108" fill="#f0c840" opacity="0.7"/>
+<line x1="18" y1="103" x2="26" y2="108" stroke="#f0c840" stroke-width="0.5" opacity="0.5"/>
+<line x1="82" y1="103" x2="86" y2="108" stroke="#f0c840" stroke-width="0.5" opacity="0.5"/>
+<line x1="2" y1="112" x2="8" y2="117" stroke="#f0c840" stroke-width="0.5" opacity="0.4"/>
+<line x1="88" y1="112" x2="92" y2="117" stroke="#f0c840" stroke-width="0.5" opacity="0.4"/>
+<line x1="6" y1="96" x2="2" y2="102" stroke="#f0c840" stroke-width="0.8" opacity="0.4"/>
+<line x1="10" y1="96" x2="6" y2="102" stroke="#f0c840" stroke-width="0.8" opacity="0.4"/>
+<line x1="110" y1="96" x2="114" y2="102" stroke="#f0c840" stroke-width="0.8" opacity="0.4"/>
+<line x1="114" y1="96" x2="118" y2="102" stroke="#f0c840" stroke-width="0.7" opacity="0.35"/>
+</svg>`,
+
+vest_regular: `<svg viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="lb_vr" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#2a2a2e"/><stop offset="50%" stop-color="#3e3e44"/><stop offset="100%" stop-color="#1e1e22"/></linearGradient><linearGradient id="ls_vr" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#c8a030"/><stop offset="40%" stop-color="#f0c840"/><stop offset="100%" stop-color="#a07820"/></linearGradient><linearGradient id="lg_vr" x1="50%" y1="0%" x2="50%" y2="100%"><stop offset="0%" stop-color="#fff8e0" stop-opacity="0.8"/><stop offset="100%" stop-color="#ffe080" stop-opacity="0"/></linearGradient></defs>
+<ellipse cx="60" cy="132" rx="30" ry="7" fill="#1a1208" opacity="0.1"/>
+<ellipse cx="60" cy="124" rx="28" ry="7" fill="#2a2a2e" stroke="#1a1a22" stroke-width="0.8"/>
+<ellipse cx="60" cy="122" rx="24" ry="5" fill="#3a3a40" stroke="#2a2a30" stroke-width="0.6"/>
+<rect x="54" y="74" width="10" height="50" rx="3" fill="url(#lb_vr)" stroke="#1a1a22" stroke-width="0.7"/>
+<circle cx="60" cy="72" r="8" fill="#3e3e44" stroke="#2a2a30" stroke-width="1"/>
+<circle cx="60" cy="72" r="4" fill="#2a2a2e"/>
+<line x1="60" y1="64" x2="36" y2="26" stroke="#2e2e34" stroke-width="8" stroke-linecap="round"/>
+<line x1="60" y1="64" x2="36" y2="26" stroke="#3e3e46" stroke-width="4" stroke-linecap="round" opacity="0.6"/>
+<circle cx="36" cy="26" r="7" fill="#3e3e44" stroke="#2a2a30" stroke-width="1"/>
+<circle cx="36" cy="26" r="3.5" fill="#2a2a2e"/>
+<polygon points="10,24 62,24 68,52 4,52" fill="url(#ls_vr)" stroke="#906808" stroke-width="1"/>
+<polygon points="62,24 72,20 78,48 68,52" fill="#a07018" stroke="#806008" stroke-width="0.8"/>
+<ellipse cx="36" cy="23" rx="28" ry="6" fill="#d0a828" stroke="#906808" stroke-width="0.8"/>
+<ellipse cx="36" cy="52" rx="34" ry="7" fill="#804808" stroke="#603808" stroke-width="0.7"/>
+<ellipse cx="36" cy="52" rx="28" ry="5" fill="#ffe080" opacity="0.3"/>
+<ellipse cx="36" cy="78" rx="40" ry="12" fill="url(#lg_vr)" opacity="0.45"/>
+<line x1="18" y1="24" x2="14" y2="52" stroke="#a07018" stroke-width="0.6" opacity="0.4"/>
+<line x1="36" y1="23" x2="36" y2="52" stroke="#a07018" stroke-width="0.5" opacity="0.35"/>
+<path d="M60,124 Q72,124 76,132" fill="none" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round"/>
+</svg>`,
+
+full_formal_week: `<svg viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="mb_ff2" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#1e1e22"/><stop offset="50%" stop-color="#2e2e34"/><stop offset="100%" stop-color="#161618"/></linearGradient><linearGradient id="sc_ff2" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#000820"/><stop offset="100%" stop-color="#001028"/></linearGradient><linearGradient id="kb_ff2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#2a2a2e"/><stop offset="100%" stop-color="#1e1e22"/></linearGradient></defs>
+<ellipse cx="60" cy="132" rx="56" ry="8" fill="#1a1208" opacity="0.09"/>
+<polygon points="4,102 116,102 110,126 10,126" fill="url(#kb_ff2)" stroke="#0e0e12" stroke-width="0.8"/>
+<polygon points="116,102 126,96 120,120 110,126" fill="#141416" stroke="#0a0a0e" stroke-width="0.6"/>
+<ellipse cx="60" cy="101" rx="58" ry="9" fill="#262630" stroke="#1a1a1e" stroke-width="0.8"/>
+<line x1="12" y1="108" x2="110" y2="108" stroke="#3a3a40" stroke-width="0.6" opacity="0.7"/>
+<line x1="10" y1="114" x2="110" y2="114" stroke="#3a3a40" stroke-width="0.6" opacity="0.6"/>
+<rect x="90" y="104" width="12" height="7" rx="1.5" fill="#ff8c00" stroke="#cc6800" stroke-width="0.5"/>
+<text x="96" y="109.5" text-anchor="middle" font-size="4" font-weight="700" fill="white" font-family="Arial">BBRG</text>
+<rect x="54" y="74" width="12" height="28" rx="2" fill="#1e1e22" stroke="#0e0e14" stroke-width="0.6"/>
+<rect x="46" y="98" width="28" height="5" rx="2" fill="#2a2a2e" stroke="#1a1a22" stroke-width="0.5"/>
+<polygon points="4,12 116,12 112,76 8,76" fill="url(#mb_ff2)" stroke="#0e0e14" stroke-width="1"/>
+<polygon points="116,12 128,6 124,70 112,76" fill="#12161e" stroke="#0a0a0e" stroke-width="0.7"/>
+<ellipse cx="60" cy="11" rx="58" ry="9" fill="#222228" stroke="#161618" stroke-width="0.8"/>
+<polygon points="10,18 110,18 106,70 14,70" fill="url(#sc_ff2)"/>
+<polygon points="10,18 110,18 109,28 11,28" fill="#ff6600"/>
+<text x="60" y="25.5" text-anchor="middle" font-size="6" font-weight="700" fill="white" font-family="Arial">BLOOMBERG TERMINAL</text>
+<polygon points="11,64 109,64 108,70 12,70" fill="#1a1a00"/>
+<text x="60" y="69" text-anchor="middle" font-size="4.5" fill="#ffcc00" font-family="Arial">AEX +1.2%  SPX +1.5%  EUR 1.08</text>
+<polygon points="11,28 64,28 63,64 12,64" fill="#020c1a"/>
+<polygon points="65,28 109,28 108,64 64,64" fill="#010814"/>
+<text x="18" y="36" font-size="4" fill="#00cc44" font-family="monospace">AAPL  189.45</text>
+<text x="18" y="42" font-size="4" fill="#00cc44" font-family="monospace">MSFT  415.23</text>
+<text x="18" y="48" font-size="4" fill="#ff4444" font-family="monospace">TSLA  175.80</text>
+<text x="18" y="54" font-size="4" fill="#00cc44" font-family="monospace">NVDA  875.40</text>
+<polyline points="68,58 76,48 84,52 92,40 100,44 106,34" fill="none" stroke="#00cc44" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+<line x1="66" y1="62" x2="108" y2="62" stroke="#004400" stroke-width="0.5"/>
+</svg>`,
+
+full_casual_week_unique: `<svg viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="pf_fc" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#f8f8f4"/><stop offset="100%" stop-color="#eeeeea"/></linearGradient><linearGradient id="ps_fc" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#d0d0cc"/><stop offset="100%" stop-color="#b8b8b4"/></linearGradient></defs>
+<ellipse cx="60" cy="132" rx="58" ry="8" fill="#1a1208" opacity="0.07"/>
+<polygon points="4,8 116,8 112,124 8,124" fill="#e0e0dc" stroke="#c8c8c4" stroke-width="0.5"/>
+<polygon points="6,6 118,6 114,122 10,122" fill="#e8e8e4" stroke="#d0d0cc" stroke-width="0.5"/>
+<polygon points="118,6 128,2 124,118 114,122" fill="url(#ps_fc)" stroke="#b8b8b4" stroke-width="0.6"/>
+<polygon points="8,4 116,4 112,120 12,120" fill="url(#pf_fc)" stroke="#c8c8c4" stroke-width="1"/>
+<polygon points="8,4 116,4 115,16 9,16" fill="#1a3a52"/>
+<text x="62" y="12.5" text-anchor="middle" font-size="6.5" font-weight="700" fill="white" font-family="Arial">DISCOUNTED CASH FLOW</text>
+<line x1="10" y1="22" x2="112" y2="22" stroke="#c8c8c4" stroke-width="0.6"/>
+<text x="22" y="20" font-size="4.5" fill="#1a3a52" font-family="Arial" font-weight="700">ITEM</text>
+<text x="54" y="20" font-size="4.5" fill="#1a3a52" font-family="Arial" font-weight="700">Y1</text>
+<text x="70" y="20" font-size="4.5" fill="#1a3a52" font-family="Arial" font-weight="700">Y2</text>
+<text x="86" y="20" font-size="4.5" fill="#1a3a52" font-family="Arial" font-weight="700">Y3</text>
+<text x="102" y="20" font-size="4.5" fill="#1a3a52" font-family="Arial" font-weight="700">Y4</text>
+<text x="12" y="30" font-size="4" fill="#333" font-family="Arial">Revenue</text><text x="52" y="30" font-size="4" fill="#333" font-family="Arial">1,240</text><text x="68" y="30" font-size="4" fill="#333" font-family="Arial">1,480</text><text x="84" y="30" font-size="4" fill="#333" font-family="Arial">1,740</text><text x="100" y="30" font-size="4" fill="#333" font-family="Arial">2,050</text>
+<line x1="10" y1="33" x2="112" y2="33" stroke="#e8e8e4" stroke-width="0.5"/>
+<text x="12" y="41" font-size="4" fill="#333" font-family="Arial">EBITDA</text><text x="52" y="41" font-size="4" fill="#333" font-family="Arial">310</text><text x="68" y="41" font-size="4" fill="#333" font-family="Arial">385</text><text x="84" y="41" font-size="4" fill="#333" font-family="Arial">462</text><text x="100" y="41" font-size="4" fill="#333" font-family="Arial">554</text>
+<line x1="10" y1="44" x2="112" y2="44" stroke="#e8e8e4" stroke-width="0.5"/>
+<text x="12" y="52" font-size="4" fill="#333" font-family="Arial">FCF</text><text x="52" y="52" font-size="4" fill="#1a8a30" font-family="Arial">210</text><text x="68" y="52" font-size="4" fill="#1a8a30" font-family="Arial">268</text><text x="84" y="52" font-size="4" fill="#1a8a30" font-family="Arial">330</text><text x="100" y="52" font-size="4" fill="#1a8a30" font-family="Arial">402</text>
+<line x1="10" y1="55" x2="112" y2="55" stroke="#e8e8e4" stroke-width="0.5"/>
+<polygon points="10,57 112,57 111,67 11,67" fill="#1a3a52" opacity="0.08"/>
+<text x="12" y="65" font-size="4.5" fill="#1a3a52" font-family="Arial" font-weight="700">NPV (8.5%)</text><text x="100" y="65" font-size="4.5" fill="#1a3a52" font-family="Arial" font-weight="700">2,847</text>
+<line x1="10" y1="68" x2="112" y2="68" stroke="#1a3a52" stroke-width="0.8"/>
+<rect x="12" y="74" width="10" height="20" fill="#4466ee" opacity="0.7" rx="1"/>
+<rect x="26" y="68" width="10" height="26" fill="#4466ee" opacity="0.75" rx="1"/>
+<rect x="40" y="60" width="10" height="34" fill="#4466ee" opacity="0.8" rx="1"/>
+<rect x="54" y="54" width="10" height="40" fill="#2244cc" opacity="0.85" rx="1"/>
+<line x1="10" y1="96" x2="70" y2="96" stroke="#c8c8c4" stroke-width="0.5"/>
+<text x="80" y="84" font-size="5" fill="#cc2222" font-family="Arial" transform="rotate(-8,80,84)">check!</text>
+<path d="M108,8 Q118,4 120,14 Q122,24 112,26 Q104,28 102,20 Q100,14 106,12 Q110,10 112,16 Q114,20 110,21" fill="none" stroke="#888" stroke-width="1.5" stroke-linecap="round"/>
+</svg>`,
+
+workstreak_10: `<svg viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="fb_w10" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#1a2e4a"/><stop offset="100%" stop-color="#0e1e30"/></linearGradient><linearGradient id="fs_w10" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#0a1828"/><stop offset="100%" stop-color="#061020"/></linearGradient></defs>
+<ellipse cx="60" cy="132" rx="54" ry="7" fill="#1a1208" opacity="0.07"/>
+<polygon points="4,4 116,4 112,128 8,128" fill="url(#fs_w10)" stroke="#061020" stroke-width="0.8"/>
+<polygon points="2,2 114,2 110,126 6,126" fill="url(#fb_w10)" stroke="#0e1e30" stroke-width="1.2"/>
+<polygon points="10,10 110,10 106,118 14,118" fill="#c8a020" stroke="#a07808" stroke-width="0.8"/>
+<polygon points="14,14 106,14 102,114 18,114" fill="#0e1828"/>
+<line x1="14" y1="28" x2="106" y2="28" stroke="#1e3040" stroke-width="0.4"/>
+<line x1="14" y1="44" x2="106" y2="44" stroke="#1e3040" stroke-width="0.4"/>
+<line x1="14" y1="60" x2="106" y2="60" stroke="#1e3040" stroke-width="0.4"/>
+<line x1="14" y1="76" x2="106" y2="76" stroke="#1e3040" stroke-width="0.4"/>
+<line x1="14" y1="92" x2="106" y2="92" stroke="#1e3040" stroke-width="0.4"/>
+<polyline points="16,92 26,86 34,90 44,74 54,78 62,62 70,50 78,42 86,38 94,36 100,32" fill="none" stroke="#00cc44" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<polygon points="16,92 26,86 34,90 44,74 54,78 62,62 70,50 78,42 86,38 94,36 100,32 100,104 16,104" fill="#00cc44" opacity="0.07"/>
+<line x1="44" y1="96" x2="44" y2="78" stroke="#4488ff" stroke-width="1.5" stroke-linecap="round"/>
+<polygon points="40,80 44,72 48,80" fill="#4488ff"/>
+<text x="44" y="104" text-anchor="middle" font-size="6" fill="#4488ff" font-family="Arial" font-weight="700">BUY</text>
+<line x1="94" y1="46" x2="94" y2="54" stroke="#ff4444" stroke-width="1.5" stroke-linecap="round"/>
+<polygon points="90,52 94,60 98,52" fill="#ff4444"/>
+<text x="94" y="38" text-anchor="middle" font-size="6" fill="#ff4444" font-family="Arial" font-weight="700">SELL</text>
+<text x="60" y="88" text-anchor="middle" font-size="10" font-weight="700" fill="#ffd700" font-family="Georgia,serif">BUY LOW</text>
+<text x="60" y="100" text-anchor="middle" font-size="10" font-weight="700" fill="#ffd700" font-family="Georgia,serif">SELL HIGH</text>
+<rect x="4" y="2" width="8" height="8" rx="1.5" fill="#c8a020"/>
+<rect x="108" y="2" width="8" height="8" rx="1.5" fill="#c8a020"/>
+<rect x="4" y="122" width="8" height="8" rx="1.5" fill="#c8a020"/>
+<rect x="108" y="122" width="8" height="8" rx="1.5" fill="#c8a020"/>
+</svg>`,
+
+all_outfits_used: `<svg viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="sky_ao" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#1a2a4a"/><stop offset="50%" stop-color="#2a4a7a"/><stop offset="100%" stop-color="#c87030"/></linearGradient><linearGradient id="wf_ao" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#e8e8ec"/><stop offset="100%" stop-color="#d0d0d4"/></linearGradient></defs>
+<ellipse cx="60" cy="132" rx="54" ry="8" fill="#1a1208" opacity="0.08"/>
+<polygon points="4,4 116,4 112,128 8,128" fill="url(#wf_ao)" stroke="#c0c0c4" stroke-width="1"/>
+<polygon points="8,8 112,8 108,124 12,124" fill="#d8d4ce" stroke="#b8b4ae" stroke-width="0.6"/>
+<polygon points="12,14 108,14 104,118 16,118" fill="url(#sky_ao)"/>
+<circle cx="88" cy="28" r="8" fill="#fffce0" opacity="0.9"/>
+<circle cx="92" cy="26" r="7" fill="#1a2a4a" opacity="0.7"/>
+<circle cx="50" cy="22" r="1.2" fill="white" opacity="0.8"/>
+<circle cx="66" cy="18" r="1" fill="white" opacity="0.9"/>
+<circle cx="82" cy="24" r="0.8" fill="white" opacity="0.7"/>
+<circle cx="34" cy="26" r="1" fill="white" opacity="0.8"/>
+<circle cx="20" cy="20" r="1.2" fill="white" opacity="0.85"/>
+<polygon points="14,112 14,72 22,72 22,60 28,60 28,54 36,54 36,64 46,64 46,52 52,52 52,46 58,46 58,42 64,42 64,46 72,46 72,52 80,52 80,44 86,44 86,52 92,52 92,60 100,60 100,68 104,68 104,112" fill="#0e1828"/>
+<rect x="46" y="55" width="3" height="4" rx="0.5" fill="#ffd060" opacity="0.8"/>
+<rect x="52" y="53" width="3" height="4" rx="0.5" fill="#ffd060" opacity="0.9"/>
+<rect x="62" y="47" width="3" height="4" rx="0.5" fill="#ffd060" opacity="0.85"/>
+<rect x="80" y="46" width="3" height="4" rx="0.5" fill="#ffd060" opacity="0.8"/>
+<rect x="24" y="65" width="3" height="4" rx="0.5" fill="#ffd060" opacity="0.7"/>
+<polygon points="14,72 14,90 104,90 104,72" fill="#e88030" opacity="0.2"/>
+<polygon points="14,90 14,112 104,112 104,90" fill="#f09040" opacity="0.15"/>
+<line x1="60" y1="14" x2="60" y2="112" stroke="url(#wf_ao)" stroke-width="4"/>
+<line x1="12" y1="63" x2="108" y2="63" stroke="url(#wf_ao)" stroke-width="4"/>
+<polygon points="12,14 108,14 104,118 16,118" fill="none" stroke="#e8e8ec" stroke-width="2"/>
+<polygon points="4,4 116,4 112,128 8,128" fill="none" stroke="#f4f4f6" stroke-width="5"/>
+</svg>`,
+
+monochrome_master: `<svg viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="gb_mm" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#4a2804"/><stop offset="35%" stop-color="#7a4010"/><stop offset="100%" stop-color="#3a1e04"/></linearGradient><linearGradient id="gs_mm" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#2e1804"/><stop offset="100%" stop-color="#1e1004"/></linearGradient><linearGradient id="lbl_mm" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#f4ecd8"/><stop offset="100%" stop-color="#ddd0a8"/></linearGradient><linearGradient id="cap_mm" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#b07010"/><stop offset="50%" stop-color="#e09828"/><stop offset="100%" stop-color="#906008"/></linearGradient></defs>
+<ellipse cx="60" cy="132" rx="26" ry="6" fill="#1a1208" opacity="0.12"/>
+<ellipse cx="60" cy="124" rx="22" ry="5" fill="#2e1804" stroke="#1e1004" stroke-width="0.8"/>
+<path d="M38,124 L40,66 Q38,54 60,54 Q82,54 80,66 L82,124 Z" fill="url(#gb_mm)" stroke="#3a1e04" stroke-width="0.8"/>
+<path d="M82,124 L80,66 Q82,54 90,57 L90,120 Z" fill="url(#gs_mm)" stroke="#2a1404" stroke-width="0.6"/>
+<path d="M38,66 Q36,52 48,44 Q60,38 72,44 Q84,52 80,66" fill="url(#gb_mm)" stroke="#3a1e04" stroke-width="0.8"/>
+<path d="M80,66 Q82,52 90,55 L86,44 Q74,36 72,44" fill="url(#gs_mm)" stroke="#2a1404" stroke-width="0.6"/>
+<rect x="54" y="12" width="12" height="34" rx="3" fill="url(#cap_mm)" stroke="#806008" stroke-width="0.8"/>
+<rect x="50" y="8" width="20" height="10" rx="3" fill="url(#cap_mm)" stroke="#806008" stroke-width="0.8"/>
+<ellipse cx="60" cy="8" rx="11" ry="3.5" fill="#d09020" stroke="#906008" stroke-width="0.7"/>
+<ellipse cx="60" cy="22" rx="7" ry="2.5" fill="none" stroke="#a07808" stroke-width="0.8" opacity="0.7"/>
+<rect x="42" y="74" width="34" height="40" rx="2" fill="url(#lbl_mm)" stroke="#c0a848" stroke-width="0.8"/>
+<rect x="42" y="74" width="34" height="10" rx="2" fill="#1a1208"/>
+<text x="59" y="82" text-anchor="middle" font-size="5.5" font-weight="700" fill="white" font-family="Georgia,serif">THE MACALLAN</text>
+<text x="59" y="94" text-anchor="middle" font-size="14" font-weight="700" fill="#5a3208" font-family="Georgia,serif">12</text>
+<text x="59" y="102" text-anchor="middle" font-size="4.5" fill="#5a3208" font-family="Georgia,serif">YEARS OLD</text>
+<text x="59" y="110" text-anchor="middle" font-size="4" fill="#7a5018" font-family="Georgia,serif">SINGLE MALT</text>
+<path d="M42,72 L40,122" stroke="white" stroke-width="2" stroke-linecap="round" opacity="0.15"/>
+</svg>`,
+
+workstreak_20: `<svg viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="pt2_w20" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#f0d040"/><stop offset="40%" stop-color="#fce060"/><stop offset="100%" stop-color="#c8a820"/></linearGradient><linearGradient id="pf2_w20" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#d4a820"/><stop offset="100%" stop-color="#a88010"/></linearGradient><linearGradient id="ps2_w20" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#906808"/><stop offset="100%" stop-color="#704e04"/></linearGradient><linearGradient id="st2_w20" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#2a2a2e"/><stop offset="50%" stop-color="#3e3e44"/><stop offset="100%" stop-color="#1e1e22"/></linearGradient></defs>
+<ellipse cx="60" cy="134" rx="66" ry="8" fill="#1a1208" opacity="0.1"/>
+<polygon points="14,108 106,108 102,120 18,120" fill="url(#st2_w20)" stroke="#1a1a22" stroke-width="0.8"/>
+<polygon points="106,108 118,102 114,114 102,120" fill="#1a1a22" stroke="#101014" stroke-width="0.6"/>
+<ellipse cx="60" cy="107" rx="48" ry="8" fill="#2e2e34" stroke="#1e1e24" stroke-width="0.7"/>
+<polygon points="22,68 100,68 96,108 26,108" fill="#222226" stroke="#181820" stroke-width="0.6"/>
+<polygon points="100,68 110,62 106,102 96,108" fill="#1a1a1e" stroke="#101014" stroke-width="0.5"/>
+<polygon points="4,28 116,28 112,72 8,72" fill="url(#pt2_w20)" stroke="#a88010" stroke-width="1"/>
+<polygon points="8,72 112,72 108,108 12,108" fill="url(#pf2_w20)" stroke="#906008" stroke-width="1"/>
+<polygon points="112,72 124,66 120,102 108,108" fill="url(#ps2_w20)" stroke="#704e04" stroke-width="0.8"/>
+<polygon points="116,28 128,22 124,66 112,72" fill="#906808" stroke="#704e04" stroke-width="0.6"/>
+<polygon points="10,31 114,31 110,69 14,69" fill="none" stroke="#a88010" stroke-width="0.8" opacity="0.5"/>
+<polygon points="12,74 110,74 106,104 16,104" fill="none" stroke="#c8a020" stroke-width="0.7" opacity="0.5"/>
+<text x="60" y="50" text-anchor="middle" font-size="9" font-weight="700" fill="#7a5008" font-family="Georgia,serif" opacity="0.6">MATEO TERRADA</text>
+<text x="60" y="90" text-anchor="middle" font-size="11" font-weight="700" fill="#fce060" font-family="Georgia,serif" letter-spacing="1">MATEO TERRADA</text>
+<line x1="14" y1="94" x2="106" y2="94" stroke="#fce060" stroke-width="0.6" opacity="0.4"/>
+<text x="60" y="103" text-anchor="middle" font-size="5.5" fill="#f0d040" font-family="Georgia,serif" opacity="0.85">WHOLESALE BANKING · RABOBANK</text>
+<polygon points="4,28 30,28 26,72 8,72" fill="white" opacity="0.08"/>
+</svg>`,
+
+bordeaux_loyalist: `<svg viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="cb_bl" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#1a1e2e"/><stop offset="50%" stop-color="#262c3e"/><stop offset="100%" stop-color="#12161e"/></linearGradient><radialGradient id="cf_bl" cx="40%" cy="35%" r="65%"><stop offset="0%" stop-color="#0e1828"/><stop offset="100%" stop-color="#060c14"/></radialGradient></defs>
+<ellipse cx="60" cy="132" rx="46" ry="8" fill="#1a1208" opacity="0.1"/>
+<polygon points="16,8 104,8 100,6 20,6" fill="#1e2232" stroke="#0e1220" stroke-width="0.6"/>
+<polygon points="14,10 106,10 102,124 18,124" fill="url(#cb_bl)" stroke="#0e121e" stroke-width="1.2"/>
+<polygon points="106,10 118,4 114,118 102,124" fill="#12161e" stroke="#0a0e18" stroke-width="0.8"/>
+<polygon points="18,14 102,14 98,120 22,120" fill="none" stroke="#c8a820" stroke-width="1.5"/>
+<polygon points="24,20 96,20 92,114 28,114" fill="url(#cf_bl)"/>
+<polygon points="24,20 96,20 95,32 25,32" fill="#c8a020" opacity="0.15"/>
+<text x="60" y="29" text-anchor="middle" font-size="8.5" font-weight="800" fill="#ffd700" font-family="Arial" letter-spacing="1.5">NYSE</text>
+<ellipse cx="60" cy="72" rx="28" ry="28" fill="#0a0e18" stroke="#c8a020" stroke-width="1.5"/>
+<ellipse cx="60" cy="72" rx="24" ry="24" fill="none" stroke="#c8a020" stroke-width="0.5" opacity="0.4"/>
+<line x1="60" y1="46" x2="60" y2="50" stroke="#ffd700" stroke-width="2" stroke-linecap="round"/>
+<line x1="82" y1="50" x2="80" y2="53" stroke="#ffd700" stroke-width="1.5" stroke-linecap="round"/>
+<line x1="88" y1="72" x2="84" y2="72" stroke="#ffd700" stroke-width="2" stroke-linecap="round"/>
+<line x1="60" y1="96" x2="60" y2="92" stroke="#ffd700" stroke-width="2" stroke-linecap="round"/>
+<line x1="38" y1="92" x2="40" y2="89" stroke="#ffd700" stroke-width="1.5" stroke-linecap="round"/>
+<line x1="32" y1="72" x2="36" y2="72" stroke="#ffd700" stroke-width="2" stroke-linecap="round"/>
+<line x1="38" y1="52" x2="40" y2="55" stroke="#ffd700" stroke-width="1.5" stroke-linecap="round"/>
+<line x1="60" y1="72" x2="38" y2="72" stroke="#ffd700" stroke-width="2.5" stroke-linecap="round"/>
+<line x1="60" y1="72" x2="60" y2="88" stroke="#ffd700" stroke-width="1.8" stroke-linecap="round"/>
+<circle cx="60" cy="72" r="2.5" fill="#ffd700"/>
+<text x="60" y="108" text-anchor="middle" font-size="9" font-weight="700" fill="#ffd700" font-family="monospace" letter-spacing="1.5">09:30</text>
+<text x="60" y="116" text-anchor="middle" font-size="5.5" fill="#c8a020" font-family="Arial">MARKET OPEN</text>
+</svg>`,
+
+four_seasons: `<svg viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="df_fs" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#faf6ec"/><stop offset="100%" stop-color="#f0e8d0"/></linearGradient><linearGradient id="dfr_fs" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#c8a020"/><stop offset="100%" stop-color="#906808"/></linearGradient><linearGradient id="seal_fs" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#c83020"/><stop offset="100%" stop-color="#8a1810"/></linearGradient></defs>
+<ellipse cx="60" cy="132" rx="56" ry="7" fill="#1a1208" opacity="0.07"/>
+<polygon points="6,8 114,8 110,124 10,124" fill="#d0c8a8" stroke="#b0a888" stroke-width="0.6"/>
+<polygon points="4,6 112,6 108,122 8,122" fill="url(#df_fs)" stroke="#c8c0a0" stroke-width="1"/>
+<polygon points="12,14 108,14 104,114 16,114" fill="none" stroke="url(#dfr_fs)" stroke-width="2.5"/>
+<polygon points="16,18 104,18 100,110 20,110" fill="none" stroke="#c8a820" stroke-width="0.8" opacity="0.5"/>
+<text x="12" y="12" font-size="8" fill="#c8a820" opacity="0.7">❧</text>
+<text x="108" y="12" font-size="8" fill="#c8a820" opacity="0.7" text-anchor="end">❧</text>
+<text x="12" y="116" font-size="8" fill="#c8a820" opacity="0.7">❧</text>
+<text x="108" y="116" font-size="8" fill="#c8a820" opacity="0.7" text-anchor="end">❧</text>
+<text x="60" y="32" text-anchor="middle" font-size="5.5" fill="#8a7040" font-family="Georgia,serif" letter-spacing="1">RABOBANK WHOLESALE BANKING</text>
+<line x1="16" y1="34" x2="104" y2="34" stroke="#c8a820" stroke-width="0.6" opacity="0.5"/>
+<text x="60" y="46" text-anchor="middle" font-size="6" fill="#6a6050" font-family="Georgia,serif" font-style="italic">This certifies that</text>
+<text x="60" y="62" text-anchor="middle" font-size="12" font-weight="700" fill="#1a1810" font-family="Georgia,serif">Mateo Terrada</text>
+<line x1="18" y1="65" x2="102" y2="65" stroke="#1a1810" stroke-width="0.7" opacity="0.4"/>
+<text x="60" y="76" text-anchor="middle" font-size="5.5" fill="#6a6050" font-family="Georgia,serif" font-style="italic">has been appointed to the position of</text>
+<text x="60" y="90" text-anchor="middle" font-size="11" font-weight="700" fill="#8a6010" font-family="Georgia,serif">Managing Director</text>
+<line x1="16" y1="93" x2="104" y2="93" stroke="#c8a820" stroke-width="0.8" opacity="0.6"/>
+<text x="60" y="103" text-anchor="middle" font-size="5.5" fill="#6a6050" font-family="Georgia,serif" font-style="italic">Amsterdam, 2026</text>
+<circle cx="60" cy="116" r="11" fill="url(#seal_fs)" stroke="#c8a820" stroke-width="1.2"/>
+<circle cx="60" cy="116" r="8" fill="none" stroke="#ffd700" stroke-width="0.7" opacity="0.6"/>
+<text x="60" y="113.5" text-anchor="middle" font-size="6" font-weight="700" fill="#ffd700" font-family="Arial">RBK</text>
+<text x="60" y="120" text-anchor="middle" font-size="4.5" fill="#ffd700" font-family="Arial">★</text>
+</svg>`,
+
+elegante_sport_domination: `<svg viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<linearGradient id="base_es" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#1a2e4a"/><stop offset="100%" stop-color="#0e1e30"/></linearGradient>
+<linearGradient id="basef_es" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#162438"/><stop offset="100%" stop-color="#0a1828"/></linearGradient>
+<linearGradient id="tg_es" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#f8e060"/><stop offset="40%" stop-color="#ffd020"/><stop offset="100%" stop-color="#c8a010"/></linearGradient>
+<linearGradient id="ts_es" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#c09010"/><stop offset="100%" stop-color="#907008"/></linearGradient>
+<radialGradient id="sh_es" cx="35%" cy="30%" r="60%"><stop offset="0%" stop-color="rgba(255,255,255,0.35)"/><stop offset="100%" stop-color="rgba(255,255,255,0)"/></radialGradient>
+<linearGradient id="bearB_es" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#8B5e3c"/><stop offset="100%" stop-color="#6a4428"/></linearGradient>
+<linearGradient id="bullB_es" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#c8a030"/><stop offset="100%" stop-color="#a07820"/></linearGradient>
+</defs>
+<ellipse cx="60" cy="134" rx="52" ry="8" fill="#1a1208" opacity="0.12"/>
+<polygon points="14,108 106,108 102,118 18,118" fill="url(#base_es)" stroke="#0a1828" stroke-width="0.8"/>
+<polygon points="18,118 102,118 98,128 22,128" fill="url(#basef_es)" stroke="#081420" stroke-width="0.6"/>
+<polygon points="102,118 112,112 108,122 98,128" fill="#0a1420" stroke="#060e18" stroke-width="0.5"/>
+<polygon points="106,108 116,102 112,112 102,118" fill="#0e1a2c" stroke="#080e1c" stroke-width="0.4"/>
+<polygon points="22,110 100,110 98,116 24,116" fill="#c8a020" stroke="#906808" stroke-width="0.6"/>
+<text x="60" y="115.5" text-anchor="middle" font-size="5.5" font-weight="700" fill="#1a1208" font-family="Georgia,serif" letter-spacing="1">THE SOPHISTICATE</text>
+<!-- BEAR (left) -->
+<ellipse cx="36" cy="80" rx="18" ry="22" fill="url(#bearB_es)" stroke="#5a3820" stroke-width="0.8"/>
+<circle cx="36" cy="56" r="14" fill="#7a5234" stroke="#5a3820" stroke-width="0.8"/>
+<ellipse cx="36" cy="63" rx="7" ry="5" fill="#9a6a44" stroke="#7a4e2c" stroke-width="0.6"/>
+<circle cx="31" cy="52" r="2.5" fill="#1a0e08"/>
+<circle cx="41" cy="52" r="2.5" fill="#1a0e08"/>
+<circle cx="31" cy="52" r="0.8" fill="white" opacity="0.5"/>
+<circle cx="41" cy="52" r="0.8" fill="white" opacity="0.5"/>
+<circle cx="28" cy="46" r="5" fill="#7a5234" stroke="#5a3820" stroke-width="0.6"/>
+<circle cx="44" cy="46" r="5" fill="#7a5234" stroke="#5a3820" stroke-width="0.6"/>
+<path d="M46,68 Q58,56 60,68 Q58,76 48,78" fill="url(#bearB_es)" stroke="#5a3820" stroke-width="0.8"/>
+<line x1="48" y1="78" x2="51" y2="84" stroke="#3a2010" stroke-width="1.5" stroke-linecap="round"/>
+<line x1="45" y1="80" x2="47" y2="87" stroke="#3a2010" stroke-width="1.5" stroke-linecap="round"/>
+<line x1="52" y1="77" x2="56" y2="83" stroke="#3a2010" stroke-width="1.5" stroke-linecap="round"/>
+<!-- BULL (right) -->
+<ellipse cx="84" cy="82" rx="20" ry="18" fill="url(#bullB_es)" stroke="#806010" stroke-width="0.8"/>
+<ellipse cx="68" cy="72" rx="16" ry="12" fill="#c8a030" stroke="#906018" stroke-width="0.8" transform="rotate(-20,68,72)"/>
+<ellipse cx="60" cy="76" rx="7" ry="5" fill="#e8b840" stroke="#a08020" stroke-width="0.6"/>
+<circle cx="66" cy="67" r="2.5" fill="#1a0e04"/>
+<circle cx="66" cy="66" r="0.8" fill="white" opacity="0.6"/>
+<path d="M62,64 Q56,50 50,44 Q46,38 52,37" fill="none" stroke="#f0e060" stroke-width="3.5" stroke-linecap="round"/>
+<path d="M52,37 Q55,35 57,38" fill="none" stroke="#f0e060" stroke-width="2" stroke-linecap="round"/>
+<path d="M72,63 Q74,48 78,42 Q82,36 86,39" fill="none" stroke="#f0e060" stroke-width="3.5" stroke-linecap="round"/>
+<circle cx="52" cy="37" r="2.5" fill="#ffe060"/>
+<circle cx="86" cy="39" r="2.5" fill="#ffe060"/>
+<path d="M70,90 Q66,100 64,108" fill="none" stroke="#a07820" stroke-width="7" stroke-linecap="round"/>
+<path d="M82,92 Q82,102 84,108" fill="none" stroke="#a07820" stroke-width="7" stroke-linecap="round"/>
+<ellipse cx="64" cy="108" rx="5" ry="3" fill="#5a3810"/>
+<ellipse cx="84" cy="108" rx="5" ry="3" fill="#5a3810"/>
+<!-- Clash -->
+<text x="60" y="76" text-anchor="middle" font-size="8" fill="#ffd700" opacity="0.9">⚡</text>
+</svg>`,
+
+        };
+
+        const ACHIEVEMENT_ITEMS = {
+            first_log:                { name: "Taza 'World's Best Analyst'", emoji: '☕' },
+            first_fav:                { name: "Post-it 'EBITDA'",            emoji: '📝' },
+            used_all_formalities:     { name: 'Stress Ball del banco',       emoji: '🟠' },
+            workweek_logged:          { name: 'Planta "Growth"',             emoji: '🌿' },
+            vest_debut:               { name: 'Perchero (primer chaleco)',    emoji: '🪝' },
+            workstreak_5:             { name: 'Silla Ergonómica',            emoji: '🪑' },
+            bordeaux_week:            { name: 'Botella de Moët',             emoji: '🍾' },
+            no_repeat_7:              { name: 'Whiteboard con DCF',          emoji: '📊' },
+            patagonia_fan:            { name: 'Colección Patagonia Vests',   emoji: '🧥' },
+            all_formalities_week:     { name: 'WSJ enmarcado',               emoji: '📰' },
+            vest_both:                { name: 'Alfombra persa',              emoji: '🟫' },
+            vest_regular:             { name: 'Lámpara de escritorio',       emoji: '💡' },
+            full_formal_week:         { name: 'Bloomberg Terminal',          emoji: '💻' },
+            full_casual_week_unique:  { name: 'Modelo financiero A3',        emoji: '📈' },
+            workstreak_10:            { name: 'Cuadro "Buy Low Sell High"',  emoji: '🖼️' },
+            all_outfits_used:         { name: 'Vista skyline ventana',       emoji: '🌆' },
+            monochrome_master:        { name: 'Whisky en el bar',            emoji: '🥃' },
+            workstreak_20:            { name: 'Nameplate dorado',            emoji: '🥇' },
+            bordeaux_loyalist:        { name: 'Reloj NYSE Ticker',           emoji: '🕐' },
+            four_seasons:             { name: 'Diploma Managing Director',   emoji: '📜' },
+            elegante_sport_domination:{ name: 'Trofeo The Sophisticate',     emoji: '🏆' },
+        };
+
+        function openLogros() {
+            checkAndUnlockAchievements();
+            document.getElementById('logrosOverlay').classList.add('open');
+            renderLogrosPage();
+        }
+
+        function closeLogros(e) {
+            if (e && e.target !== document.getElementById('logrosOverlay')) return;
+            document.getElementById('logrosOverlay').classList.remove('open');
+        }
+
+        function switchLogrosTab(tab) {
+            document.querySelectorAll('.logros-tab-btn').forEach(b => {
+                b.classList.toggle('active', b.getAttribute('data-tab') === tab);
+            });
+            document.querySelectorAll('.logros-section').forEach(s => s.classList.remove('active'));
+            document.getElementById('logros-' + tab).classList.add('active');
+        }
+
+        function renderLogrosPage() {
+            const unlocked = getUnlockedAchievements();
+            const stats    = computeAchievementStats();
+            const total    = ACHIEVEMENTS.length;
+            const done     = Object.keys(unlocked).length;
+
+            // crunchies: bronce=10, plata=25, oro=50, platino=100
+            const tierPts = { Bronce: 10, Plata: 25, Oro: 50, Platino: 100 };
+            let crunchies = 0;
+            ACHIEVEMENTS.forEach(a => { if (unlocked[a.id]) crunchies += tierPts[a.tier] || 0; });
+            document.getElementById('logrosCrunchies').textContent = '🪙 ' + crunchies + ' crunchies';
+
+            renderVitrina2(unlocked);
+            renderGoals(unlocked, stats, done, total);
+        }
+
+        // ── OFICINA ISOMÉTRICA ────────────────────────────────────────────────
+
+        // ── VITRINA (dentro de logros page) ───────────────────────────────────
+        function renderVitrina2(unlocked) {
+            const cabinet = document.getElementById('vitrinaCabinet2');
+            const customOutfits = JSON.parse(localStorage.getItem('customOutfits')) || [];
+
+            const tierInfo = {
+                Bronce:  { label: '🥉 Bronce',  cls: 'tier-bronce' },
+                Plata:   { label: '🥈 Plata',   cls: 'tier-plata'  },
+                Oro:     { label: '🥇 Oro',     cls: 'tier-oro'    },
+                Platino: { label: '💎 Platino', cls: 'tier-platino' },
+            };
+
+            const hasAny = ACHIEVEMENTS.some(a => unlocked[a.id]);
+            if (!hasAny) {
+                cabinet.innerHTML = '<div class="vitrina-empty">Completá logros para llenar tu vitrina ✨</div>';
+                return;
+            }
+
+            let html = '';
+            ['Bronce','Plata','Oro','Platino'].forEach(tier => {
+                const tierAchievements = ACHIEVEMENTS.filter(a => a.tier === tier);
+                const info = tierInfo[tier];
+                const items = tierAchievements.map(a => {
+                    const isUnlocked = !!unlocked[a.id];
+                    const svg = ITEM_SVGS[a.id] || '';
+                    const itemData = ACHIEVEMENT_ITEMS[a.id];
+                    const name = itemData ? itemData.name : a.name;
+                    return '<div class="vitrina-item ' + info.cls + (isUnlocked ? '' : ' locked') + '" title="' + a.name + (isUnlocked ? '' : ' — Bloqueado') + '">' +
+                        '<div class="vitrina-medal-wrap">' + svg + '</div>' +
+                        '<div class="vitrina-name">' + name + '</div>' +
+                        '</div>';
+                }).join('');
+                html += '<div class="vitrina-shelf ' + info.cls + '">' +
+                    '<div class="vitrina-shelf-label">' + info.label + '</div>' +
+                    '<div class="vitrina-shelf-row">' + items + '</div>' +
+                    '</div>';
+            });
+
+            cabinet.innerHTML = html;
+        }
+
+        // ── GOALS LIST ────────────────────────────────────────────────────────
+        function renderGoals(unlocked, stats, done, total) {
+            const pct = Math.round(done / total * 100);
+            const circumference = 2 * Math.PI * 24;
+            const offset = circumference * (1 - pct/100);
+            const circle = document.getElementById('logrosCircleProgress');
+            if (circle) { circle.style.strokeDashoffset = offset; }
+            document.getElementById('logrosCirclePct').textContent = pct + '%';
+            document.getElementById('logrosProgressTitle').textContent = done + ' de ' + total + ' logros';
+            document.getElementById('logrosProgressSub').textContent = done === total
+                ? '🎉 Colección completa. Sos un dandy.'
+                : (total - done) + ' logros restantes';
+
+            const list = document.getElementById('logrosGoalsList');
+            list.innerHTML = '';
+            const tierEmoji = { Bronce:'🥉', Plata:'🥈', Oro:'🥇', Platino:'💎' };
+            const tierPts   = { Bronce:10, Plata:25, Oro:50, Platino:100 };
+
+            ['Bronce','Plata','Oro','Platino'].forEach(tier => {
+                const tierAs = ACHIEVEMENTS.filter(a => a.tier === tier);
+                const lbl = document.createElement('div');
+                lbl.className = 'logros-section-label';
+                lbl.textContent = tierEmoji[tier] + ' ' + tier + ' · ' + tierPts[tier] + ' crunchies c/u';
+                list.appendChild(lbl);
+
+                tierAs.forEach(a => {
+                    const isUnlocked = !!unlocked[a.id];
+                    const prog = a.progress(stats);
+                    const p = Math.min(100, Math.round(prog.val / prog.max * 100));
+                    const item = ACHIEVEMENT_ITEMS[a.id];
+
+                    const div = document.createElement('div');
+                    div.className = 'logros-achievement-item' + (isUnlocked ? ' unlocked' : '');
+
+                    const medalSvg = `<svg width="46" height="46" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="24" cy="28" r="16" fill="${a.svgColor}" opacity="${isUnlocked?'1':'0.4'}"/>
+                        <circle cx="24" cy="28" r="13" fill="none" stroke="white" stroke-width="1.5" opacity="0.5"/>
+                        <text x="24" y="33" text-anchor="middle" font-size="14">${a.medal}</text>
+                        <rect x="20" y="6" width="8" height="10" rx="2" fill="${a.svgColor}" opacity="${isUnlocked?'0.9':'0.3'}"/>
+                        <rect x="18" y="10" width="12" height="4" rx="2" fill="${a.svgColor}" opacity="${isUnlocked?'0.7':'0.2'}"/>
+                    </svg>`;
+
+                    div.innerHTML = `
+                        <div class="logros-achievement-medal">${medalSvg}</div>
+                        <div class="logros-achievement-info">
+                            <div class="logros-achievement-name">${a.name}</div>
+                            <div class="logros-achievement-desc">${a.desc}</div>
+                            <div class="logros-achievement-bar-wrap">
+                                <div class="logros-achievement-bar-fill" style="width:${p}%"></div>
+                            </div>
+                            <div class="logros-achievement-pct">${prog.val} / ${prog.max}${isUnlocked ? ' ✓ ' + unlocked[a.id] : ''}</div>
+                        </div>
+                        <div class="logros-achievement-reward">${item ? item.emoji + '<br>' + item.name : ''}</div>
+                    `;
+                    list.appendChild(div);
+                });
+            });
+        }
+
+        function openAchievements() { openLogros(); }
+        function closeAchievements() { closeLogros(); }
+
+        function renderAchievements() {
+            const stats = computeAchievementStats();
+            const unlocked = getUnlockedAchievements();
+            const total = ACHIEVEMENTS.length;
+            const done = Object.keys(unlocked).length;
+
+            document.getElementById('achievementsSub').textContent =
+                `${done} de ${total} logros desbloqueados`;
+            document.getElementById('achievementsProgressBar').style.width =
+                (done / total * 100) + '%';
+
+            const list = document.getElementById('achievementsList');
+            list.innerHTML = '';
+
+            TIER_ORDER.forEach(tier => {
+                const tierAchievements = ACHIEVEMENTS.filter(a => a.tier === tier);
+                const label = document.createElement('div');
+                label.className = 'achievements-section-label';
+                const tierEmoji = { Bronce: '🥉', Plata: '🥈', Oro: '🥇', Platino: '💎' }[tier];
+                label.textContent = tierEmoji + ' ' + tier;
+                list.appendChild(label);
+
+                tierAchievements.forEach(a => {
+                    const isUnlocked = !!unlocked[a.id];
+                    const prog = a.progress(stats);
+                    const pct = Math.min(100, Math.round(prog.val / prog.max * 100));
+
+                    const item = document.createElement('div');
+                    item.className = 'achievement-item' + (isUnlocked ? ' unlocked' : '');
+
+                    const medalSvg = `<svg width="48" height="48" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="24" cy="28" r="16" fill="${a.svgColor}" opacity="${isUnlocked ? '1' : '0.4'}"/>
+                        <circle cx="24" cy="28" r="13" fill="none" stroke="white" stroke-width="1.5" opacity="0.5"/>
+                        <text x="24" y="33" text-anchor="middle" font-size="14">${a.medal}</text>
+                        <rect x="20" y="6" width="8" height="10" rx="2" fill="${a.svgColor}" opacity="${isUnlocked ? '0.9' : '0.3'}"/>
+                        <rect x="18" y="10" width="12" height="4" rx="2" fill="${a.svgColor}" opacity="${isUnlocked ? '0.7' : '0.2'}"/>
+                    </svg>`;
+
+                    item.innerHTML = `
+                        <div class="achievement-medal">${medalSvg}</div>
+                        <div class="achievement-info">
+                            <div class="achievement-name">${a.name}</div>
+                            <div class="achievement-desc">${a.desc}</div>
+                            <div class="achievement-progress-wrap">
+                                <div class="achievement-progress-fill" style="width:${pct}%"></div>
+                            </div>
+                            <div class="achievement-progress-label">${prog.val} / ${prog.max}</div>
+                        </div>
+                        ${isUnlocked ? `<div class="achievement-unlocked-date">${unlocked[a.id]}</div>` : ''}
+                    `;
+                    list.appendChild(item);
+                });
+            });
         }
 
         // ============ INIT ============
         renderOutfits();
         renderCustomOutfits();
+        updateAchievementsBadge();
         updateStats();
         updateFilterCounts();
         fetchWeather('Haarlem');
@@ -5175,5 +6339,46 @@
         // Countdown ticks every 30 seconds
         setInterval(updateCountdownBadge, 30000);
     </script>
+
+    <!-- ══ LOGROS MODAL ══ -->
+    <div class="logros-overlay" id="logrosOverlay" onclick="closeLogros(event)">
+        <div class="logros-dialog">
+            <div class="logros-header">
+                <div class="logros-title">🏆 Logros</div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <div class="logros-crunchies-badge" id="logrosCrunchies">🪙 0</div>
+                    <button class="train-close" onclick="closeLogros()">✕</button>
+                </div>
+            </div>
+            <div class="logros-tabs">
+                <button class="logros-tab-btn active" data-tab="vitrina" onclick="switchLogrosTab('vitrina')">✦ Vitrina</button>
+                <button class="logros-tab-btn" data-tab="goals" onclick="switchLogrosTab('goals')">🎯 Objetivos</button>
+            </div>
+            <div class="logros-section active" id="logros-vitrina">
+                <div class="vitrina-cabinet" id="vitrinaCabinet2">
+                    <div class="vitrina-empty">Completá logros para llenar tu vitrina ✨</div>
+                </div>
+
+            </div>
+            <div class="logros-section" id="logros-goals">
+                <div class="logros-progress-header">
+                    <div class="logros-progress-circle">
+                        <svg width="52" height="52" viewBox="0 0 58 58">
+                            <circle cx="29" cy="29" r="24" fill="none" stroke="#f0f0f0" stroke-width="5"/>
+                            <circle cx="29" cy="29" r="24" fill="none" stroke="#1a3a52" stroke-width="5"
+                                stroke-dasharray="150.8" stroke-dashoffset="150.8"
+                                id="logrosCircleProgress" stroke-linecap="round"/>
+                        </svg>
+                        <div class="logros-progress-pct" id="logrosCirclePct">0%</div>
+                    </div>
+                    <div class="logros-progress-text">
+                        <div class="logros-progress-title" id="logrosProgressTitle">0 de 21 logros</div>
+                        <div class="logros-progress-sub" id="logrosProgressSub">Seguí registrando outfits</div>
+                    </div>
+                </div>
+                <div id="logrosGoalsList"></div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
