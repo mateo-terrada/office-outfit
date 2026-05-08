@@ -3213,7 +3213,7 @@
   <rect x="31" y="12" width="2" height="10" rx="1" fill="#3D2314"/>
   <rect x="57" y="12" width="2" height="10" rx="1" fill="#3D2314"/>
   <!-- Jopo: pronounced quiff curving up and forward -->
-  <path d="M34,10 Q28,0 36,−2 Q43,−4 41,6 Q39,10 36,10 Z" fill="#3D2314"/>
+  <path d="M34,10 Q28,0 36,-2 Q43,-4 41,6 Q39,10 36,10 Z" fill="#3D2314"/>
   <circle cx="40" cy="21" r="1.8" fill="#5C3D2E"/>
   <circle cx="50" cy="21" r="1.8" fill="#5C3D2E"/>
   <path d="M40,27 Q45,31 50,27" stroke="#5C3D2E" stroke-width="1.2" fill="none" stroke-linecap="round"/>
@@ -3285,6 +3285,9 @@
         }
 
         function renderOutfits(filtro = 'todos') {
+            // Si hay filtro de prendas activo, no pisar el resultado
+            if (prendaFilterActive) return;
+
             const grid = document.getElementById('outfitsGrid');
             grid.innerHTML = '';
 
@@ -3737,10 +3740,14 @@
 
             prendaFilterActive = true;
 
+            // Asegurar que estamos en la tab de sugeridos
+            switchTab('sugeridos');
+
             // Deactivate category filter buttons visually
             document.querySelectorAll('#tab-sugeridos .filter-btn').forEach(btn => btn.classList.remove('active'));
 
-            const allOutfits = outfits.filter(o => !o.custom);
+            const customOutfits = JSON.parse(localStorage.getItem('customOutfits')) || [];
+            const allOutfits = [...applyOverrides([...outfits]), ...customOutfits];
             const results = allOutfits.filter(o => {
                 return (!pantalon || o.prendas.pantalon === pantalon)
                     && (!camisa   || o.prendas.camisa === camisa)
@@ -3763,6 +3770,7 @@
                 const card = createOutfitCard(outfit);
                 grid.appendChild(card);
             });
+            animateCards(grid);
         }
 
         function clearPrendaFilter() {
@@ -4557,7 +4565,28 @@
             allOutfits.push(...customOutfits);
             const total = allOutfits.length;
 
-            const recommended = getWeatherRecommendations(currentWeatherCondition, currentMaxTemp);
+            let recommended = getWeatherRecommendations(currentWeatherCondition, currentMaxTemp);
+
+            // Filtrar outfits usados en los últimos 5 días
+            const calData = JSON.parse(localStorage.getItem('calendarOutfits')) || {};
+            const recentUsedIds = new Set();
+            for (let i = 1; i <= 5; i++) {
+                const d = new Date(); d.setDate(d.getDate() - i);
+                const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+                if (calData[key]) recentUsedIds.add(String(calData[key].id));
+            }
+            if (recentUsedIds.size > 0) {
+                const filtered = recommended.filter(o => !recentUsedIds.has(String(o.id)));
+                if (filtered.length > 0) recommended = filtered;
+            }
+
+            // Filtrar colores de abrigo usados en los últimos 3 días
+            const recentColors = getRecentAbrigoColors(3);
+            if (recentColors.size > 0) {
+                const filtered = recommended.filter(o => !abrigoMatchesColor(o.prendas.abrigo, recentColors));
+                if (filtered.length > 0) recommended = filtered;
+            }
+
             const excluded = total - recommended.length;
 
             if (!recommended || recommended.length === 0) {
@@ -4569,8 +4598,9 @@
             banner.style.cssText = 'grid-column:1/-1; background:#e3f2fd; padding:16px 20px; border-radius:12px; margin-bottom:20px; color:#1565c0; font-weight:600; text-align:center;';
 
             const explanation = getWeatherExplanation(currentWeatherCondition, currentMaxTemp);
-            const excludedNote = excluded > 0 ? ` (${excluded} outfit${excluded > 1 ? 's' : ''} descartado${excluded > 1 ? 's' : ''} por el clima)` : '';
-            banner.innerHTML = `${explanation}<br><span style="font-weight:400; font-size:0.9em;">${recommended.length} outfit${recommended.length > 1 ? 's' : ''} recomendado${recommended.length > 1 ? 's' : ''}${excludedNote}</span>`;
+            const excludedNote = excluded > 0 ? ` · ${excluded} descartado${excluded > 1 ? 's' : ''} por clima` : '';
+            const colorNote = recentColors.size > 0 ? ` · Sin ${[...recentColors].join(', ')} (usado reciente)` : '';
+            banner.innerHTML = `${explanation}<br><span style="font-weight:400; font-size:0.9em;">${recommended.length} outfit${recommended.length > 1 ? 's' : ''} recomendado${recommended.length > 1 ? 's' : ''}${excludedNote}${colorNote}</span>`;
             grid.appendChild(banner);
 
             recommended.forEach(outfit => {
