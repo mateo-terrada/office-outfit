@@ -1726,6 +1726,34 @@
             margin-bottom: 12px;
         }
         .cal-detail-select:focus { outline: none; border-color: #1a3a52; }
+        .cal-holiday-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 10px 0 4px;
+            font-size: 0.82em;
+            color: #666;
+            cursor: pointer;
+            user-select: none;
+        }
+        .cal-holiday-toggle input[type="checkbox"] { display: none; }
+        .cal-holiday-pill {
+            padding: 4px 12px;
+            border-radius: 20px;
+            background: #f0f0f0;
+            border: 1.5px solid #ddd;
+            font-size: 0.82em;
+            font-weight: 600;
+            color: #888;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .cal-holiday-pill.active {
+            background: #fff3e0;
+            border-color: #ff9800;
+            color: #e65100;
+        }
+
         .cal-detail-actions {
             display: flex;
             gap: 10px;
@@ -2079,7 +2107,21 @@
             transition: background 0.15s;
         }
         .train-close:hover { background: #f5f5f5; color: #333; }
-        .train-list { display: flex; flex-direction: column; gap: 8px; }
+        .train-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 196px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(26,58,82,0.2) transparent;
+            scroll-snap-type: y mandatory;
+            padding-right: 2px;
+        }
+        .train-list::-webkit-scrollbar { width: 3px; }
+        .train-list::-webkit-scrollbar-track { background: transparent; }
+        .train-list::-webkit-scrollbar-thumb { background: rgba(26,58,82,0.2); border-radius: 3px; }
+        .train-row { scroll-snap-align: start; }
         .train-row {
             display: flex;
             align-items: center;
@@ -2756,7 +2798,7 @@
                 <div class="cal-detail-current" id="calDetailCurrent"></div>
                 <div class="cal-detail-label">Asignar outfit:</div>
                 <select class="cal-detail-select" id="calDetailSelect"></select>
-                <div class="cal-detail-actions">
+<div class="cal-detail-actions">
                     <button class="cal-detail-clear" onclick="calClearDay()">Limpiar</button>
                     <button class="cal-detail-save" onclick="calSaveDay()">Guardar</button>
                 </div>
@@ -4732,6 +4774,8 @@
             const now = new Date();
             calYear = now.getFullYear();
             calMonth = now.getMonth();
+            calSelectedDate = null;
+            document.getElementById('calDetail').style.display = 'none';
             document.getElementById('calOverlay').classList.add('open');
             renderCalendar();
             renderRecentStrip();
@@ -4788,7 +4832,8 @@
                     (isToday ? ' today' : '') +
                     (isSelected ? ' selected' : '');
 
-                const dotColor = hasOutfit ? (data[key].abrigoColor || '#1a3a52') : null;
+                const isHoliday = hasOutfit && data[key].id === '__holiday__';
+                const dotColor = isHoliday ? '#ff9800' : (hasOutfit ? (data[key].abrigoColor || '#1a3a52') : null);
                 cell.innerHTML = `<span class="cal-day-num">${d}</span>${hasOutfit ? `<span class="cal-dot" style="background:${dotColor};"></span>` : ''}`;
                 cell.onclick = () => selectCalDay(calYear, calMonth, d);
                 grid.appendChild(cell);
@@ -4807,14 +4852,15 @@
             });
             document.getElementById('calDetailDate').textContent = dateLabel;
             document.getElementById('calDetailCurrent').textContent = existing
-                ? `Outfit registrado: ${existing.nombre}`
+                ? (existing.id === '__holiday__' ? '🏖️ Feriado / No laboral' : `Outfit registrado: ${existing.nombre}`)
                 : 'Sin outfit registrado';
 
             // Populate select with all outfits
             const customOutfits = JSON.parse(localStorage.getItem('customOutfits')) || [];
             const allOutfits = [...applyOverrides([...outfits]), ...customOutfits];
             const sel = document.getElementById('calDetailSelect');
-            sel.innerHTML = '<option value="">— Elegir outfit —</option>';
+            sel.innerHTML = '<option value="">— Elegir outfit —</option><option value="__holiday__">🏖️ Feriado / No laboral</option>';
+            if (existing && existing.id === '__holiday__') sel.value = '__holiday__';
             ['formal','elegante-sport','casual'].forEach(cat => {
                 const group = document.createElement('optgroup');
                 group.label = cat === 'formal' ? 'Formal' : cat === 'elegante-sport' ? 'Elegante Sport' : 'Casual';
@@ -4833,35 +4879,41 @@
 
         function calSaveDay() {
             if (!calSelectedDate) return;
-            const sel = document.getElementById('calDetailSelect');
-            const id = sel.value;
-            if (!id) return;
+            const data = calGetData();
+            const select = document.getElementById('calDetailSelect');
+            const val = select.value;
+            if (!val) return;
+
+            if (val === '__holiday__') {
+                data[calSelectedDate] = { id: '__holiday__', nombre: 'Feriado' };
+                calSaveData(data);
+                document.getElementById('calDetailCurrent').textContent = '🏖️ Feriado / No laboral';
+                renderCalendar();
+                renderRecentStrip();
+                showToast('🏖️ Feriado marcado');
+                return;
+            }
 
             const customOutfits = JSON.parse(localStorage.getItem('customOutfits')) || [];
             const allOutfits = [...applyOverrides([...outfits]), ...customOutfits];
-            const outfit = allOutfits.find(o => o.id == id);
+            const outfitId = parseInt(val);
+            const outfit = allOutfits.find(o => o.id == outfitId);
             if (!outfit) return;
 
-            const data = calGetData();
-            data[calSelectedDate] = {
-                id: outfit.id,
-                nombre: outfit.nombre,
-                abrigoColor: getPrendaColor(outfit.prendas.abrigo) || '#1a3a52'
-            };
+            data[calSelectedDate] = { id: outfit.id };
             calSaveData(data);
 
             document.getElementById('calDetailCurrent').textContent = `Outfit registrado: ${outfit.nombre}`;
             renderCalendar();
             renderRecentStrip();
-            // Refresh outfit cards so usage counter updates immediately
+
             const activeFilter = document.querySelector('#tab-sugeridos .filter-btn.active');
-            if (activeFilter) {
+            if (activeFilter && !prendaFilterActive) {
                 const ft = activeFilter.textContent;
                 const filterType = ft.includes('Todos') ? 'todos' : ft.includes('Formal') ? 'formal' : ft.includes('Elegante') ? 'elegante-sport' : ft.includes('Casual') ? 'casual' : 'todos';
                 renderOutfits(filterType);
             }
             renderCustomOutfits();
-
             showToast(`📅 ${outfit.nombre} guardado`);
             updateAchievementsBadge();
         }
@@ -4875,44 +4927,13 @@
             document.getElementById('calDetailSelect').value = '';
             renderCalendar();
             renderRecentStrip();
-            // Refresh outfit cards so usage counter updates immediately
             const activeFilter = document.querySelector('#tab-sugeridos .filter-btn.active');
-            if (activeFilter) {
+            if (activeFilter && !prendaFilterActive) {
                 const ft = activeFilter.textContent;
                 const filterType = ft.includes('Todos') ? 'todos' : ft.includes('Formal') ? 'formal' : ft.includes('Elegante') ? 'elegante-sport' : ft.includes('Casual') ? 'casual' : 'todos';
                 renderOutfits(filterType);
             }
             renderCustomOutfits();
-        }
-
-        // ============ TRAIN WIDGET ============
-        let trainData = [];
-        let trainLastFetch = null;
-        let nextDepartureTime = null; // ISO string of the trip we're counting down to
-
-        function updateCountdownBadge() {
-            const badge = document.getElementById('trainCountdown');
-            if (!badge || !nextDepartureTime) { if (badge) badge.style.display = 'none'; return; }
-
-            const minsToDepart = minutesUntil(nextDepartureTime);
-            const minsToLeave  = minsToDepart - 15; // minus bike buffer
-
-            badge.style.display = '';
-            badge.className = 'train-countdown-badge';
-
-            if (minsToLeave <= 0) {
-                badge.textContent = '¡Ya!';
-                badge.classList.add('go');
-            } else if (minsToLeave <= 1) {
-                badge.textContent = minsToLeave + 'min';
-                badge.classList.add('urgent');
-            } else if (minsToLeave <= 5) {
-                badge.textContent = minsToLeave + 'min';
-                badge.classList.add('warn');
-            } else {
-                badge.textContent = minsToLeave + 'min';
-                badge.classList.add('ok');
-            }
         }
 
         // On mobile, move the FAB into header for better flow
@@ -4953,6 +4974,46 @@
             return Math.round(diff / 60000);
         }
 
+        function showToast(msg) {
+            let toast = document.getElementById('appToast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'appToast';
+                toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1a3a52;color:white;padding:10px 20px;border-radius:20px;font-size:0.88em;font-weight:600;z-index:9999;opacity:0;transition:opacity 0.25s;pointer-events:none;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,0.18);';
+                document.body.appendChild(toast);
+            }
+            toast.textContent = msg;
+            toast.style.opacity = '1';
+            clearTimeout(toast._t);
+            toast._t = setTimeout(() => { toast.style.opacity = '0'; }, 2500);
+        }
+
+        let trainData = [];
+        let trainLastFetch = null;
+        let nextDepartureTime = null;
+
+        function updateCountdownBadge() {
+            const badge = document.getElementById('trainCountdown');
+            if (!badge || !nextDepartureTime) { if (badge) badge.style.display = 'none'; return; }
+            const minsToDepart = minutesUntil(nextDepartureTime);
+            const minsToLeave  = minsToDepart - 15;
+            badge.style.display = '';
+            badge.className = 'train-countdown-badge';
+            if (minsToLeave <= 0) {
+                badge.textContent = '¡Ya!';
+                badge.classList.add('go');
+            } else if (minsToLeave <= 1) {
+                badge.textContent = minsToLeave + 'min';
+                badge.classList.add('urgent');
+            } else if (minsToLeave <= 5) {
+                badge.textContent = minsToLeave + 'min';
+                badge.classList.add('warn');
+            } else {
+                badge.textContent = minsToLeave + 'min';
+                badge.classList.add('ok');
+            }
+        }
+
         async function fetchTrains() {
             const KEY = '27874576009e41a3a0a5301b90355937';
             const URL = 'https://gateway.apiportal.ns.nl/reisinformatie-api/api/v3/trips'
@@ -4987,8 +5048,9 @@
                     if (transitLegs.length < 1 || transitLegs.length > 2) return false;
                     const depActual = transitLegs[0].origin?.actualDateTime || transitLegs[0].origin?.plannedDateTime;
                     if (!depActual) return false;
-                    return minutesUntil(depActual) >= BIKE_BUFFER;
-                }).slice(0, 4);
+                    const mins = minutesUntil(depActual);
+                    return mins >= BIKE_BUFFER && mins <= 60;
+                });
 
                 trainData = filtered;
                 trainLastFetch = new Date();
@@ -5404,11 +5466,18 @@
             const customOutfits = JSON.parse(localStorage.getItem('customOutfits')) || [];
             const allOutfits = [...applyOverrides([...outfits]), ...customOutfits];
 
-            const entries = Object.entries(calendar).sort((a,b) => a[0].localeCompare(b[0]));
+            const entries = Object.entries(calendar).filter(([,e]) => e.id !== '__holiday__').sort((a,b) => a[0].localeCompare(b[0]));
             const totalLogs = entries.length;
 
             // helpers
-            const isWorkday = (dateStr) => { const d = new Date(dateStr + 'T12:00:00'); const day = d.getDay(); return day >= 1 && day <= 5; };
+            const calData2 = calGetData();
+            const isWorkday = (dateStr) => {
+                const d = new Date(dateStr + 'T12:00:00');
+                const day = d.getDay();
+                if (day < 1 || day > 5) return false;
+                if (calData2[dateStr] && calData2[dateStr].id === '__holiday__') return false;
+                return true;
+            };
             const weekKey   = (dateStr) => { const d = new Date(dateStr + 'T12:00:00'); const mon = new Date(d); mon.setDate(d.getDate() - ((d.getDay()+6)%7)); return mon.toISOString().slice(0,10); };
 
             // formalidad usage
