@@ -9,7 +9,7 @@ FROM_UIC     = '8400282'   # Haarlem
 TO_UIC       = '8400621'   # Utrecht Centraal
 DEPART_FROM  = 7           # Check trains from 7:00
 DEPART_TO    = 9           # ...until 9:00
-DELAY_THRESH = 5           # minutes delay to trigger alert
+DELAY_THRESH = 0           # minutes delay to trigger alert
 NL_TZ        = timezone(timedelta(hours=2))  # CEST (summer), change to +1 in winter
 
 # ── HELPERS ──────────────────────────────────────────────────────────────────
