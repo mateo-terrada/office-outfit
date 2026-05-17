@@ -46,9 +46,9 @@ def main():
     print(f"Running at {now_nl.strftime('%H:%M')} NL time")
 
     # Only run on weekdays
-    if now_nl.weekday() >= 5:
-        print("Weekend — skipping")
-        return
+  #  if now_nl.weekday() >= 5:
+   #     print("Weekend — skipping")
+    #    return
 
     # Fetch journeys from NS API
     url = 'https://gateway.apiportal.ns.nl/reisinformatie-api/api/v3/trips'
