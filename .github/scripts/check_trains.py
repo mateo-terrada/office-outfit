@@ -9,8 +9,26 @@ FROM_STATION = 'Haarlem'
 TO_STATION   = 'Utrecht Centraal'
 DEPART_FROM  = 13
 DEPART_TO    = 15
-DELAY_THRESH = 0
-NL_TZ        = timezone(timedelta(hours=2))  # CEST (summer)
+DELAY_THRESH = 1
+
+def get_nl_timezone():
+    """Detect CET (UTC+1) vs CEST (UTC+2) automatically."""
+    # DST in NL: last Sunday of March → last Sunday of October
+    now_utc = datetime.now(timezone.utc)
+    year = now_utc.year
+
+    # Last Sunday of March
+    march31 = datetime(year, 3, 31, 1, 0, tzinfo=timezone.utc)
+    dst_start = march31 - timedelta(days=march31.weekday() + 1)
+
+    # Last Sunday of October
+    oct31 = datetime(year, 10, 31, 1, 0, tzinfo=timezone.utc)
+    dst_end = oct31 - timedelta(days=oct31.weekday() + 1)
+
+    if dst_start <= now_utc < dst_end:
+        return timezone(timedelta(hours=2))  # CEST
+    else:
+        return timezone(timedelta(hours=1))  # CET
 
 def parse_dt(s):
     if not s:
@@ -43,12 +61,20 @@ def send_ntfy(title, message, priority='default'):
         print(f"ntfy error: {e}")
 
 def main():
+    NL_TZ  = get_nl_timezone()
     now_nl = datetime.now(NL_TZ)
-    print(f"Running at {now_nl.strftime('%H:%M')} NL time, weekday={now_nl.weekday()}")
+    offset = int(NL_TZ.utcoffset(None).total_seconds() / 3600)
+    print(f"Running at {now_nl.strftime('%H:%M')} NL time (UTC+{offset}), weekday={now_nl.weekday()}")
 
-   # if now_nl.weekday() >= 5:
-    #    print("Weekend — skipping")
-     #   return
+    # Only run on weekdays
+ #   if now_nl.weekday() >= 5:
+  #      print("Weekend — skipping")
+   #     return
+
+    # Only run around 7:00-7:30am NL time (guard against off-schedule runs)
+    if not (6 <= now_nl.hour <= 8):
+        print(f"Outside run window ({now_nl.hour}h) — skipping")
+        return
 
     url = 'https://gateway.apiportal.ns.nl/reisinformatie-api/api/v3/trips'
     params = {
@@ -65,8 +91,6 @@ def main():
     try:
         resp = requests.get(url, params=params, headers=headers, timeout=10)
         print(f"NS API status: {resp.status_code}")
-        if resp.status_code != 200:
-            print(f"Response body: {resp.text[:500]}")
         resp.raise_for_status()
         data = resp.json()
     except Exception as e:
