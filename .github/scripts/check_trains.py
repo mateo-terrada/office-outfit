@@ -72,9 +72,9 @@ def main():
    #     return
 
     # Only run around 7:00-7:30am NL time (guard against off-schedule runs)
-    if not (6 <= now_nl.hour <= 8):
-        print(f"Outside run window ({now_nl.hour}h) — skipping")
-        return
+#    if not (6 <= now_nl.hour <= 8):
+ #       print(f"Outside run window ({now_nl.hour}h) — skipping")
+  #      return
 
     url = 'https://gateway.apiportal.ns.nl/reisinformatie-api/api/v3/trips'
     params = {
