@@ -7,8 +7,8 @@ NS_API_KEY   = os.environ['NS_API_KEY']
 NTFY_TOPIC   = os.environ['NTFY_TOPIC']
 FROM_STATION = 'Haarlem'
 TO_STATION   = 'Utrecht Centraal'
-DEPART_FROM  = 7
-DEPART_TO    = 9
+DEPART_FROM  = 13
+DEPART_TO    = 15
 DELAY_THRESH = 0
 NL_TZ        = timezone(timedelta(hours=2))  # CEST (summer)
 
