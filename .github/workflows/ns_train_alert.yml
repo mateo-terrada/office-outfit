@@ -2,29 +2,22 @@ name: NS Train Alert
 
 on:
   schedule:
-    # 7:00 AM Amsterdam (CEST = UTC+2, so 05:00 UTC)
+    # 6:00 UTC = 7:00 CET (winter) / 8:00 CEST (summer) — script handles DST
     - cron: '0 5 * * 1-5'
-    # 7:30 AM Amsterdam
+    # 6:30 UTC
     - cron: '30 5 * * 1-5'
-  workflow_dispatch:  # allow manual trigger for testing
+  workflow_dispatch:
 
 jobs:
   check-trains:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-
-      - name: Install dependencies
-        run: pip install requests
-
-      - name: Check trains and send alert if needed
+      - run: pip install requests
+      - name: Check trains
         env:
           NS_API_KEY: ${{ secrets.NS_API_KEY }}
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
