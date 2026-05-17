@@ -7,28 +7,19 @@ NS_API_KEY   = os.environ['NS_API_KEY']
 NTFY_TOPIC   = os.environ['NTFY_TOPIC']
 FROM_STATION = 'Haarlem'
 TO_STATION   = 'Utrecht Centraal'
-DEPART_FROM  = 13
-DEPART_TO    = 15
-DELAY_THRESH = 1
+VIA_STATION  = 'Amsterdam Centraal'
+DEPART_FROM  = 7
+DEPART_TO    = 9
+DELAY_THRESH = 5
 
 def get_nl_timezone():
-    """Detect CET (UTC+1) vs CEST (UTC+2) automatically."""
-    # DST in NL: last Sunday of March → last Sunday of October
     now_utc = datetime.now(timezone.utc)
     year = now_utc.year
-
-    # Last Sunday of March
     march31 = datetime(year, 3, 31, 1, 0, tzinfo=timezone.utc)
     dst_start = march31 - timedelta(days=march31.weekday() + 1)
-
-    # Last Sunday of October
     oct31 = datetime(year, 10, 31, 1, 0, tzinfo=timezone.utc)
     dst_end = oct31 - timedelta(days=oct31.weekday() + 1)
-
-    if dst_start <= now_utc < dst_end:
-        return timezone(timedelta(hours=2))  # CEST
-    else:
-        return timezone(timedelta(hours=1))  # CET
+    return timezone(timedelta(hours=2)) if dst_start <= now_utc < dst_end else timezone(timedelta(hours=1))
 
 def parse_dt(s):
     if not s:
@@ -60,21 +51,39 @@ def send_ntfy(title, message, priority='default'):
     except Exception as e:
         print(f"ntfy error: {e}")
 
+def check_leg(leg, NL_TZ):
+    """Returns (dep_time_str, status) where status is 'ok', 'cancelled', or 'Xmin delay'"""
+    origin      = leg.get('origin', {})
+    dep_planned = origin.get('plannedDateTime')
+    dep_actual  = origin.get('actualDateTime') or dep_planned
+    if not dep_planned:
+        return None, None
+
+    dep_nl    = parse_dt(dep_planned).astimezone(NL_TZ)
+    dep_time  = dep_nl.strftime('%H:%M')
+    cancelled = leg.get('cancelled', False)
+    delay     = minutes_late(dep_planned, dep_actual)
+
+    if cancelled:
+        return dep_time, 'cancelled'
+    elif delay >= DELAY_THRESH:
+        return dep_time, f'{delay}min delay'
+    else:
+        return dep_time, 'ok'
+
 def main():
     NL_TZ  = get_nl_timezone()
     now_nl = datetime.now(NL_TZ)
     offset = int(NL_TZ.utcoffset(None).total_seconds() / 3600)
     print(f"Running at {now_nl.strftime('%H:%M')} NL time (UTC+{offset}), weekday={now_nl.weekday()}")
 
-    # Only run on weekdays
- #   if now_nl.weekday() >= 5:
-  #      print("Weekend — skipping")
-   #     return
+    if now_nl.weekday() >= 5:
+        print("Weekend — skipping")
+        return
 
-    # Only run around 7:00-7:30am NL time (guard against off-schedule runs)
-#    if not (6 <= now_nl.hour <= 8):
- #       print(f"Outside run window ({now_nl.hour}h) — skipping")
-  #      return
+    if not (6 <= now_nl.hour <= 8):
+        print(f"Outside run window ({now_nl.hour}h) — skipping")
+        return
 
     url = 'https://gateway.apiportal.ns.nl/reisinformatie-api/api/v3/trips'
     params = {
@@ -101,41 +110,74 @@ def main():
     trips = data.get('trips', [])
     print(f"Got {len(trips)} trips")
 
-    problems, all_ok = [], []
+    # Track problems per leg route
+    har_ams_problems = []
+    ams_utr_problems = []
+    full_trip_ok     = []
+    full_trip_bad    = []
 
     for trip in trips:
         legs = trip.get('legs', [])
         if not legs:
             continue
-        origin      = legs[0].get('origin', {})
-        dep_planned = origin.get('plannedDateTime')
-        dep_actual  = origin.get('actualDateTime') or dep_planned
+
+        # Check departure time of first leg
+        first_origin = legs[0].get('origin', {})
+        dep_planned  = first_origin.get('plannedDateTime')
         if not dep_planned:
             continue
         dep_nl = parse_dt(dep_planned).astimezone(NL_TZ)
         if not (DEPART_FROM <= dep_nl.hour < DEPART_TO):
             continue
 
-        dep_time  = dep_nl.strftime('%H:%M')
-        cancelled = trip.get('cancelled', False) or legs[0].get('cancelled', False)
-        delay     = minutes_late(dep_planned, dep_actual)
+        trip_dep = dep_nl.strftime('%H:%M')
+        trip_has_problem = False
 
-        if cancelled:
-            problems.append(f"CANCELADO: {dep_time}")
-        elif delay >= DELAY_THRESH:
-            problems.append(f"Retraso {delay}min: {dep_time}")
+        for leg in legs:
+            origin_name = leg.get('origin', {}).get('name', '')
+            dest_name   = leg.get('destination', {}).get('name', '')
+            dep_time, status = check_leg(leg, NL_TZ)
+            if dep_time is None:
+                continue
+
+            is_har_ams = 'Haarlem' in origin_name and 'Amsterdam' in dest_name
+            is_ams_utr = 'Amsterdam' in origin_name and 'Utrecht' in dest_name
+
+            if status != 'ok':
+                trip_has_problem = True
+                entry = f"{dep_time} ({status})"
+                if is_har_ams:
+                    har_ams_problems.append(entry)
+                elif is_ams_utr:
+                    ams_utr_problems.append(entry)
+
+        if trip_has_problem:
+            full_trip_bad.append(trip_dep)
         else:
-            all_ok.append(dep_time)
+            full_trip_ok.append(trip_dep)
 
-    print(f"Problems: {problems} | OK: {all_ok}")
+    print(f"HAR-AMS problems: {har_ams_problems}")
+    print(f"AMS-UTR problems: {ams_utr_problems}")
+    print(f"OK trips: {full_trip_ok} | Bad trips: {full_trip_bad}")
 
-    if problems:
-        msg = "Haarlem -> Utrecht:\n" + '\n'.join(problems)
-        if all_ok:
-            msg += f"\n\nSin problemas: {', '.join(all_ok)}"
-        send_ntfy('Trenes - Problemas hoy', msg, priority='4')
+    has_problems = har_ams_problems or ams_utr_problems
+
+    if has_problems:
+        lines = []
+        if har_ams_problems:
+            lines.append("Haarlem -> Amsterdam:")
+            for p in har_ams_problems:
+                lines.append(f"  {p}")
+        if ams_utr_problems:
+            lines.append("Amsterdam -> Utrecht:")
+            for p in ams_utr_problems:
+                lines.append(f"  {p}")
+        if full_trip_ok:
+            lines.append(f"\nSin problemas: {', '.join(full_trip_ok)}")
+
+        send_ntfy('Trenes - Problemas hoy', '\n'.join(lines), priority='4')
     else:
-        print(f"All good: {', '.join(all_ok)} — no alert sent")
+        print(f"All good: {', '.join(full_trip_ok)} — no alert sent")
 
 if __name__ == '__main__':
     main()
