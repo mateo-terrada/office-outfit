@@ -4900,7 +4900,19 @@
             const outfit = allOutfits.find(o => o.id == outfitId);
             if (!outfit) return;
 
-            data[calSelectedDate] = { id: outfit.id };
+            // Map abrigo to dot color
+            const abrigo = (outfit.prendas.abrigo || '').toLowerCase();
+            let abrigoColor = '#1a3a52'; // default navy
+            if (abrigo.includes('bordeau') || abrigo.includes('bordeaux')) abrigoColor = '#7B2D42';
+            else if (abrigo.includes('azul') || abrigo.includes('navy') || abrigo.includes('marino')) abrigoColor = '#1a3a72';
+            else if (abrigo.includes('celeste')) abrigoColor = '#4a90b8';
+            else if (abrigo.includes('gris') || abrigo.includes('jaspe')) abrigoColor = '#707078';
+            else if (abrigo.includes('verde')) abrigoColor = '#2d6e2d';
+            else if (abrigo.includes('beige') || abrigo.includes('crema')) abrigoColor = '#c8a878';
+            else if (abrigo.includes('negro') || abrigo.includes('black')) abrigoColor = '#222222';
+            else if (abrigo.includes('marrón') || abrigo.includes('marron') || abrigo.includes('camel')) abrigoColor = '#8B5e2a';
+
+            data[calSelectedDate] = { id: outfit.id, abrigoColor };
             calSaveData(data);
 
             document.getElementById('calDetailCurrent').textContent = `Outfit registrado: ${outfit.nombre}`;
