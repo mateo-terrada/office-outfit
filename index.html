@@ -422,11 +422,24 @@
             font-size: 0.8em;
             font-weight: 600;
             color: #666;
-            cursor: default;
+            cursor: pointer;
             display: flex;
             align-items: center;
             gap: 5px;
             user-select: none;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.2s;
+        }
+
+        .usage-counter:hover {
+            background: #c8e6c9;
+            border-color: #2e7d32;
+            color: #2e7d32;
+            transform: scale(1.05);
+        }
+
+        .usage-counter:active {
+            transform: scale(0.95);
         }
 
         .usage-counter.used {
@@ -1336,6 +1349,7 @@
         @media (max-width: 768px) {
             .outfits-grid {
                 grid-template-columns: 1fr;
+                gap: 16px;
             }
 
             h1 {
@@ -1346,14 +1360,9 @@
                 grid-template-columns: 1fr;
             }
 
+            /* Hide top tabs on mobile — replaced by bottom nav */
             .tabs {
-                flex-direction: column;
-                max-width: 100%;
-                border-radius: 14px;
-            }
-
-            .tab-btn {
-                width: 100%;
+                display: none;
             }
 
             header {
@@ -1401,6 +1410,97 @@
             .outfit-day-widget {
                 max-width: unset;
                 font-size: 0.82em;
+            }
+
+            /* Room for bottom nav */
+            .container {
+                padding-bottom: 88px;
+            }
+
+            /* Larger tap targets on mobile */
+            .filter-btn {
+                min-height: 44px;
+            }
+
+            /* Slightly more compact cards on mobile */
+            .outfit-header {
+                padding: 12px 14px;
+            }
+            .outfit-title {
+                font-size: 1.05em;
+            }
+        }
+
+        /* ── BOTTOM NAV (mobile only) ────────────────────────────── */
+        .bottom-nav {
+            display: none;
+        }
+        @media (max-width: 768px) {
+            .bottom-nav {
+                display: flex;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                z-index: 900;
+                background: rgba(255,255,255,0.92);
+                backdrop-filter: blur(16px);
+                -webkit-backdrop-filter: blur(16px);
+                border-top: 1px solid rgba(0,0,0,0.07);
+                box-shadow: 0 -2px 16px rgba(0,0,0,0.07);
+                padding: 6px 4px calc(6px + env(safe-area-inset-bottom, 0px));
+            }
+            .bottom-nav-btn {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 3px;
+                min-height: 52px;
+                border: none;
+                background: transparent;
+                cursor: pointer;
+                font-family: 'DM Sans', sans-serif;
+                color: #888;
+                position: relative;
+                border-radius: 12px;
+                transition: color 0.2s, background 0.2s;
+                padding: 4px 2px;
+            }
+            .bottom-nav-icon {
+                font-size: 1.25em;
+                line-height: 1;
+            }
+            .bottom-nav-label {
+                font-size: 0.62em;
+                font-weight: 700;
+                letter-spacing: 0.2px;
+            }
+            .bottom-nav-btn.active {
+                color: #1a3a52;
+                background: rgba(26,58,82,0.07);
+            }
+            .bottom-nav-btn.gold.active,
+            .bottom-nav-btn.gold {
+                color: #b8860b;
+            }
+            .bottom-nav-badge {
+                position: absolute;
+                top: 4px;
+                right: 50%;
+                transform: translateX(16px);
+                background: #e53935;
+                color: white;
+                border-radius: 50%;
+                width: 15px;
+                height: 15px;
+                font-size: 0.52em;
+                font-weight: 800;
+                display: none;
+                align-items: center;
+                justify-content: center;
+                border: 1.5px solid white;
             }
         }
 
@@ -1461,6 +1561,12 @@
             background: #0f2438;
             transform: scale(1.08);
             box-shadow: 0 6px 20px rgba(26,58,82,0.45);
+        }
+        @media (max-width: 768px) {
+            .cal-fab {
+                bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+                z-index: 901;
+            }
         }
 
         /* ── CALENDAR MODAL ── */
@@ -1970,6 +2076,27 @@
             letter-spacing: 0.5px;
             min-width: 56px;
             flex-shrink: 0;
+        }
+
+        .weather-outfit-why {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px dashed #e0e0e0;
+            display: none;
+        }
+        .weather-why-title {
+            font-size: 0.7em;
+            font-weight: 800;
+            color: #aaa;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            margin-bottom: 6px;
+        }
+        .weather-why-item {
+            font-size: 0.8em;
+            color: #555;
+            padding: 3px 0;
+            line-height: 1.35;
         }
 
         /* ── TRAIN WIDGET ── */
@@ -2510,6 +2637,7 @@
                         <div id="weatherOutfitMannequin"></div>
                     </div>
                     <div class="weather-outfit-prendas" id="weatherOutfitPrendas"></div>
+                    <div class="weather-outfit-why" id="weatherOutfitWhy"></div>
                 </div>
                 <div class="jacket-indicator" id="jacketIndicator" style="display:none"></div>
                 <button class="weather-modal-outfit-btn" onclick="closeWeatherModal(); showWeatherRecommendations()">
@@ -2561,56 +2689,71 @@
                             <label>Pantalón</label>
                             <select id="searchPantalon">
                                 <option value="">Cualquiera</option>
-                                <option value="Pantalón azul (tobillo)">Azul Zara tobillo</option>
-                                <option value="Pantalón negro (tobillo)">Negro Zara tobillo</option>
+                                <option value="Pantalón azul (tobillo)">Pantalón azul (tobillo)</option>
                                 <option value="Pantalón gris claro">Pantalón gris claro</option>
                                 <option value="Pantalón gris oscuro">Pantalón gris oscuro</option>
+                                <option value="Pantalón negro (tobillo)">Pantalón negro (tobillo)</option>
+                                <option value="Pantalón azul formal">Pantalón azul formal</option>
+                                <option value="Pantalón beige claro (tobillo)">Pantalón beige claro (tobillo)</option>
                             </select>
                         </div>
                         <div class="prenda-search-group">
                             <label>Camisa</label>
                             <select id="searchCamisa">
                                 <option value="">Cualquiera</option>
+                                <option value="Camisa blanca (Boss)">Camisa blanca (Boss)</option>
                                 <option value="Camisa blanca">Camisa blanca</option>
-                                <option value="Camisa celeste clara">Camisa celeste clara</option>
-                                <option value="Camisa celeste Brooksfield">Celeste detalles Brooksfield</option>
+                                <option value="Camisa celeste Brooksfield">Camisa celeste Brooksfield</option>
+                                <option value="Camisa celeste líneas Brooksfield">Camisa celeste líneas Brooksfield</option>
+                                <option value="Camisa celeste (Penguin)">Camisa celeste (Penguin)</option>
+                                <option value="Camisa celeste (Primark)">Camisa celeste (Primark)</option>
+                                <option value="Camisa Oxford TH">Camisa Oxford TH</option>
+                                <option value="Camisa Oxford (Original Oxford)">Camisa Oxford (Original Oxford)</option>
+                                <option value="Camisa rayas azul/blanco (Brooksfield)">Camisa rayas azul/blanco (Brooksfield)</option>
+                                <option value="Camisa rayas celeste/blanco (Simonacci)">Camisa rayas celeste/blanco (Simonacci)</option>
+                                <option value="Camisa rayas navy/blanco (Simonacci)">Camisa rayas navy/blanco (Simonacci)</option>
+                                <option value="Camisa lino rayas (Brooksfield Torino)">Camisa lino rayas (Brooksfield Torino)</option>
+                                <option value="Camisa azul navy (Lefties)">Camisa azul navy (Lefties)</option>
+                                <option value="Camisa navy (Zara)">Camisa navy (Zara)</option>
                                 <option value="Camisa gris jaspeada">Camisa gris jaspeada</option>
-                                <option value="Camisa rayas celeste/blanco">Rayas celeste/blanco Polo</option>
-                                <option value="Camisa rayas azul/blanco">Rayas finitas azul/blanco</option>
-                                <option value="Camisa azul oscura">Camisa azul oscura</option>
-                                <option value="Camisa celeste líneas Brooksfield">Celeste líneas Brooksfield</option>
+                                <option value="Camisa rayas Polo RL">Camisa rayas Polo RL</option>
+                                <option value="Chomba azul navy">Chomba azul navy</option>
+                                <option value="Chomba crema">Chomba crema</option>
                             </select>
                         </div>
                         <div class="prenda-search-group">
                             <label>Abrigo / Sweater</label>
                             <select id="searchAbrigo">
                                 <option value="">Cualquiera</option>
-                                <option value="Quarter-zip Patagonia gris">Patagonia gris haspeado</option>
-                                <option value="Campera Patagonia bordeau">Patagonia roja/bordeau</option>
-                                <option value="Sweater UNIQLO azul">UNIQLO azul</option>
-                                <option value="Sweater UNIQLO celeste">UNIQLO celeste oscuro</option>
-                                <option value="Sweater Tommy Hilfiger azul oscuro">Tommy Hilfiger Cotton Cable azul</option>
-                                <option value="Quarter-zip Springfield gris">Quarter-zip gris Springfield</option>
-                                <option value="Quarter-zip Polo gris claro">Quarter-zip gris claro Polo</option>
-                                <option value="Quarter-zip Polo azul">Quarter-zip azul Polo</option>
-                                <option value="Quarter-zip Polo bordeau">Quarter-zip bordeau Polo</option>
-                                <option value="Polar Brooksfield negro">Brooksfield negra polar</option>
-                                <option value="Polar Brooksfield bordeau">Brooksfield bordeau polar</option>
-                                <option value="Sweater Brooksfield azul">Brooksfield azul rayas</option>
+                                <option value="Sin abrigo">Sin abrigo</option>
+                                <option value="Campera Patagonia bordeau">Campera Patagonia bordeau</option>
+                                <option value="Chaleco Brooksfield celeste oscuro">Chaleco Brooksfield celeste oscuro</option>
                                 <option value="Chaleco Patagonia gris">Chaleco Patagonia gris</option>
                                 <option value="Chaleco Patagonia azul">Chaleco Patagonia azul</option>
+                                <option value="Quarter-zip Patagonia gris">Quarter-zip Patagonia gris</option>
+                                <option value="Quarter-zip Polo azul">Quarter-zip Polo azul</option>
+                                <option value="Quarter-zip Polo bordeau">Quarter-zip Polo bordeau</option>
+                                <option value="Quarter-zip Polo gris claro">Quarter-zip Polo gris claro</option>
+                                <option value="Quarter-zip Springfield gris">Quarter-zip Springfield gris</option>
+                                <option value="Sweater Brooksfield azul">Sweater Brooksfield azul</option>
+                                <option value="Sweater Tommy Hilfiger azul oscuro">Sweater Tommy Hilfiger azul oscuro</option>
+                                <option value="Sweater UNIQLO azul">Sweater UNIQLO azul</option>
+                                <option value="Sweater UNIQLO celeste oscuro">Sweater UNIQLO celeste oscuro</option>
+                                <option value="Polar Brooksfield negro">Polar Brooksfield negro</option>
+                                <option value="Quilted jacket Polo RL navy">Quilted jacket Polo RL navy</option>
                             </select>
                         </div>
                         <div class="prenda-search-group">
                             <label>Zapatos</label>
                             <select id="searchZapatos">
                                 <option value="">Cualquiera</option>
-                                <option value="Vans negras">Vans negras</option>
-                                <option value="Adidas Spezial beige">Adidas Spezial beige/negro</option>
-                                <option value="Tiger blancas">Tiger blancas</option>
-                                <option value="Levis azules">Levis azules/marrón</option>
-                                <option value="Zapatos marrones">Zapatos marrones</option>
                                 <option value="Zapatos negros">Zapatos negros</option>
+                                <option value="Zapatos marrones">Zapatos marrones</option>
+                                <option value="Adidas Spezial beige">Adidas Spezial beige</option>
+                                <option value="Adidas Spezial marrón">Adidas Spezial marrón</option>
+                                <option value="Mocasines gamuza arena">Mocasines gamuza arena</option>
+                                <option value="Tiger blancas">Tiger blancas</option>
+                                <option value="Vans negras">Vans negras</option>
                             </select>
                         </div>
                     </div>
@@ -2661,59 +2804,75 @@
                         <div class="form-group">
                             <label>Pantalón</label>
                             <select id="outfitPantalon" required>
-                                <option value="">Selecciona un pantalón...</option>
+                                <option value="">— Seleccionar —</option>
                                 <option value="Pantalón azul (tobillo)">Pantalón azul (tobillo)</option>
-                                <option value="Pantalón negro (tobillo)">Pantalón negro (tobillo)</option>
                                 <option value="Pantalón gris claro">Pantalón gris claro</option>
                                 <option value="Pantalón gris oscuro">Pantalón gris oscuro</option>
+                                <option value="Pantalón negro (tobillo)">Pantalón negro (tobillo)</option>
+                                <option value="Pantalón azul formal">Pantalón azul formal</option>
+                                <option value="Pantalón beige claro (tobillo)">Pantalón beige claro (tobillo)</option>
                             </select>
                         </div>
 
                         <div class="form-group">
                             <label>Camisa</label>
                             <select id="outfitCamisa" required>
-                                <option value="">Selecciona una camisa...</option>
+                                <option value="">— Seleccionar —</option>
+                                <option value="Camisa blanca (Boss)">Camisa blanca (Boss)</option>
                                 <option value="Camisa blanca">Camisa blanca</option>
-                                <option value="Camisa celeste clara">Camisa celeste clara</option>
-                                <option value="Camisa celeste Brooksfield">Celeste medio-oscuro con detalles (Brooksfield)</option>
+                                <option value="Camisa celeste Brooksfield">Camisa celeste Brooksfield</option>
+                                <option value="Camisa celeste líneas Brooksfield">Camisa celeste líneas Brooksfield</option>
+                                <option value="Camisa celeste (Penguin)">Camisa celeste (Penguin)</option>
+                                <option value="Camisa celeste (Primark)">Camisa celeste (Primark)</option>
+                                <option value="Camisa Oxford TH">Camisa Oxford TH</option>
+                                <option value="Camisa Oxford (Original Oxford)">Camisa Oxford (Original Oxford)</option>
+                                <option value="Camisa rayas azul/blanco (Brooksfield)">Camisa rayas azul/blanco (Brooksfield)</option>
+                                <option value="Camisa rayas celeste/blanco (Simonacci)">Camisa rayas celeste/blanco (Simonacci)</option>
+                                <option value="Camisa rayas navy/blanco (Simonacci)">Camisa rayas navy/blanco (Simonacci)</option>
+                                <option value="Camisa lino rayas (Brooksfield Torino)">Camisa lino rayas (Brooksfield Torino)</option>
+                                <option value="Camisa azul navy (Lefties)">Camisa azul navy (Lefties)</option>
+                                <option value="Camisa navy (Zara)">Camisa navy (Zara)</option>
                                 <option value="Camisa gris jaspeada">Camisa gris jaspeada</option>
-                                <option value="Camisa rayas celeste/blanco">Camisa rayas celeste/blanco</option>
-                                <option value="Camisa rayas azul/blanco">Camisa rayas azul/blanco</option>
-                                <option value="Camisa azul oscura">Camisa azul oscura</option>
-                                <option value="Camisa celeste líneas Brooksfield">Celeste con líneas blancas y rojas (Brooksfield)</option>
+                                <option value="Camisa rayas Polo RL">Camisa rayas Polo RL</option>
+                                <option value="Chomba azul navy">Chomba azul navy</option>
+                                <option value="Chomba crema">Chomba crema</option>
                             </select>
                         </div>
 
                         <div class="form-group">
                             <label>Abrigo/Sweater</label>
                             <select id="outfitAbrigo" required>
-                                <option value="">Selecciona un abrigo...</option>
-                                <option value="Quarter-zip Patagonia gris">Sweater Patagonia gris haspeado (quarter-zip)</option>
+                                <option value="">— Seleccionar —</option>
+                                <option value="Sin abrigo">Sin abrigo</option>
                                 <option value="Campera Patagonia bordeau">Campera Patagonia bordeau</option>
-                                <option value="Sweater UNIQLO azul">Sweater UNIQLO azul</option>
-                                <option value="Sweater UNIQLO celeste">Sweater UNIQLO celeste</option>
-                                <option value="Quarter-zip Springfield gris">Quarter-zip Springfield gris</option>
-                                <option value="Quarter-zip Polo gris claro">Quarter-zip Polo gris claro</option>
-                                <option value="Quarter-zip Polo azul">Quarter-zip Polo azul</option>
-                                <option value="Quarter-zip Polo bordeau">Quarter-zip Polo bordeau</option>
-                                <option value="Polar Brooksfield negro">Polar Brooksfield negro</option>
-                                <option value="Polar Brooksfield bordeau">Polar Brooksfield bordeau</option>
-                                <option value="Sweater Brooksfield azul">Sweater Brooksfield azul</option>
+                                <option value="Chaleco Brooksfield celeste oscuro">Chaleco Brooksfield celeste oscuro</option>
                                 <option value="Chaleco Patagonia gris">Chaleco Patagonia gris</option>
                                 <option value="Chaleco Patagonia azul">Chaleco Patagonia azul</option>
+                                <option value="Quarter-zip Patagonia gris">Quarter-zip Patagonia gris</option>
+                                <option value="Quarter-zip Polo azul">Quarter-zip Polo azul</option>
+                                <option value="Quarter-zip Polo bordeau">Quarter-zip Polo bordeau</option>
+                                <option value="Quarter-zip Polo gris claro">Quarter-zip Polo gris claro</option>
+                                <option value="Quarter-zip Springfield gris">Quarter-zip Springfield gris</option>
+                                <option value="Sweater Brooksfield azul">Sweater Brooksfield azul</option>
+                                <option value="Sweater Tommy Hilfiger azul oscuro">Sweater Tommy Hilfiger azul oscuro</option>
+                                <option value="Sweater UNIQLO azul">Sweater UNIQLO azul</option>
+                                <option value="Sweater UNIQLO celeste oscuro">Sweater UNIQLO celeste oscuro</option>
+                                <option value="Polar Brooksfield negro">Polar Brooksfield negro</option>
+                                <option value="Quilted jacket Polo RL navy">Quilted jacket Polo RL navy</option>
                             </select>
                         </div>
 
                         <div class="form-group">
                             <label>Zapatos</label>
                             <select id="outfitZapatos" required>
-                                <option value="">Selecciona zapatos...</option>
-                                <option value="Vans negras">Vans negras</option>
-                                <option value="Adidas Spezial beige">Adidas Spezial beige</option>
-                                <option value="Tiger blancas">Tiger blancas</option>
-                                <option value="Levis azules">Levis azules</option>
-                                <option value="Zapatos marrones">Zapatos marrones</option>
+                                <option value="">— Seleccionar —</option>
                                 <option value="Zapatos negros">Zapatos negros</option>
+                                <option value="Zapatos marrones">Zapatos marrones</option>
+                                <option value="Adidas Spezial beige">Adidas Spezial beige</option>
+                                <option value="Adidas Spezial marrón">Adidas Spezial marrón</option>
+                                <option value="Mocasines gamuza arena">Mocasines gamuza arena</option>
+                                <option value="Tiger blancas">Tiger blancas</option>
+                                <option value="Vans negras">Vans negras</option>
                             </select>
                         </div>
 
@@ -2813,14 +2972,11 @@
                 nombre: "The Classic Banker",
                 formalidad: "formal",
                 contexto: "Presentaciones, meetings importantes, primeros días",
-                prendas: {
-                    pantalon: "Pantalón gris claro",
-                    camisa: "Camisa blanca",
-                    abrigo: "Chaleco Patagonia gris",
-                    zapatos: "Zapatos negros"
-                },
+                prendas: { pantalon: "Pantalón gris claro", camisa: "Camisa blanca (Boss)", abrigo: "Chaleco Patagonia gris", zapatos: "Zapatos negros" },
                 notas: "El outfit más formal y seguro. El chaleco suma elegancia sin ser agobiante.",
-                climaIdeal: ['nublado', 'lluvia', 'frio'],
+                climaIdeal: ["frio", "nublado", "lluvia"],
+                tempMin: 12,
+                tempMax: 22,
                 custom: false
             },
             {
@@ -2828,14 +2984,11 @@
                 nombre: "Subtle Power",
                 formalidad: "formal",
                 contexto: "Reuniones con clientes, networking, eventos",
-                prendas: {
-                    pantalon: "Pantalón gris oscuro",
-                    camisa: "Camisa celeste líneas Brooksfield",
-                    abrigo: "Quarter-zip Polo gris claro",
-                    zapatos: "Zapatos marrones"
-                },
-                notas: "Elegante pero con más personalidad. La camisa Brooksfield es statement.",
-                climaIdeal: ['nublado', 'templado'],
+                prendas: { pantalon: "Pantalón gris oscuro", camisa: "Camisa celeste líneas Brooksfield", abrigo: "Quarter-zip Polo gris claro", zapatos: "Zapatos marrones" },
+                notas: "Elegante pero con más personalidad. La camisa Brooksfield es el statement.",
+                climaIdeal: ["templado", "nublado"],
+                tempMin: 8,
+                tempMax: 18,
                 custom: false
             },
             {
@@ -2843,225 +2996,445 @@
                 nombre: "Finance Standard",
                 formalidad: "formal",
                 contexto: "Días normales en oficina, sin eventos especiales",
-                prendas: {
-                    pantalon: "Pantalón gris oscuro",
-                    camisa: "Camisa rayas azul/blanco",
-                    abrigo: "Quarter-zip Patagonia gris",
-                    zapatos: "Zapatos negros"
-                },
+                prendas: { pantalon: "Pantalón gris oscuro", camisa: "Camisa rayas azul/blanco (Brooksfield)", abrigo: "Quarter-zip Patagonia gris", zapatos: "Zapatos negros" },
                 notas: "El combo típico de finance. Cómodo pero profesional.",
+                climaIdeal: ["todo"],
+                tempMin: 8,
+                tempMax: 18,
                 custom: false
             },
             {
                 id: 4,
                 nombre: "Blue Power Play",
                 formalidad: "formal",
-                contexto: "Cuando quieres hacer un statement visual profesional",
-                prendas: {
-                    pantalon: "Pantalón gris claro",
-                    camisa: "Camisa azul oscura",
-                    abrigo: "Quarter-zip Polo azul",
-                    zapatos: "Zapatos negros"
-                },
-                notas: "Monochrome en azul. Sofisticado y memorable. Impacta sin ser agresivo.",
+                contexto: "Cuando querés hacer un statement visual profesional",
+                prendas: { pantalon: "Pantalón gris claro", camisa: "Camisa azul navy (Lefties)", abrigo: "Quarter-zip Polo azul", zapatos: "Zapatos negros" },
+                notas: "Monocromo en azul. Sofisticado y memorable. Impacta sin ser agresivo.",
+                climaIdeal: ["fresco", "nublado"],
+                tempMin: 8,
+                tempMax: 18,
                 custom: false
             },
             {
                 id: 5,
-                nombre: "Casual Elegance",
-                formalidad: "elegante-sport",
-                contexto: "Días más relajados, actividades en grupo, team building",
-                prendas: {
-                    pantalon: "Pantalón azul (tobillo)",
-                    camisa: "Camisa celeste clara",
-                    abrigo: "Sweater UNIQLO azul",
-                    zapatos: "Vans negras"
-                },
-                notas: "Perfecto para mantener nivel alto sin ser formal. Las Vans le dan el toque chill.",
+                nombre: "Navy Authority",
+                formalidad: "formal",
+                contexto: "Reuniones formales, presentaciones con autoridad",
+                prendas: { pantalon: "Pantalón gris claro", camisa: "Camisa celeste (Primark)", abrigo: "Sweater UNIQLO azul", zapatos: "Zapatos marrones" },
+                notas: "El azul UNIQLO sobre gris y celeste. Soft, limpio y muy profesional.",
+                climaIdeal: ["fresco", "nublado"],
+                tempMin: 8,
+                tempMax: 17,
                 custom: false
             },
             {
                 id: 6,
-                nombre: "The Sophisticate",
+                nombre: "Monochrome Grey",
                 formalidad: "elegante-sport",
-                contexto: "Casual Friday, eventos after-work, presentaciones internas relajadas",
-                prendas: {
-                    pantalon: "Pantalón gris oscuro",
-                    camisa: "Camisa rayas celeste/blanco",
-                    abrigo: "Quarter-zip Springfield gris",
-                    zapatos: "Zapatos marrones"
-                },
-                notas: "Elegante sport peak. Zapatos formales elevan los pantalones casuales.",
+                contexto: "Días de mucho trabajo, focus meetings, blending profesional",
+                prendas: { pantalon: "Pantalón gris oscuro", camisa: "Camisa gris jaspeada", abrigo: "Quarter-zip Springfield gris", zapatos: "Zapatos negros" },
+                notas: "Recategorizado a Elegante Sport — el jaspeado le quita la rigidez formal. Sofisticado sin intentarlo.",
+                climaIdeal: ["fresco", "nublado"],
+                tempMin: 8,
+                tempMax: 18,
                 custom: false
             },
             {
                 id: 7,
-                nombre: "Vest & Blue",
+                nombre: "Casual Elegance",
                 formalidad: "elegante-sport",
-                contexto: "Días con actividades variadas, sin meetings importantes",
-                prendas: {
-                    pantalon: "Pantalón negro (tobillo)",
-                    camisa: "Camisa celeste Brooksfield",
-                    abrigo: "Chaleco Patagonia azul",
-                    zapatos: "Adidas Spezial beige"
-                },
-                notas: "El chaleco Patagonia sobre negro y celeste Brooksfield. Sofisticado sin esfuerzo.",
+                contexto: "Días relajados, actividades en grupo, team building",
+                prendas: { pantalon: "Pantalón azul (tobillo)", camisa: "Camisa Oxford TH", abrigo: "Sweater UNIQLO azul", zapatos: "Vans negras" },
+                notas: "Perfecto para mantener nivel alto sin ser formal. Las Vans le dan el toque chill.",
+                climaIdeal: ["fresco", "templado"],
+                tempMin: 8,
+                tempMax: 17,
                 custom: false
             },
             {
                 id: 8,
-                nombre: "Bordeaux Statement",
-                formalidad: "elegante-sport",
-                contexto: "Cuando querés agregar color sin perder profesionalismo",
-                prendas: {
-                    pantalon: "Pantalón gris oscuro",
-                    camisa: "Camisa blanca",
-                    abrigo: "Quarter-zip Polo bordeau",
-                    zapatos: "Zapatos marrones"
-                },
-                notas: "El bordeaux es el new navy. Sofisticado y financiero without trying.",
+                nombre: "The Sophisticate",
+                formalidad: "formal",
+                contexto: "Casual Friday, eventos after-work, presentaciones internas",
+                prendas: { pantalon: "Pantalón gris oscuro", camisa: "Camisa lino rayas (Brooksfield Torino)", abrigo: "Quarter-zip Springfield gris", zapatos: "Zapatos marrones" },
+                notas: "QZ sobre lino con zapatos de cuero. Los marrones elevan todo el look.",
+                climaIdeal: ["fresco", "templado"],
+                tempMin: 8,
+                tempMax: 18,
                 custom: false
             },
             {
                 id: 9,
-                nombre: "Bordeaux Patagonia",
+                nombre: "Vest & Blue",
                 formalidad: "elegante-sport",
-                contexto: "Team building, eventos informales, días con energía",
-                prendas: {
-                    pantalon: "Pantalón azul (tobillo)",
-                    camisa: "Camisa blanca",
-                    abrigo: "Campera Patagonia bordeau",
-                    zapatos: "Adidas Spezial beige"
-                },
-                notas: "El bordeau de la Patagonia con pantalón azul y Adidas. Casual con carácter.",
+                contexto: "Días con actividades variadas, sin meetings importantes",
+                prendas: { pantalon: "Pantalón negro (tobillo)", camisa: "Camisa celeste Brooksfield", abrigo: "Chaleco Patagonia azul", zapatos: "Adidas Spezial beige" },
+                notas: "El chaleco Brooksfield sobre negro y celeste. Sofisticado sin esfuerzo.",
+                climaIdeal: ["fresco", "templado"],
+                tempMin: 12,
+                tempMax: 22,
                 custom: false
             },
             {
                 id: 10,
-                nombre: "Dark Mix",
-                formalidad: "casual",
-                contexto: "Workdays relajados, entrenamientos internos, networking casual",
-                prendas: {
-                    pantalon: "Pantalón negro (tobillo)",
-                    camisa: "Camisa gris jaspeada",
-                    abrigo: "Sweater Brooksfield azul",
-                    zapatos: "Tiger blancas"
-                },
-                notas: "Negro, azul y blanco. El sweater Brooksfield le da el toque inesperado.",
+                nombre: "Bordeaux Statement",
+                formalidad: "formal",
+                contexto: "Cuando querés agregar color sin perder profesionalismo",
+                prendas: { pantalon: "Pantalón gris oscuro", camisa: "Camisa blanca (Boss)", abrigo: "Quarter-zip Polo bordeau", zapatos: "Zapatos marrones" },
+                notas: "El bordeaux es el new navy. Sofisticado y financiero without trying.",
+                climaIdeal: ["fresco", "nublado"],
+                tempMin: 8,
+                tempMax: 18,
                 custom: false
             },
             {
                 id: 11,
-                nombre: "Relaxed Pro",
-                formalidad: "casual",
-                contexto: "Días ultra-casuales, actividades deportivas del traineeship",
-                prendas: {
-                    pantalon: "Pantalón azul (tobillo)",
-                    camisa: "Camisa celeste clara",
-                    abrigo: "Polar Brooksfield negro",
-                    zapatos: "Vans negras"
-                },
-                notas: "Lo máximo casual que deberías ir. Todavía se ve put-together y profesional.",
+                nombre: "Bordeaux Patagonia",
+                formalidad: "elegante-sport",
+                contexto: "Team building, eventos informales, días con energía",
+                prendas: { pantalon: "Pantalón azul (tobillo)", camisa: "Camisa celeste (Primark)", abrigo: "Campera Patagonia bordeau", zapatos: "Adidas Spezial beige" },
+                notas: "El bordeaux de la Patagonia con azul tobillo y Spezial. Casual con carácter.",
+                climaIdeal: ["muy-frio", "frio"],
+                tempMin: 0,
+                tempMax: 12,
                 custom: false
             },
             {
                 id: 12,
-                nombre: "Navy Authority",
+                nombre: "Dutch Quarter-Zip",
                 formalidad: "formal",
-                contexto: "Reuniones formales, presentaciones con autoridad, días statement",
-                prendas: {
-                    pantalon: "Pantalón gris claro",
-                    camisa: "Camisa celeste clara",
-                    abrigo: "Sweater UNIQLO azul",
-                    zapatos: "Zapatos marrones"
-                },
-                notas: "El azul del UNIQLO sobre gris y celeste. Soft, limpio y profesional.",
+                contexto: "Días de balance entre casual y formal, reuniones sin estar ultra-dressed",
+                prendas: { pantalon: "Pantalón gris oscuro", camisa: "Camisa Oxford TH", abrigo: "Quarter-zip Polo azul", zapatos: "Zapatos marrones" },
+                notas: "Oxford TH bajo QZ azul — el cuello button-down asoma con clase.",
+                climaIdeal: ["fresco", "nublado"],
+                tempMin: 8,
+                tempMax: 18,
                 custom: false
             },
             {
                 id: 13,
-                nombre: "Monochrome Grey",
+                nombre: "Tommy Cable",
                 formalidad: "formal",
-                contexto: "Días de mucho trabajo, focus meetings, cuando querés blending profesional",
-                prendas: {
-                    pantalon: "Pantalón gris oscuro",
-                    camisa: "Camisa gris jaspeada",
-                    abrigo: "Quarter-zip Springfield gris",
-                    zapatos: "Zapatos negros"
-                },
-                notas: "Monochrome en grises oscuros. Sutil, sofisticado, 100% profesional sin intentarlo.",
+                contexto: "Reuniones internas, trabajo tranquilo en oficina",
+                prendas: { pantalon: "Pantalón gris oscuro", camisa: "Camisa celeste líneas Brooksfield", abrigo: "Sweater Tommy Hilfiger azul oscuro", zapatos: "Zapatos marrones" },
+                notas: "El celeste líneas Brooksfield bajo el sweater TH — el cuello asoma con carácter. Azul sobre azul es una combo europea clásica.",
+                climaIdeal: ["frio", "fresco"],
+                tempMin: 5,
+                tempMax: 15,
                 custom: false
             },
             {
                 id: 14,
-                nombre: "Dutch Quarter-Zip",
-                formalidad: "elegante-sport",
-                contexto: "Días de balance entre casual y formal, reuniones sin estar ultra-dressed",
-                prendas: {
-                    pantalon: "Pantalón gris oscuro",
-                    camisa: "Camisa blanca",
-                    abrigo: "Quarter-zip Polo azul",
-                    zapatos: "Zapatos marrones"
-                },
-                notas: "El quarter-zip azul Polo sobre blanco y gris. Eleva sin ser formal.",
+                nombre: "Dark Mix",
+                formalidad: "casual",
+                contexto: "Workdays relajados, networking casual",
+                prendas: { pantalon: "Pantalón negro (tobillo)", camisa: "Camisa gris jaspeada", abrigo: "Sweater Brooksfield azul", zapatos: "Tiger blancas" },
+                notas: "Negro, azul y gris jaspeado. El sweater Brooksfield fino le da el toque inesperado.",
+                climaIdeal: ["fresco", "templado"],
+                tempMin: 8,
+                tempMax: 18,
                 custom: false
             },
             {
                 id: 15,
-                nombre: "Minimal Euro",
+                nombre: "Oxford Polar",
                 formalidad: "casual",
-                contexto: "Días relajados pero cool, cuando querés algo limpio y minimalista",
-                prendas: {
-                    pantalon: "Pantalón negro (tobillo)",
-                    camisa: "Camisa celeste clara",
-                    abrigo: "Sin abrigo",
-                    zapatos: "Tiger blancas"
-                },
-                notas: "Minimal y europeo. Negro + celeste + blanco. Limpio, sin complicaciones.",
+                contexto: "Días ultra-casuales, actividades del traineeship, viernes relajados",
+                prendas: { pantalon: "Pantalón azul (tobillo)", camisa: "Camisa Oxford TH", abrigo: "Polar Brooksfield negro", zapatos: "Vans negras" },
+                notas: "Oxford TH bajo polar negro — más carácter que la versión anterior. Azul tobillo con Vans es muy europeo casual.",
+                climaIdeal: ["muy-frio", "frio"],
+                tempMin: 0,
+                tempMax: 12,
                 custom: false
             },
             {
                 id: 16,
-                nombre: "Relaxed Texture",
+                nombre: "Minimal Euro",
                 formalidad: "casual",
-                contexto: "Días con vibe relajada pero texturada, sin being too casual",
-                prendas: {
-                    pantalon: "Pantalón azul (tobillo)",
-                    camisa: "Camisa gris jaspeada",
-                    abrigo: "Quarter-zip Springfield gris",
-                    zapatos: "Vans negras"
-                },
-                notas: "Las texturas (haspeado + quarter-zip) dan sofisticación a un outfit casual. Smart.",
+                contexto: "Días relajados pero cool, cuando querés algo limpio y minimalista",
+                prendas: { pantalon: "Pantalón negro (tobillo)", camisa: "Camisa Oxford (Original Oxford)", abrigo: "Sin abrigo", zapatos: "Tiger blancas" },
+                notas: "Minimal y europeo. Negro + Oxford + sin capa. Limpio, sin complicaciones.",
+                climaIdeal: ["calor", "verano"],
+                tempMin: 18,
+                tempMax: 35,
                 custom: false
             },
             {
                 id: 17,
-                nombre: "Burgundy Touch",
+                nombre: "Relaxed Texture",
                 formalidad: "casual",
-                contexto: "Días con color pero sin ser agresivo, personal pero elegante",
-                prendas: {
-                    pantalon: "Pantalón gris claro",
-                    camisa: "Camisa blanca",
-                    abrigo: "Quarter-zip Polo bordeau",
-                    zapatos: "Adidas Spezial beige"
-                },
-                notas: "El bordeau + Adidas Spezial es una combo europea sofisticada. Diferente sin ser riesgoso.",
+                contexto: "Días con vibe relajada pero texturada, sin ser too casual",
+                prendas: { pantalon: "Pantalón azul (tobillo)", camisa: "Camisa gris jaspeada", abrigo: "Quarter-zip Springfield gris", zapatos: "Vans negras" },
+                notas: "Las texturas (jaspeado + QZ) dan sofisticación a un outfit casual. Smart.",
+                climaIdeal: ["fresco", "templado"],
+                tempMin: 8,
+                tempMax: 18,
                 custom: false
             },
             {
                 id: 18,
-                nombre: "Tommy Cable",
-                formalidad: "elegante-sport",
-                contexto: "Días de reuniones internas o trabajo tranquilo en oficina",
-                prendas: {
-                    pantalon: "Pantalón gris oscuro",
-                    camisa: "Camisa blanca",
-                    abrigo: "Sweater Tommy Hilfiger azul oscuro",
-                    zapatos: "Zapatos marrones"
-                },
-                notas: "El cable knit de Tommy le da textura y carácter. Azul marino sobre gris es una combo clásica y europea.",
+                nombre: "Burgundy Touch",
+                formalidad: "casual",
+                contexto: "Días con color pero sin ser agresivo, personal pero elegante",
+                prendas: { pantalon: "Pantalón gris claro", camisa: "Camisa rayas celeste/blanco (Simonacci)", abrigo: "Quarter-zip Polo bordeau", zapatos: "Adidas Spezial beige" },
+                notas: "El bordeaux + Spezial Simonacci es una combo europea sofisticada. Diferente sin ser riesgoso.",
+                climaIdeal: ["fresco", "templado"],
+                tempMin: 8,
+                tempMax: 18,
                 custom: false
-            }
+            },
+            {
+                id: 19,
+                nombre: "Navy Formal",
+                formalidad: "formal",
+                contexto: "Meetings formales, días de presentaciones, cuando el azul formal es el protagonista",
+                prendas: { pantalon: "Pantalón azul formal", camisa: "Camisa blanca (Boss)", abrigo: "Quarter-zip Polo bordeau", zapatos: "Zapatos marrones" },
+                notas: "Azul formal + Boss blanca + QZ bordeaux. El contraste navy/bordeaux es un clásico de finance.",
+                climaIdeal: ["fresco", "nublado"],
+                tempMin: 8,
+                tempMax: 18,
+                custom: false
+            },
+            {
+                id: 20,
+                nombre: "Blue Gradient",
+                formalidad: "formal",
+                contexto: "Días de oficina con presencia, sin llegar a full formal",
+                prendas: { pantalon: "Pantalón azul formal", camisa: "Camisa celeste (Primark)", abrigo: "Sweater Tommy Hilfiger azul oscuro", zapatos: "Zapatos negros" },
+                notas: "Gradiente de azules: celeste Primark → sweater TH azul oscuro. Muy banker europeo.",
+                climaIdeal: ["frio", "fresco"],
+                tempMin: 5,
+                tempMax: 15,
+                custom: false
+            },
+            {
+                id: 21,
+                nombre: "Grey Stripe Classic",
+                formalidad: "formal",
+                contexto: "Reuniones formales, días de presentación con autoridad",
+                prendas: { pantalon: "Pantalón azul formal", camisa: "Camisa rayas navy/blanco (Simonacci)", abrigo: "Chaleco Brooksfield celeste oscuro", zapatos: "Zapatos negros" },
+                notas: "Rayas navy Simonacci bajo chaleco Brooksfield celeste oscuro. Tono sobre tono con estructura.",
+                climaIdeal: ["fresco", "templado"],
+                tempMin: 12,
+                tempMax: 22,
+                custom: false
+            },
+            {
+                id: 22,
+                nombre: "Summer Navy",
+                formalidad: "elegante-sport",
+                contexto: "Días cálidos de oficina, casual Friday de verano",
+                prendas: { pantalon: "Pantalón negro (tobillo)", camisa: "Camisa Oxford TH", abrigo: "Sin abrigo", zapatos: "Mocasines gamuza arena" },
+                notas: "Negro tobillo + Oxford TH + sin capa + slip-on arena. Gris-celeste/negro/arena — muy europeo de verano.",
+                climaIdeal: ["calor", "verano"],
+                tempMin: 18,
+                tempMax: 35,
+                custom: false
+            },
+            {
+                id: 23,
+                nombre: "Warm Beige",
+                formalidad: "elegante-sport",
+                contexto: "Días templados, elegante sin esfuerzo",
+                prendas: { pantalon: "Pantalón beige claro (tobillo)", camisa: "Camisa celeste (Penguin)", abrigo: "Quarter-zip Polo bordeau", zapatos: "Adidas Spezial beige" },
+                notas: "Beige tobillo + bordeaux + Spezial beige. Paleta cálida y veraniega con punch de color.",
+                climaIdeal: ["fresco", "templado"],
+                tempMin: 8,
+                tempMax: 18,
+                custom: false
+            },
+            {
+                id: 24,
+                nombre: "Beige Blue",
+                formalidad: "elegante-sport",
+                contexto: "Días de oficina primavera/otoño, look casual elevado",
+                prendas: { pantalon: "Pantalón beige claro (tobillo)", camisa: "Camisa Oxford (Original Oxford)", abrigo: "Sweater UNIQLO azul", zapatos: "Adidas Spezial marrón" },
+                notas: "Beige tobillo + Original Oxford bajo UNIQLO azul. El button-down asoma bien por el cuello del sweater.",
+                climaIdeal: ["fresco", "templado"],
+                tempMin: 8,
+                tempMax: 17,
+                custom: false
+            },
+            {
+                id: 25,
+                nombre: "Summer Beige",
+                formalidad: "casual",
+                contexto: "Días muy cálidos, casual de verano",
+                prendas: { pantalon: "Pantalón beige claro (tobillo)", camisa: "Camisa celeste (Penguin)", abrigo: "Sin abrigo", zapatos: "Tiger blancas" },
+                notas: "Beige tobillo + celeste Penguin + sin capa + Tiger blancas. El look más fresco del sistema.",
+                climaIdeal: ["calor", "verano"],
+                tempMin: 18,
+                tempMax: 35,
+                custom: false
+            },
+            {
+                id: 26,
+                nombre: "Spezial Brown",
+                formalidad: "elegante-sport",
+                contexto: "Días con presencia sin ser formal, look europeo sofisticado",
+                prendas: { pantalon: "Pantalón gris claro", camisa: "Camisa azul navy (Lefties)", abrigo: "Quarter-zip Polo gris claro", zapatos: "Adidas Spezial marrón" },
+                notas: "Gris claro + azul oscura + QZ gris claro + Spezial marrón. El marrón como acento cálido sobre neutros.",
+                climaIdeal: ["fresco", "templado"],
+                tempMin: 8,
+                tempMax: 18,
+                custom: false
+            },
+            {
+                id: 27,
+                nombre: "Vest Brown",
+                formalidad: "elegante-sport",
+                contexto: "Días variados, elegante sport con chaleco",
+                prendas: { pantalon: "Pantalón negro (tobillo)", camisa: "Camisa celeste Brooksfield", abrigo: "Chaleco Brooksfield celeste oscuro", zapatos: "Adidas Spezial marrón" },
+                notas: "Negro tobillo + celeste Brooksfield + chaleco + Spezial marrón. Versión más cálida del Vest & Blue.",
+                climaIdeal: ["fresco", "templado"],
+                tempMin: 12,
+                tempMax: 22,
+                custom: false
+            },
+            {
+                id: 28,
+                nombre: "Navy Polo Classic",
+                formalidad: "elegante-sport",
+                contexto: "Días templados sin reuniones importantes, look clean",
+                prendas: { pantalon: "Pantalón gris claro", camisa: "Chomba azul navy", abrigo: "Sin abrigo", zapatos: "Zapatos marrones" },
+                notas: "Chomba navy tucked in + gris claro + sin capa + zapatos marrones. Muy old money sin esfuerzo.",
+                climaIdeal: ["templado", "calor"],
+                tempMin: 18,
+                tempMax: 35,
+                custom: false
+            },
+            {
+                id: 29,
+                nombre: "Polo & Vest",
+                formalidad: "formal",
+                contexto: "Reuniones formales con toque diferente, días de presencia",
+                prendas: { pantalon: "Pantalón gris oscuro", camisa: "Chomba azul navy", abrigo: "Chaleco Brooksfield celeste oscuro", zapatos: "Zapatos marrones" },
+                notas: "Chomba navy tucked in + chaleco Brooksfield + gris oscuro + marrones. La chomba bien tucked eleva todo.",
+                climaIdeal: ["fresco", "templado"],
+                tempMin: 12,
+                tempMax: 22,
+                custom: false
+            },
+            {
+                id: 30,
+                nombre: "Cream Polo Navy",
+                formalidad: "elegante-sport",
+                contexto: "Días cálidos, look veraniego pero presentable",
+                prendas: { pantalon: "Pantalón beige claro (tobillo)", camisa: "Chomba crema", abrigo: "Sin abrigo", zapatos: "Mocasines gamuza arena" },
+                notas: "Beige tobillo + chomba crema + sin capa + slip-on arena. Tono sobre tono cálido — el look más veraniego del sistema.",
+                climaIdeal: ["calor", "verano"],
+                tempMin: 18,
+                tempMax: 35,
+                custom: false
+            },
+            {
+                id: 31,
+                nombre: "Cream & Brown",
+                formalidad: "elegante-sport",
+                contexto: "Días templados casual, look tierra y neutros",
+                prendas: { pantalon: "Pantalón gris oscuro", camisa: "Chomba crema", abrigo: "Sin abrigo", zapatos: "Adidas Spezial marrón" },
+                notas: "Chomba crema + gris oscuro + Spezial marrón. Los tres tonos se complementan perfectamente.",
+                climaIdeal: ["templado", "calor"],
+                tempMin: 18,
+                tempMax: 35,
+                custom: false
+            },
+            {
+                id: 32,
+                nombre: "Summer Formal",
+                formalidad: "formal",
+                contexto: "Días formales de calor, meetings en verano",
+                prendas: { pantalon: "Pantalón azul formal", camisa: "Camisa blanca (Boss)", abrigo: "Sin abrigo", zapatos: "Zapatos negros" },
+                notas: "Azul formal + Boss blanca + sin capa + zapatos negros. El pantalón de traje mantiene la formalidad aunque no haya capa.",
+                climaIdeal: ["calor", "verano"],
+                tempMin: 18,
+                tempMax: 35,
+                custom: false
+            },
+            {
+                id: 33,
+                nombre: "Linen Stripes",
+                formalidad: "elegante-sport",
+                contexto: "Días cálidos con reuniones, formal relajado",
+                prendas: { pantalon: "Pantalón gris claro", camisa: "Camisa lino rayas (Brooksfield Torino)", abrigo: "Sin abrigo", zapatos: "Zapatos marrones" },
+                notas: "Lino rayas + gris claro + zapatos marrones + sin capa. El lino comunica verano sin perder presentabilidad.",
+                climaIdeal: ["templado", "calor"],
+                tempMin: 18,
+                tempMax: 35,
+                custom: false
+            },
+            {
+                id: 34,
+                nombre: "Oxford Summer",
+                formalidad: "elegante-sport",
+                contexto: "Días cálidos de oficina, elegante sin esfuerzo",
+                prendas: { pantalon: "Pantalón gris oscuro", camisa: "Camisa Oxford TH", abrigo: "Sin abrigo", zapatos: "Mocasines gamuza arena" },
+                notas: "Oxford TH sola + gris oscuro + mocasines arena. El Oxford sin capa es el look más limpio del sistema.",
+                climaIdeal: ["calor", "verano"],
+                tempMin: 18,
+                tempMax: 35,
+                custom: false
+            },
+            {
+                id: 35,
+                nombre: "Navy Stripe Sun",
+                formalidad: "elegante-sport",
+                contexto: "Días cálidos casual, look europeo veraniego",
+                prendas: { pantalon: "Pantalón azul (tobillo)", camisa: "Camisa rayas navy/blanco (Simonacci)", abrigo: "Sin abrigo", zapatos: "Adidas Spezial marrón" },
+                notas: "Rayas navy Simonacci + azul tobillo + Spezial marrón + sin capa. Mediterráneo y sofisticado.",
+                climaIdeal: ["calor", "verano"],
+                tempMin: 18,
+                tempMax: 35,
+                custom: false
+            },
+            {
+                id: 36,
+                nombre: "Beige Stripe",
+                formalidad: "casual",
+                contexto: "Días muy cálidos, el más casual del sistema",
+                prendas: { pantalon: "Pantalón beige claro (tobillo)", camisa: "Camisa rayas celeste/blanco (Simonacci)", abrigo: "Sin abrigo", zapatos: "Adidas Spezial beige" },
+                notas: "Beige tobillo + rayas celeste Simonacci + Spezial beige + sin capa. Paleta completa veraniega.",
+                climaIdeal: ["calor", "verano"],
+                tempMin: 18,
+                tempMax: 35,
+                custom: false
+            },
+            {
+                id: 37,
+                nombre: "Old Money Quilted",
+                formalidad: "elegante-sport",
+                contexto: "Días templados, elegante sport con statement piece",
+                prendas: { pantalon: "Pantalón gris claro", camisa: "Camisa blanca (Boss)", abrigo: "Quilted jacket Polo RL navy", zapatos: "Zapatos marrones" },
+                notas: "La quilted jacket es el protagonista. Gris claro + Boss blanca + marrones — old money sin dudar.",
+                climaIdeal: ["fresco", "templado"],
+                tempMin: 12,
+                tempMax: 22,
+                custom: false
+            },
+            {
+                id: 38,
+                nombre: "Quilted Fachero",
+                formalidad: "elegante-sport",
+                contexto: "Días frescos con onda, fachero elevado",
+                prendas: { pantalon: "Pantalón negro (tobillo)", camisa: "Camisa Oxford TH", abrigo: "Quilted jacket Polo RL navy", zapatos: "Adidas Spezial marrón" },
+                notas: "Negro tobillo + Oxford TH + quilted navy + Spezial marrón. El cuello pana marrón conecta directo con la zapatilla.",
+                climaIdeal: ["fresco", "templado"],
+                tempMin: 12,
+                tempMax: 22,
+                custom: false
+            },
+            {
+                id: 39,
+                nombre: "Navy on Navy",
+                formalidad: "elegante-sport",
+                contexto: "Días frescos de otoño, statement navy total",
+                prendas: { pantalon: "Pantalón azul formal", camisa: "Camisa rayas navy/blanco (Simonacci)", abrigo: "Quilted jacket Polo RL navy", zapatos: "Zapatos marrones" },
+                notas: "Tono sobre tono navy — azul formal + rayas navy + quilted navy. El cuello pana marrón rompe y salva el look.",
+                climaIdeal: ["fresco", "templado"],
+                tempMin: 12,
+                tempMax: 22,
+                custom: false
+            },
         ];
 
         // ============ COLOR DOTS ============
@@ -3310,6 +3683,10 @@
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 if (btn.getAttribute('onclick') === `switchTab('${tabName}')`) btn.classList.add('active');
             });
+            // Sync bottom nav active state
+            document.querySelectorAll('.bottom-nav-btn').forEach(b => b.classList.remove('active'));
+            const bnav = document.getElementById(`bnav-${tabName}`);
+            if (bnav) bnav.classList.add('active');
             if (tabName === 'mios') renderCustomOutfits();
         }
 
@@ -3472,9 +3849,9 @@
                     <button class="favorite-btn ${isFavorite ? 'active' : ''}" onclick="toggleFavorite(event, ${outfit.id})" title="Favorito">
                         ${isFavorite ? '⭐' : '☆'}
                     </button>
-                    <div class="usage-counter ${usageCount > 0 ? 'used' : ''}" title="${usageCount > 0 ? `Usado ${usageCount} vez${usageCount > 1 ? 'es' : ''} según calendario` : 'Sin usos registrados'}">
+                    <button class="usage-counter ${usageCount > 0 ? 'used' : ''}" onclick="woreItToday(event, ${outfit.id})" title="Tocá para registrar que lo usaste hoy">
                         👕 ${usageCount}
-                    </div>
+                    </button>
                 </div>
                 <button class="pencil-btn" onclick="event.stopPropagation(); openEditOutfit(${outfit.id})" title="Editar outfit">✎</button>
                 <div class="outfit-header">
@@ -3514,6 +3891,52 @@
                 </div>
             `;
             return card;
+        }
+
+        function woreItToday(event, outfitId) {
+            event.stopPropagation();
+            const data = JSON.parse(localStorage.getItem('calendarOutfits')) || {};
+            const t = new Date();
+            const key = `${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,'0')}-${String(t.getDate()).padStart(2,'0')}`;
+
+            // If today already has this outfit, treat tap as undo
+            if (data[key] && String(data[key].id) === String(outfitId)) {
+                delete data[key];
+                localStorage.setItem('calendarOutfits', JSON.stringify(data));
+                showToast('Registro de hoy deshecho');
+            } else {
+                // Find the outfit to compute abrigo color for the calendar dot
+                const customOutfits = JSON.parse(localStorage.getItem('customOutfits')) || [];
+                const allOutfits = [...applyOverrides([...outfits]), ...customOutfits];
+                const outfit = allOutfits.find(o => String(o.id) === String(outfitId));
+
+                let abrigoColor = '#1a3a52';
+                if (outfit) {
+                    const abrigo = (outfit.prendas.abrigo || '').toLowerCase();
+                    if (abrigo.includes('bordeau') || abrigo.includes('bordeaux')) abrigoColor = '#7B2D42';
+                    else if (abrigo.includes('azul') || abrigo.includes('navy') || abrigo.includes('marino')) abrigoColor = '#1a3a72';
+                    else if (abrigo.includes('celeste')) abrigoColor = '#4a90b8';
+                    else if (abrigo.includes('gris') || abrigo.includes('jaspe')) abrigoColor = '#707078';
+                    else if (abrigo.includes('verde')) abrigoColor = '#2d6e2d';
+                    else if (abrigo.includes('beige') || abrigo.includes('crema')) abrigoColor = '#c8a878';
+                    else if (abrigo.includes('negro') || abrigo.includes('black')) abrigoColor = '#222222';
+                    else if (abrigo.includes('marrón') || abrigo.includes('marron') || abrigo.includes('camel')) abrigoColor = '#8B5e2a';
+                }
+
+                data[key] = { id: outfitId, abrigoColor };
+                localStorage.setItem('calendarOutfits', JSON.stringify(data));
+                showToast(`👕 Registrado para hoy${outfit ? ': ' + outfit.nombre : ''}`);
+            }
+
+            // Refresh views
+            updateAchievementsBadge();
+            const activeFilter = document.querySelector('#tab-sugeridos .filter-btn.active');
+            if (activeFilter && !prendaFilterActive) {
+                const ft = activeFilter.textContent;
+                const filterType = ft.includes('Todos') ? 'todos' : ft.includes('Formal') ? 'formal' : ft.includes('Elegante') ? 'elegante-sport' : ft.includes('Casual') ? 'casual' : 'todos';
+                renderOutfits(filterType);
+            }
+            renderCustomOutfits();
         }
 
         function getCalendarUsageCount(outfitId) {
@@ -3873,57 +4296,76 @@
                     <div class="form-group">
                         <label>Pantalón</label>
                         <select id="editPantalon">
-                            <option value="Pantalón azul (tobillo)" ${outfit.prendas.pantalon === 'Pantalón azul (tobillo)' ? 'selected' : ''}>Pantalón azul (tobillo)</option>
-                            <option value="Pantalón negro (tobillo)" ${outfit.prendas.pantalon === 'Pantalón negro (tobillo)' ? 'selected' : ''}>Pantalón negro (tobillo)</option>
-                            <option value="Pantalón gris claro" ${outfit.prendas.pantalon === 'Pantalón gris claro' ? 'selected' : ''}>Pantalón gris claro</option>
-                            <option value="Pantalón gris oscuro" ${outfit.prendas.pantalon === 'Pantalón gris oscuro' ? 'selected' : ''}>Pantalón gris oscuro</option>
-                        </select>
+                                <option value="">— Seleccionar —</option>
+                                <option value="Pantalón azul (tobillo)">Pantalón azul (tobillo)</option>
+                                <option value="Pantalón gris claro">Pantalón gris claro</option>
+                                <option value="Pantalón gris oscuro">Pantalón gris oscuro</option>
+                                <option value="Pantalón negro (tobillo)">Pantalón negro (tobillo)</option>
+                                <option value="Pantalón azul formal">Pantalón azul formal</option>
+                                <option value="Pantalón beige claro (tobillo)">Pantalón beige claro (tobillo)</option>
+                            </select>
                     </div>
 
                     <div class="form-group">
                         <label>Camisa</label>
                         <select id="editCamisa">
-                            <option value="Camisa blanca" ${outfit.prendas.camisa === 'Camisa blanca' ? 'selected' : ''}>Camisa blanca</option>
-                            <option value="Camisa celeste clara" ${outfit.prendas.camisa === 'Camisa celeste clara' ? 'selected' : ''}>Camisa celeste clara</option>
-                            <option value="Camisa celeste Brooksfield" ${outfit.prendas.camisa === 'Camisa celeste Brooksfield' ? 'selected' : ''}>Celeste medio-oscuro con detalles (Brooksfield)</option>
-                            <option value="Camisa gris jaspeada" ${outfit.prendas.camisa === 'Camisa gris jaspeada' ? 'selected' : ''}>Camisa gris jaspeada</option>
-                            <option value="Camisa rayas celeste/blanco" ${outfit.prendas.camisa === 'Camisa rayas celeste/blanco' ? 'selected' : ''}>Camisa rayas celeste/blanco</option>
-                            <option value="Camisa rayas azul/blanco" ${outfit.prendas.camisa === 'Camisa rayas azul/blanco' ? 'selected' : ''}>Camisa rayas azul/blanco</option>
-                            <option value="Camisa azul oscura" ${outfit.prendas.camisa === 'Camisa azul oscura' ? 'selected' : ''}>Camisa azul oscura</option>
-                            <option value="Camisa celeste líneas Brooksfield" ${outfit.prendas.camisa === 'Camisa celeste líneas Brooksfield' ? 'selected' : ''}>Celeste con líneas blancas y rojas (Brooksfield)</option>
-                        </select>
+                                <option value="">— Seleccionar —</option>
+                                <option value="Camisa blanca (Boss)">Camisa blanca (Boss)</option>
+                                <option value="Camisa blanca">Camisa blanca</option>
+                                <option value="Camisa celeste Brooksfield">Camisa celeste Brooksfield</option>
+                                <option value="Camisa celeste líneas Brooksfield">Camisa celeste líneas Brooksfield</option>
+                                <option value="Camisa celeste (Penguin)">Camisa celeste (Penguin)</option>
+                                <option value="Camisa celeste (Primark)">Camisa celeste (Primark)</option>
+                                <option value="Camisa Oxford TH">Camisa Oxford TH</option>
+                                <option value="Camisa Oxford (Original Oxford)">Camisa Oxford (Original Oxford)</option>
+                                <option value="Camisa rayas azul/blanco (Brooksfield)">Camisa rayas azul/blanco (Brooksfield)</option>
+                                <option value="Camisa rayas celeste/blanco (Simonacci)">Camisa rayas celeste/blanco (Simonacci)</option>
+                                <option value="Camisa rayas navy/blanco (Simonacci)">Camisa rayas navy/blanco (Simonacci)</option>
+                                <option value="Camisa lino rayas (Brooksfield Torino)">Camisa lino rayas (Brooksfield Torino)</option>
+                                <option value="Camisa azul navy (Lefties)">Camisa azul navy (Lefties)</option>
+                                <option value="Camisa navy (Zara)">Camisa navy (Zara)</option>
+                                <option value="Camisa gris jaspeada">Camisa gris jaspeada</option>
+                                <option value="Camisa rayas Polo RL">Camisa rayas Polo RL</option>
+                                <option value="Chomba azul navy">Chomba azul navy</option>
+                                <option value="Chomba crema">Chomba crema</option>
+                            </select>
                     </div>
 
                     <div class="form-group">
                         <label>Abrigo / Sweater</label>
                         <select id="editAbrigo">
-                            <option value="Quarter-zip Patagonia gris" ${outfit.prendas.abrigo === 'Quarter-zip Patagonia gris' ? 'selected' : ''}>Sweater Patagonia gris haspeado (quarter-zip)</option>
-                            <option value="Campera Patagonia bordeau" ${outfit.prendas.abrigo === 'Campera Patagonia bordeau' ? 'selected' : ''}>Campera Patagonia bordeau</option>
-                            <option value="Sweater UNIQLO azul" ${outfit.prendas.abrigo === 'Sweater UNIQLO azul' ? 'selected' : ''}>Sweater UNIQLO azul</option>
-                            <option value="Sweater UNIQLO celeste" ${outfit.prendas.abrigo === 'Sweater UNIQLO celeste' ? 'selected' : ''}>Sweater UNIQLO celeste</option>
-                            <option value="Sweater Tommy Hilfiger azul oscuro" ${outfit.prendas.abrigo === 'Sweater Tommy Hilfiger azul oscuro' ? 'selected' : ''}>Tommy Hilfiger Cotton Cable azul</option>
-                            <option value="Quarter-zip Springfield gris" ${outfit.prendas.abrigo === 'Quarter-zip Springfield gris' ? 'selected' : ''}>Quarter-zip Springfield gris</option>
-                            <option value="Quarter-zip Polo gris claro" ${outfit.prendas.abrigo === 'Quarter-zip Polo gris claro' ? 'selected' : ''}>Quarter-zip Polo gris claro</option>
-                            <option value="Quarter-zip Polo azul" ${outfit.prendas.abrigo === 'Quarter-zip Polo azul' ? 'selected' : ''}>Quarter-zip Polo azul</option>
-                            <option value="Quarter-zip Polo bordeau" ${outfit.prendas.abrigo === 'Quarter-zip Polo bordeau' ? 'selected' : ''}>Quarter-zip Polo bordeau</option>
-                            <option value="Polar Brooksfield negro" ${outfit.prendas.abrigo === 'Polar Brooksfield negro' ? 'selected' : ''}>Polar Brooksfield negro</option>
-                            <option value="Polar Brooksfield bordeau" ${outfit.prendas.abrigo === 'Polar Brooksfield bordeau' ? 'selected' : ''}>Polar Brooksfield bordeau</option>
-                            <option value="Sweater Brooksfield azul" ${outfit.prendas.abrigo === 'Sweater Brooksfield azul' ? 'selected' : ''}>Sweater Brooksfield azul</option>
-                            <option value="Chaleco Patagonia gris" ${outfit.prendas.abrigo === 'Chaleco Patagonia gris' ? 'selected' : ''}>Chaleco Patagonia gris</option>
-                            <option value="Chaleco Patagonia azul" ${outfit.prendas.abrigo === 'Chaleco Patagonia azul' ? 'selected' : ''}>Chaleco Patagonia azul</option>
-                        </select>
+                                <option value="">— Seleccionar —</option>
+                                <option value="Sin abrigo">Sin abrigo</option>
+                                <option value="Campera Patagonia bordeau">Campera Patagonia bordeau</option>
+                                <option value="Chaleco Brooksfield celeste oscuro">Chaleco Brooksfield celeste oscuro</option>
+                                <option value="Chaleco Patagonia gris">Chaleco Patagonia gris</option>
+                                <option value="Chaleco Patagonia azul">Chaleco Patagonia azul</option>
+                                <option value="Quarter-zip Patagonia gris">Quarter-zip Patagonia gris</option>
+                                <option value="Quarter-zip Polo azul">Quarter-zip Polo azul</option>
+                                <option value="Quarter-zip Polo bordeau">Quarter-zip Polo bordeau</option>
+                                <option value="Quarter-zip Polo gris claro">Quarter-zip Polo gris claro</option>
+                                <option value="Quarter-zip Springfield gris">Quarter-zip Springfield gris</option>
+                                <option value="Sweater Brooksfield azul">Sweater Brooksfield azul</option>
+                                <option value="Sweater Tommy Hilfiger azul oscuro">Sweater Tommy Hilfiger azul oscuro</option>
+                                <option value="Sweater UNIQLO azul">Sweater UNIQLO azul</option>
+                                <option value="Sweater UNIQLO celeste oscuro">Sweater UNIQLO celeste oscuro</option>
+                                <option value="Polar Brooksfield negro">Polar Brooksfield negro</option>
+                                <option value="Quilted jacket Polo RL navy">Quilted jacket Polo RL navy</option>
+                            </select>
                     </div>
 
                     <div class="form-group">
                         <label>Zapatos</label>
                         <select id="editZapatos">
-                            <option value="Vans negras" ${outfit.prendas.zapatos === 'Vans negras' ? 'selected' : ''}>Vans negras</option>
-                            <option value="Adidas Spezial beige" ${outfit.prendas.zapatos === 'Adidas Spezial beige' ? 'selected' : ''}>Adidas Spezial beige</option>
-                            <option value="Tiger blancas" ${outfit.prendas.zapatos === 'Tiger blancas' ? 'selected' : ''}>Tiger blancas</option>
-                            <option value="Levis azules" ${outfit.prendas.zapatos === 'Levis azules' ? 'selected' : ''}>Levis azules</option>
-                            <option value="Zapatos marrones" ${outfit.prendas.zapatos === 'Zapatos marrones' ? 'selected' : ''}>Zapatos marrones</option>
-                            <option value="Zapatos negros" ${outfit.prendas.zapatos === 'Zapatos negros' ? 'selected' : ''}>Zapatos negros</option>
-                        </select>
+                                <option value="">— Seleccionar —</option>
+                                <option value="Zapatos negros">Zapatos negros</option>
+                                <option value="Zapatos marrones">Zapatos marrones</option>
+                                <option value="Adidas Spezial beige">Adidas Spezial beige</option>
+                                <option value="Adidas Spezial marrón">Adidas Spezial marrón</option>
+                                <option value="Mocasines gamuza arena">Mocasines gamuza arena</option>
+                                <option value="Tiger blancas">Tiger blancas</option>
+                                <option value="Vans negras">Vans negras</option>
+                            </select>
                     </div>
 
                     <div class="form-group">
@@ -4233,6 +4675,16 @@
                         <span>${item.val}</span>
                     </div>`
                 ).join('');
+                const whyEl = document.getElementById('weatherOutfitWhy');
+                if (whyEl) {
+                    if (todayOutfitReasons && todayOutfitReasons.length) {
+                        whyEl.innerHTML = '<div class="weather-why-title">Por qué este outfit</div>' +
+                            todayOutfitReasons.map(r => `<div class="weather-why-item">${r}</div>`).join('');
+                        whyEl.style.display = 'block';
+                    } else {
+                        whyEl.style.display = 'none';
+                    }
+                }
                 outfitSection.style.display = 'block';
             } else {
                 outfitSection.style.display = 'none';
@@ -4358,6 +4810,7 @@
         }
 
         let todayOutfitPick = null;
+        let todayOutfitReasons = [];
 
         function getRecentAbrigoColors(days = 2) {
             // Returns set of abrigo color keywords used in the last N days
@@ -4407,6 +4860,7 @@
             let pool = getWeatherRecommendations(condition, maxTemp);
             if (!pool || pool.length === 0) return;
 
+            const reasons = [];
             const today = new Date();
             const dayOfWeek = today.getDay(); // 0=Dom, 1=Lun, 2=Mar, 3=Mié, 4=Jue, 5=Vie, 6=Sáb
             const isOfficeDay = dayOfWeek === 1 || dayOfWeek === 3; // Lunes o Miércoles
@@ -4415,20 +4869,20 @@
             // Regla 1: días de oficina → excluir casual
             if (isOfficeDay) {
                 const filtered = pool.filter(o => o.formalidad !== 'casual');
-                if (filtered.length > 0) pool = filtered;
+                if (filtered.length > 0) { pool = filtered; reasons.push('📅 Día de oficina — formal o elegante sport'); }
             }
 
             // Regla 2: viernes → excluir formal
             if (isFriday) {
                 const filtered = pool.filter(o => o.formalidad !== 'formal');
-                if (filtered.length > 0) pool = filtered;
+                if (filtered.length > 0) { pool = filtered; reasons.push('🎉 Viernes — algo más relajado'); }
             }
 
             // Regla 3: evitar colores de abrigo usados en los últimos 2 días
             const recentColors = getRecentAbrigoColors(2);
             if (recentColors.size > 0) {
                 const filtered = pool.filter(o => !abrigoMatchesColor(o.prendas.abrigo, recentColors));
-                if (filtered.length > 0) pool = filtered;
+                if (filtered.length > 0) { pool = filtered; reasons.push(`🎨 Evita colores recientes (${[...recentColors].join(', ')})`); }
             }
 
             // Regla 4: evitar repetir el mismo outfit en los últimos 5 días
@@ -4442,13 +4896,36 @@
             }
             if (recentIds.size > 0) {
                 const filtered = pool.filter(o => !recentIds.has(String(o.id)));
-                if (filtered.length > 0) pool = filtered;
+                if (filtered.length > 0) { pool = filtered; reasons.push('🔄 No usado en los últimos 5 días'); }
+            }
+
+            // Regla 5 (nueva): priorizar outfits cuyo rango de temperatura
+            // esté mejor centrado en la temperatura de hoy
+            if (maxTemp !== null) {
+                pool = [...pool].sort((a, b) => {
+                    const midA = (a.tempMin != null && a.tempMax != null) ? (a.tempMin + a.tempMax) / 2 : 999;
+                    const midB = (b.tempMin != null && b.tempMax != null) ? (b.tempMin + b.tempMax) / 2 : 999;
+                    return Math.abs(midA - maxTemp) - Math.abs(midB - maxTemp);
+                });
+                // Quedarse con el mejor tercio (mínimo 3) para mantener variedad
+                const keep = Math.max(3, Math.ceil(pool.length / 3));
+                pool = pool.slice(0, keep);
             }
 
             // Date seed para consistencia durante el día
             const seed = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
             const pick = pool[seed % pool.length];
             todayOutfitPick = pick;
+
+            // Add temp fit reason
+            if (maxTemp !== null && pick.tempMin != null && pick.tempMax != null) {
+                reasons.unshift(`🌡️ Ideal para ${maxTemp}° (rango ${pick.tempMin}–${pick.tempMax}°)`);
+            }
+            // Add rain reason
+            if (condition === 'rain' || condition === 'drizzle' || condition === 'thunderstorm') {
+                reasons.push('🌧️ Calzado apto para lluvia');
+            }
+            todayOutfitReasons = reasons;
 
             const widget = document.getElementById('outfitDayWidget');
             const nameEl = document.getElementById('outfitDayName');
@@ -4567,6 +5044,21 @@
                 // Sweater fino sin campera encima → marginal, pero no excluir
             }
 
+            // ── RANGO DE TEMPERATURA DEL OUTFIT (nuevo) ────────────────
+            // Cada outfit tiene tempMin/tempMax recomendados. Si la temp actual
+            // queda claramente fuera de ese rango, lo excluimos. Tolerancia de
+            // 2° para no ser demasiado estricto en los bordes.
+            if (maxTemp !== null && outfit.tempMin != null && outfit.tempMax != null) {
+                if (maxTemp > outfit.tempMax) {
+                    reasons.push(`❌ Diseñado para hasta ${outfit.tempMax}°, hoy ${maxTemp}° (demasiado calor)`);
+                    return { ok: false, reasons };
+                }
+                if (maxTemp < outfit.tempMin) {
+                    reasons.push(`❌ Diseñado desde ${outfit.tempMin}°, hoy ${maxTemp}° (demasiado frío)`);
+                    return { ok: false, reasons };
+                }
+            }
+
             return { ok: true, reasons };
         }
 
@@ -4630,6 +5122,15 @@
             }
 
             const excluded = total - recommended.length;
+
+            // Ordenar por mejor fit de temperatura (rango más centrado en hoy primero)
+            if (currentMaxTemp !== null) {
+                recommended = [...recommended].sort((a, b) => {
+                    const midA = (a.tempMin != null && a.tempMax != null) ? (a.tempMin + a.tempMax) / 2 : 999;
+                    const midB = (b.tempMin != null && b.tempMax != null) ? (b.tempMin + b.tempMax) / 2 : 999;
+                    return Math.abs(midA - currentMaxTemp) - Math.abs(midB - currentMaxTemp);
+                });
+            }
 
             if (!recommended || recommended.length === 0) {
                 grid.innerHTML = '<div class="empty-state"><h2>Sin recomendaciones</h2><p>Probá con otro clima o actualiza.</p></div>';
@@ -4900,19 +5401,7 @@
             const outfit = allOutfits.find(o => o.id == outfitId);
             if (!outfit) return;
 
-            // Map abrigo to dot color
-            const abrigo = (outfit.prendas.abrigo || '').toLowerCase();
-            let abrigoColor = '#1a3a52'; // default navy
-            if (abrigo.includes('bordeau') || abrigo.includes('bordeaux')) abrigoColor = '#7B2D42';
-            else if (abrigo.includes('azul') || abrigo.includes('navy') || abrigo.includes('marino')) abrigoColor = '#1a3a72';
-            else if (abrigo.includes('celeste')) abrigoColor = '#4a90b8';
-            else if (abrigo.includes('gris') || abrigo.includes('jaspe')) abrigoColor = '#707078';
-            else if (abrigo.includes('verde')) abrigoColor = '#2d6e2d';
-            else if (abrigo.includes('beige') || abrigo.includes('crema')) abrigoColor = '#c8a878';
-            else if (abrigo.includes('negro') || abrigo.includes('black')) abrigoColor = '#222222';
-            else if (abrigo.includes('marrón') || abrigo.includes('marron') || abrigo.includes('camel')) abrigoColor = '#8B5e2a';
-
-            data[calSelectedDate] = { id: outfit.id, abrigoColor };
+            data[calSelectedDate] = { id: outfit.id };
             calSaveData(data);
 
             document.getElementById('calDetailCurrent').textContent = `Outfit registrado: ${outfit.nombre}`;
@@ -5674,6 +6163,11 @@
                 const remaining = total - done;
                 badge.style.display = remaining < total ? 'flex' : 'none';
                 badge.textContent = done;
+            }
+            const bnavBadge = document.getElementById('bottomNavBadge');
+            if (bnavBadge) {
+                bnavBadge.style.display = done > 0 ? 'flex' : 'none';
+                bnavBadge.textContent = done;
             }
         }
 
@@ -6491,5 +6985,25 @@ elegante_sport_domination: `<svg viewBox="0 0 120 140" xmlns="http://www.w3.org/
             </div>
         </div>
     </div>
+    <!-- BOTTOM NAV (mobile only) -->
+    <nav class="bottom-nav" id="bottomNav">
+        <button class="bottom-nav-btn active" id="bnav-sugeridos" onclick="switchTab('sugeridos')">
+            <span class="bottom-nav-icon">👔</span>
+            <span class="bottom-nav-label">Sugeridos</span>
+        </button>
+        <button class="bottom-nav-btn" id="bnav-mios" onclick="switchTab('mios')">
+            <span class="bottom-nav-icon">📁</span>
+            <span class="bottom-nav-label">Mis Outfits</span>
+        </button>
+        <button class="bottom-nav-btn" id="bnav-clima" onclick="showWeatherRecommendations()">
+            <span class="bottom-nav-icon">🌤️</span>
+            <span class="bottom-nav-label">Por Clima</span>
+        </button>
+        <button class="bottom-nav-btn gold" id="bnav-logros" onclick="openLogros()">
+            <span class="bottom-nav-icon">🏆</span>
+            <span class="bottom-nav-label">Logros</span>
+            <span class="bottom-nav-badge" id="bottomNavBadge"></span>
+        </button>
+    </nav>
 </body>
 </html>
