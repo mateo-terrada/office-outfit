@@ -3445,25 +3445,33 @@
             { keywords: ['bordeau', 'bordeaux', 'bordo'],                       color: '#7B2D42' },
             { keywords: ['campera patagonia bordeau'],                           color: '#7B2D42' },
             { keywords: ['camisa azul oscura'],                                  color: '#1a3060' },
+            { keywords: ['quilted jacket polo rl navy', 'camisa navy (zara)',
+                          'camisa azul navy', 'camisa navy'],                    color: '#1E3A5F' },
             { keywords: ['pantalón azul', 'levis azules'],                       color: '#1E3A5F' },
             { keywords: ['uniqlo azul', 'patagonia azul', 'polo azul',
                           'brooksfield azul', 'quarter-zip polo azul',
                           'sweater uniqlo azul', 'chaleco patagonia azul',
-                          'tommy hilfiger azul oscuro'],                          color: '#1E3A5F' },
-            { keywords: ['azul/blanco'],                                         color: '#E8EEF5' },
-            { keywords: ['azul'],                                                color: '#1E3A5F' },
+                          'tommy hilfiger azul oscuro', 'chomba azul navy'],      color: '#1E3A5F' },
+            { keywords: ['navy/blanco', 'azul/blanco'],                          color: '#E8EEF5' },
             { keywords: ['celeste/blanco'],                                       color: '#F0F6FC' },
             { keywords: ['celeste líneas', 'celeste lineas'],                     color: '#4A7FA5' },
+            { keywords: ['celeste oscuro'],                                       color: '#3E6E94' },
+            { keywords: ['oxford th'],                                            color: '#B0C4D4' },
+            { keywords: ['oxford (original oxford)', 'oxford'],                   color: '#A8BDD0' },
             { keywords: ['celeste clara', 'celeste brooksfield',
                           'uniqlo celeste'],                                       color: '#7BAFD4' },
             { keywords: ['celeste'],                                              color: '#7BAFD4' },
+            { keywords: ['chomba crema', 'crema'],                               color: '#EDE3C8' },
+            { keywords: ['lino rayas', 'lino'],                                  color: '#E8E2D0' },
             { keywords: ['pantalón gris oscuro', 'springfield gris',
                           'polo gris claro', 'patagonia gris'],                  color: '#6B6B6B' },
             { keywords: ['gris jaspeada', 'gris'],                              color: '#6B6B6B' },
             { keywords: ['camisa blanca', 'tiger blancas', 'blanco', 'blancas'], color: '#E0E0E0' },
             { keywords: ['pantalón negro', 'polar brooksfield negro',
                           'vans negras', 'zapatos negros', 'negro', 'negras'],   color: '#2C2C2C' },
-            { keywords: ['zapatos marrones'],                                    color: '#8B5E3C' },
+            { keywords: ['spezial marrón', 'spezial marron', 'zapatos marrones',
+                          'marrón', 'marron'],                                    color: '#8B5E3C' },
+            { keywords: ['gamuza arena', 'arena'],                              color: '#C9A876' },
             { keywords: ['beige'],                                               color: '#D4B896' },
         ];
 
@@ -3508,7 +3516,7 @@
 
             const noAbrigo  = outfit.prendas.abrigo.toLowerCase().includes('sin abrigo');
             const camisaLower = (outfit.prendas.camisa || '').toLowerCase();
-            const esRayas         = camisaLower.includes('rayas azul') || camisaLower.includes('rayas azul/blanco');
+            const esRayas         = camisaLower.includes('rayas azul') || camisaLower.includes('rayas azul/blanco') || camisaLower.includes('navy/blanco') || camisaLower.includes('rayas navy');
             const esRayasCeleste  = camisaLower.includes('celeste/blanco') || camisaLower.includes('rayas celeste');
             const esRayasLineas   = camisaLower.includes('celeste líneas') || camisaLower.includes('celeste lineas');
 
@@ -3541,12 +3549,44 @@
   <line x1="56" y1="38" x2="56" y2="80" stroke="#ffffff" stroke-width="1" opacity="0.4"/>
   <line x1="61" y1="38" x2="61" y2="80" stroke="#ffffff" stroke-width="1" opacity="0.4"/>` : '';
             const esChaleco = outfit.prendas.abrigo.toLowerCase().includes('chaleco');
+            const esChomba = (outfit.prendas.camisa || '').toLowerCase().includes('chomba');
+
+            // Color de raya para overlays donde la camisa asoma bajo un abrigo
+            const tieneRayas = esRayas || esRayasCeleste || esRayasLineas;
+            const rayaColor = esRayasLineas ? '#ffffff' : '#4A7FA5';
+            // Mini-rayas verticales para una franja pequeña (x0..x1, y0..y1)
+            function miniStripes(x0, x1, y0, y1, color, op) {
+                let s = '';
+                for (let x = x0 + 1.5; x < x1; x += 2.2) {
+                    s += `<line x1="${x.toFixed(1)}" y1="${y0}" x2="${x.toFixed(1)}" y2="${y1}" stroke="${color}" stroke-width="0.7" opacity="${op}"/>`;
+                }
+                return s;
+            }
+            const abrigoLower = outfit.prendas.abrigo.toLowerCase();
+            const zapatosLower = (outfit.prendas.zapatos || '').toLowerCase();
+
+            // Tipos específicos de abrigo
+            const esQuarterZip = abrigoLower.includes('quarter-zip') || abrigoLower.includes('quarter zip');
+            const esQuilted    = abrigoLower.includes('quilted');
+            const esPolar      = abrigoLower.includes('polar');
+            const esCampera    = abrigoLower.includes('campera');
+
+            // Tipos de zapato
+            const esSneaker    = zapatosLower.includes('spezial') || zapatosLower.includes('tiger') || zapatosLower.includes('vans');
+            const esMocasin    = zapatosLower.includes('mocasin') || zapatosLower.includes('mocasín') || zapatosLower.includes('gamuza');
+            const esSpezial    = zapatosLower.includes('spezial');
+
+            // Pantalón tobillo → muestra un poco de tobillo
+            const esTobillo    = (outfit.prendas.pantalon || '').toLowerCase().includes('tobillo');
+
+            // Sweater con rayas horizontales blancas (Brooksfield azul)
+            const esSweaterRayado = abrigoLower.includes('sweater brooksfield azul');
 
             // Sweaters de cuello redondo → no V cutout, cuello redondo del color del sweater
-            const esCrewneck = !noAbrigo && !esChaleco && (
-                outfit.prendas.abrigo.toLowerCase().includes('uniqlo') ||
-                outfit.prendas.abrigo.toLowerCase().includes('tommy hilfiger') ||
-                outfit.prendas.abrigo.toLowerCase().includes('brooksfield')
+            const esCrewneck = !noAbrigo && !esChaleco && !esQuarterZip && !esQuilted && !esPolar && !esCampera && (
+                abrigoLower.includes('uniqlo') ||
+                abrigoLower.includes('tommy hilfiger') ||
+                abrigoLower.includes('brooksfield')
             );
 
             // Chaleco → mangas muestran color de camisa, no del abrigo
@@ -3554,20 +3594,141 @@
             const mangaDark  = esChaleco ? camisaDark : abrigoDark;
             const mangaLight = esChaleco ? lighten(c.camisa, 30) : abrigoLight;
 
-            const abrigoLayers = noAbrigo ? `
+            // Chomba sin abrigo → brazos al descubierto (piel)
+            const chombaArmsBare = esChomba && (noAbrigo || esChaleco);
+
+            let abrigoLayers;
+            if (noAbrigo) {
+                // ── SIN ABRIGO: camisa visible en todo el torso ──
+                const armColor = chombaArmsBare ? skin : c.camisa;
+                const armCuff  = chombaArmsBare ? '' : `
+  <rect x="12" y="65" width="13" height="6" rx="3" fill="${lighten(c.camisa,30)}" opacity="0.4"/>
+  <rect x="65" y="65" width="13" height="6" rx="3" fill="${lighten(c.camisa,30)}" opacity="0.4"/>`;
+                abrigoLayers = `
   <!-- Sin abrigo: camisa visible en todo el torso -->
   <rect x="24" y="42" width="42" height="38" rx="5" fill="${c.camisa}"/>
   <rect x="24" y="42" width="7" height="38" rx="3" fill="${camisaDark}" opacity="0.18"/>
   <rect x="59" y="42" width="7" height="38" rx="3" fill="${camisaDark}" opacity="0.18"/>
-  <!-- Arms camisa -->
-  <rect x="12" y="43" width="13" height="28" rx="5" fill="${c.camisa}"/>
-  <rect x="65" y="43" width="13" height="28" rx="5" fill="${c.camisa}"/>` : esCrewneck ? `
-  <!-- SWEATER cuello redondo: torso completo, sin V -->
+  <!-- Arms: piel si chomba, camisa si no -->
+  <rect x="12" y="43" width="13" height="${chombaArmsBare ? 24 : 28}" rx="${chombaArmsBare ? 6 : 5}" fill="${armColor}"/>
+  <rect x="65" y="43" width="13" height="${chombaArmsBare ? 24 : 28}" rx="${chombaArmsBare ? 6 : 5}" fill="${armColor}"/>
+  ${chombaArmsBare ? `<!-- Manga corta de la chomba -->
+  <rect x="12" y="43" width="13" height="9" rx="4" fill="${c.camisa}"/>
+  <rect x="65" y="43" width="13" height="9" rx="4" fill="${c.camisa}"/>
+  <rect x="12" y="49" width="13" height="3" fill="${camisaDark}" opacity="0.25"/>
+  <rect x="65" y="49" width="13" height="3" fill="${camisaDark}" opacity="0.25"/>` : armCuff}`;
+            } else if (esQuarterZip) {
+                // ── QUARTER-ZIP: cuello alto + zipper visible ──
+                abrigoLayers = `
+  <!-- Quarter-zip: torso completo -->
   <rect x="24" y="42" width="42" height="38" rx="5" fill="${c.abrigo}"/>
   <rect x="24" y="42" width="7" height="38" rx="3" fill="${abrigoDark}" opacity="0.2"/>
   <rect x="59" y="42" width="7" height="38" rx="3" fill="${abrigoDark}" opacity="0.2"/>
-  <!-- Camisa asomando: franja + puntas de cuello encima del sweater -->
+  <!-- Cuello alto (stand collar) -->
+  <path d="M37,42 L37,33 Q45,30 53,33 L53,42 Z" fill="${c.abrigo}"/>
+  <path d="M37,33 Q45,30 53,33" stroke="${abrigoDark}" stroke-width="0.8" fill="none" opacity="0.5"/>
+  <!-- Zipper line + tirador -->
+  <line x1="45" y1="33" x2="45" y2="58" stroke="${abrigoDark}" stroke-width="1" opacity="0.7"/>
+  <rect x="43.7" y="34" width="2.6" height="4" rx="1" fill="${abrigoLight}" opacity="0.9"/>
+  <!-- Camisa asomando arriba del zip -->
+  <path d="M41,34 L45,40 L49,34 Z" fill="${c.camisa}" opacity="0.95"/>
+  <!-- Arms -->
+  <rect x="12" y="43" width="13" height="28" rx="5" fill="${c.abrigo}"/>
+  <rect x="65" y="43" width="13" height="28" rx="5" fill="${c.abrigo}"/>
+  <rect x="12" y="65" width="13" height="6" rx="3" fill="${abrigoLight}" opacity="0.55"/>
+  <rect x="65" y="65" width="13" height="6" rx="3" fill="${abrigoLight}" opacity="0.55"/>`;
+            } else if (esQuilted) {
+                // ── QUILTED JACKET: acolchado + cuello contrastante ──
+                const collarColor = darken(c.abrigo, 35);
+                abrigoLayers = `
+  <!-- Quilted: torso completo -->
+  <rect x="24" y="42" width="42" height="38" rx="5" fill="${c.abrigo}"/>
+  <!-- Líneas horizontales de acolchado -->
+  <line x1="25" y1="49" x2="65" y2="49" stroke="${abrigoDark}" stroke-width="0.7" opacity="0.4"/>
+  <line x1="25" y1="56" x2="65" y2="56" stroke="${abrigoDark}" stroke-width="0.7" opacity="0.4"/>
+  <line x1="25" y1="63" x2="65" y2="63" stroke="${abrigoDark}" stroke-width="0.7" opacity="0.4"/>
+  <line x1="25" y1="70" x2="65" y2="70" stroke="${abrigoDark}" stroke-width="0.7" opacity="0.4"/>
+  <!-- Zip central -->
+  <line x1="45" y1="42" x2="45" y2="80" stroke="${abrigoDark}" stroke-width="0.9" opacity="0.6"/>
+  <!-- Cuello camionera contrastante -->
+  <path d="M36,42 L36,36 Q45,33 54,36 L54,42 Z" fill="${collarColor}"/>
+  <path d="M36,36 Q45,33 54,36" stroke="${darken(c.abrigo,45)}" stroke-width="0.6" fill="none"/>
+  <!-- Arms acolchados -->
+  <rect x="12" y="43" width="13" height="28" rx="5" fill="${c.abrigo}"/>
+  <rect x="65" y="43" width="13" height="28" rx="5" fill="${c.abrigo}"/>
+  <line x1="12" y1="50" x2="25" y2="50" stroke="${abrigoDark}" stroke-width="0.6" opacity="0.4"/>
+  <line x1="12" y1="57" x2="25" y2="57" stroke="${abrigoDark}" stroke-width="0.6" opacity="0.4"/>
+  <line x1="65" y1="50" x2="78" y2="50" stroke="${abrigoDark}" stroke-width="0.6" opacity="0.4"/>
+  <line x1="65" y1="57" x2="78" y2="57" stroke="${abrigoDark}" stroke-width="0.6" opacity="0.4"/>`;
+            } else if (esPolar) {
+                // ── POLAR/FLEECE: textura moteada + cuello alto ──
+                abrigoLayers = `
+  <!-- Polar: torso completo -->
+  <rect x="24" y="42" width="42" height="38" rx="5" fill="${c.abrigo}"/>
+  <rect x="24" y="42" width="7" height="38" rx="3" fill="${abrigoDark}" opacity="0.2"/>
+  <rect x="59" y="42" width="7" height="38" rx="3" fill="${abrigoDark}" opacity="0.2"/>
+  <!-- Textura moteada (fleece) -->
+  <circle cx="33" cy="52" r="0.8" fill="${abrigoLight}" opacity="0.5"/>
+  <circle cx="42" cy="58" r="0.8" fill="${abrigoLight}" opacity="0.5"/>
+  <circle cx="52" cy="50" r="0.8" fill="${abrigoLight}" opacity="0.5"/>
+  <circle cx="58" cy="62" r="0.8" fill="${abrigoLight}" opacity="0.5"/>
+  <circle cx="37" cy="68" r="0.8" fill="${abrigoLight}" opacity="0.5"/>
+  <circle cx="48" cy="72" r="0.8" fill="${abrigoLight}" opacity="0.5"/>
+  <!-- Cuello alto -->
+  <path d="M37,42 L37,32 Q45,29 53,32 L53,42 Z" fill="${c.abrigo}"/>
+  <path d="M37,32 Q45,29 53,32" stroke="${abrigoDark}" stroke-width="0.8" fill="none" opacity="0.5"/>
+  <line x1="45" y1="32" x2="45" y2="44" stroke="${abrigoDark}" stroke-width="0.9" opacity="0.6"/>
+  <!-- Arms -->
+  <rect x="12" y="43" width="13" height="28" rx="5" fill="${c.abrigo}"/>
+  <rect x="65" y="43" width="13" height="28" rx="5" fill="${c.abrigo}"/>
+  <rect x="12" y="65" width="13" height="6" rx="3" fill="${abrigoLight}" opacity="0.55"/>
+  <rect x="65" y="65" width="13" height="6" rx="3" fill="${abrigoLight}" opacity="0.55"/>`;
+            } else if (esCampera) {
+                // ── CAMPERA PATAGONIA: full-zip + cuello ──
+                abrigoLayers = `
+  <!-- Campera: torso completo -->
+  <rect x="24" y="42" width="42" height="38" rx="5" fill="${c.abrigo}"/>
+  <rect x="24" y="42" width="7" height="38" rx="3" fill="${abrigoDark}" opacity="0.22"/>
+  <rect x="59" y="42" width="7" height="38" rx="3" fill="${abrigoDark}" opacity="0.22"/>
+  <!-- Zip completo + panel central -->
+  <line x1="45" y1="34" x2="45" y2="80" stroke="${abrigoDark}" stroke-width="1.1" opacity="0.7"/>
+  <rect x="43.8" y="44" width="2.4" height="4" rx="1" fill="${abrigoLight}"/>
+  <!-- Cuello alto con cremallera -->
+  <path d="M37,42 L37,33 Q45,30 53,33 L53,42 Z" fill="${c.abrigo}"/>
+  <path d="M37,33 Q45,30 53,33" stroke="${abrigoDark}" stroke-width="0.8" fill="none" opacity="0.5"/>
+  <!-- Bolsillos -->
+  <line x1="30" y1="66" x2="40" y2="66" stroke="${abrigoDark}" stroke-width="0.7" opacity="0.5"/>
+  <line x1="50" y1="66" x2="60" y2="66" stroke="${abrigoDark}" stroke-width="0.7" opacity="0.5"/>
+  <!-- Arms -->
+  <rect x="12" y="43" width="13" height="28" rx="5" fill="${c.abrigo}"/>
+  <rect x="65" y="43" width="13" height="28" rx="5" fill="${c.abrigo}"/>
+  <rect x="12" y="65" width="13" height="6" rx="3" fill="${abrigoDark}" opacity="0.4"/>
+  <rect x="65" y="65" width="13" height="6" rx="3" fill="${abrigoDark}" opacity="0.4"/>`;
+            } else if (esCrewneck) {
+                // ── SWEATER cuello redondo ──
+                const swStripes = esSweaterRayado ? `
+  <line x1="24" y1="48" x2="66" y2="48" stroke="#FFFFFF" stroke-width="1.4" opacity="0.65"/>
+  <line x1="24" y1="55" x2="66" y2="55" stroke="#FFFFFF" stroke-width="1.4" opacity="0.65"/>
+  <line x1="24" y1="62" x2="66" y2="62" stroke="#FFFFFF" stroke-width="1.4" opacity="0.65"/>
+  <line x1="24" y1="69" x2="66" y2="69" stroke="#FFFFFF" stroke-width="1.4" opacity="0.65"/>
+  <line x1="24" y1="76" x2="66" y2="76" stroke="#FFFFFF" stroke-width="1.4" opacity="0.65"/>` : '';
+                const swArmStripes = esSweaterRayado ? `
+  <line x1="12" y1="48" x2="25" y2="48" stroke="#FFFFFF" stroke-width="1.2" opacity="0.6"/>
+  <line x1="12" y1="55" x2="25" y2="55" stroke="#FFFFFF" stroke-width="1.2" opacity="0.6"/>
+  <line x1="12" y1="62" x2="25" y2="62" stroke="#FFFFFF" stroke-width="1.2" opacity="0.6"/>
+  <line x1="65" y1="48" x2="78" y2="48" stroke="#FFFFFF" stroke-width="1.2" opacity="0.6"/>
+  <line x1="65" y1="55" x2="78" y2="55" stroke="#FFFFFF" stroke-width="1.2" opacity="0.6"/>
+  <line x1="65" y1="62" x2="78" y2="62" stroke="#FFFFFF" stroke-width="1.2" opacity="0.6"/>` : '';
+                abrigoLayers = `
+  <rect x="24" y="42" width="42" height="38" rx="5" fill="${c.abrigo}"/>
+  ${swStripes}
+  <rect x="24" y="42" width="7" height="38" rx="3" fill="${abrigoDark}" opacity="0.2"/>
+  <rect x="59" y="42" width="7" height="38" rx="3" fill="${abrigoDark}" opacity="0.2"/>
+  <!-- Cuello redondo ribete -->
+  <path d="M38,43 Q45,47 52,43" stroke="${abrigoDark}" stroke-width="1.2" fill="none" opacity="0.5"/>
+  <!-- Camisa asomando: franja + puntas de cuello -->
   <rect x="37" y="37" width="16" height="8" rx="2" fill="${c.camisa}"/>
+  ${tieneRayas ? miniStripes(37, 53, 37, 45, rayaColor, 0.5) : ''}
   <polygon points="40,38 37,44 42,43" fill="${c.camisa}"/>
   <polygon points="50,38 53,44 48,43" fill="${c.camisa}"/>
   <line x1="37" y1="43" x2="42" y2="43" stroke="${camisaDark}" stroke-width="0.6" opacity="0.5"/>
@@ -3575,46 +3736,87 @@
   <!-- Arms -->
   <rect x="12" y="43" width="13" height="28" rx="5" fill="${c.abrigo}"/>
   <rect x="65" y="43" width="13" height="28" rx="5" fill="${c.abrigo}"/>
-  <!-- Cuffs -->
+  ${swArmStripes}
   <rect x="12" y="65" width="13" height="6" rx="3" fill="${abrigoLight}" opacity="0.55"/>
-  <rect x="65" y="65" width="13" height="6" rx="3" fill="${abrigoLight}" opacity="0.55"/>` : `
-  <!-- ABRIGO con V cutout -->
+  <rect x="65" y="65" width="13" height="6" rx="3" fill="${abrigoLight}" opacity="0.55"/>`;
+            } else {
+                // ── CHALECO (V cutout, mangas = camisa) ──
+                abrigoLayers = `
+  <!-- Chaleco con V cutout -->
   <polygon points="24,42 24,80 45,80 45,55 38,42" fill="${c.abrigo}"/>
   <polygon points="66,42 66,80 45,80 45,55 52,42" fill="${c.abrigo}"/>
   <rect x="24" y="42" width="7" height="38" rx="3" fill="${abrigoDark}" opacity="0.2"/>
   <rect x="59" y="42" width="7" height="38" rx="3" fill="${abrigoDark}" opacity="0.2"/>
-  <!-- Arms: camisa color si chaleco, abrigo color si sweater/campera -->
-  <rect x="12" y="43" width="13" height="28" rx="5" fill="${mangaColor}"/>
-  <rect x="65" y="43" width="13" height="28" rx="5" fill="${mangaColor}"/>
-  <!-- Cuffs -->
-  <rect x="12" y="65" width="13" height="6" rx="3" fill="${mangaLight}" opacity="0.55"/>
-  <rect x="65" y="65" width="13" height="6" rx="3" fill="${mangaLight}" opacity="0.55"/>`;
+  <!-- Ribete del cuello V tejido -->
+  <line x1="38" y1="42" x2="45" y2="55" stroke="${abrigoDark}" stroke-width="1" opacity="0.45"/>
+  <line x1="52" y1="42" x2="45" y2="55" stroke="${abrigoDark}" stroke-width="1" opacity="0.45"/>
+  <!-- Arms: color de camisa (mangas a la vista) -->
+  <rect x="12" y="43" width="13" height="${chombaArmsBare ? 24 : 28}" rx="${chombaArmsBare ? 6 : 5}" fill="${chombaArmsBare ? skin : c.camisa}"/>
+  <rect x="65" y="43" width="13" height="${chombaArmsBare ? 24 : 28}" rx="${chombaArmsBare ? 6 : 5}" fill="${chombaArmsBare ? skin : c.camisa}"/>
+  ${chombaArmsBare ? `<rect x="12" y="43" width="13" height="9" rx="4" fill="${c.camisa}"/>
+  <rect x="65" y="43" width="13" height="9" rx="4" fill="${c.camisa}"/>` : `<rect x="12" y="65" width="13" height="6" rx="3" fill="${lighten(c.camisa,30)}" opacity="0.5"/>
+  <rect x="65" y="65" width="13" height="6" rx="3" fill="${lighten(c.camisa,30)}" opacity="0.5"/>`}`;
+            }
 
             const _w = size || 37; const _h = size ? Math.round(size * 54/37) : 54;
             return `<svg width="${_w}" height="${_h}" viewBox="0 0 90 130" xmlns="http://www.w3.org/2000/svg">
   <!-- Legs / Pantalón -->
-  <rect x="28" y="76" width="14" height="36" rx="3" fill="${c.pantalon}"/>
-  <rect x="48" y="76" width="14" height="36" rx="3" fill="${c.pantalon}"/>
-  <line x1="35" y1="78" x2="35" y2="110" stroke="${pantalDark}" stroke-width="1" opacity="0.4"/>
-  <line x1="55" y1="78" x2="55" y2="110" stroke="${pantalDark}" stroke-width="1" opacity="0.4"/>
+  <rect x="28" y="76" width="14" height="${esTobillo ? 32 : 36}" rx="3" fill="${c.pantalon}"/>
+  <rect x="48" y="76" width="14" height="${esTobillo ? 32 : 36}" rx="3" fill="${c.pantalon}"/>
+  <line x1="35" y1="78" x2="35" y2="${esTobillo ? 106 : 110}" stroke="${pantalDark}" stroke-width="1" opacity="0.4"/>
+  <line x1="55" y1="78" x2="55" y2="${esTobillo ? 106 : 110}" stroke="${pantalDark}" stroke-width="1" opacity="0.4"/>
+  ${esTobillo ? `<!-- Tobillo a la vista (media/piel) -->
+  <rect x="28" y="108" width="14" height="4" fill="${skin}" opacity="0.85"/>
+  <rect x="48" y="108" width="14" height="4" fill="${skin}" opacity="0.85"/>` : ''}
 
   <!-- Shoes -->
+  ${esSneaker ? `
+  <!-- SNEAKERS: silueta deportiva + suela blanca -->
+  <path d="M24,113 Q24,108 30,108 L40,108 Q42,108 42,111 L42,114 Q42,116 39,116 L27,116 Q24,116 24,113 Z" fill="${c.zapatos}"/>
+  <path d="M48,113 Q48,108 54,108 L64,108 Q66,108 66,111 L66,114 Q66,116 63,116 L51,116 Q48,116 48,113 Z" fill="${c.zapatos}"/>
+  <!-- Suela blanca -->
+  <rect x="24" y="115" width="18" height="2.5" rx="1.2" fill="#F0F0F0"/>
+  <rect x="48" y="115" width="18" height="2.5" rx="1.2" fill="#F0F0F0"/>
+  ${esSpezial ? `<!-- 3 rayas Spezial -->
+  <line x1="30" y1="109" x2="32" y2="115" stroke="#FFFFFF" stroke-width="0.8" opacity="0.85"/>
+  <line x1="32" y1="109" x2="34" y2="115" stroke="#FFFFFF" stroke-width="0.8" opacity="0.85"/>
+  <line x1="34" y1="109" x2="36" y2="115" stroke="#FFFFFF" stroke-width="0.8" opacity="0.85"/>
+  <line x1="54" y1="109" x2="56" y2="115" stroke="#FFFFFF" stroke-width="0.8" opacity="0.85"/>
+  <line x1="56" y1="109" x2="58" y2="115" stroke="#FFFFFF" stroke-width="0.8" opacity="0.85"/>
+  <line x1="58" y1="109" x2="60" y2="115" stroke="#FFFFFF" stroke-width="0.8" opacity="0.85"/>` : ''}` : esMocasin ? `
+  <!-- MOCASINES: silueta de loafer, chato, sin cordones -->
+  <ellipse cx="33" cy="113" rx="9.5" ry="4" fill="${c.zapatos}"/>
+  <ellipse cx="57" cy="113" rx="9.5" ry="4" fill="${c.zapatos}"/>
+  <!-- Empeine bajo + antifaz del mocasín -->
+  <path d="M27,112 Q33,109 39,112" stroke="${zapatosDark}" stroke-width="0.8" fill="none" opacity="0.6"/>
+  <path d="M51,112 Q57,109 63,112" stroke="${zapatosDark}" stroke-width="0.8" fill="none" opacity="0.6"/>
+  <line x1="31" y1="111" x2="35" y2="111" stroke="${zapatosDark}" stroke-width="0.7" opacity="0.5"/>
+  <line x1="55" y1="111" x2="59" y2="111" stroke="${zapatosDark}" stroke-width="0.7" opacity="0.5"/>` : `
+  <!-- ZAPATOS formales -->
   <ellipse cx="33" cy="114" rx="9" ry="5" fill="${c.zapatos}"/>
   <ellipse cx="57" cy="114" rx="9" ry="5" fill="${c.zapatos}"/>
   <ellipse cx="35" cy="113" rx="6" ry="3" fill="${zapatosDark}" opacity="0.3"/>
-  <ellipse cx="59" cy="113" rx="6" ry="3" fill="${zapatosDark}" opacity="0.3"/>
+  <ellipse cx="59" cy="113" rx="6" ry="3" fill="${zapatosDark}" opacity="0.3"/>`}
 
   <!-- CAMISA: base layer (always drawn, visible in V and collar) -->
   <rect x="26" y="38" width="38" height="42" rx="4" fill="${c.camisa}"/>
   ${camisaStripes}
   <!-- Camisa collar lapels: only for V-neck or open collar, not crewneck -->
-  ${!esCrewneck && !noAbrigo ? `
+  ${!esCrewneck && !noAbrigo && !esChomba ? `
   <polygon points="45,30 39,42 45,40" fill="${c.camisa}"/>
   <polygon points="45,30 51,42 45,40" fill="${c.camisa}"/>
   <line x1="45" y1="30" x2="39" y2="42" stroke="${camisaDark}" stroke-width="0.7" opacity="0.5"/>
   <line x1="45" y1="30" x2="51" y2="42" stroke="${camisaDark}" stroke-width="0.7" opacity="0.5"/>` : ''}
 
   ${abrigoLayers}
+
+  ${esChomba && (noAbrigo || esChaleco) ? `
+  <!-- CHOMBA: cuello polo + placket con botones -->
+  <polygon points="45,31 38,40 45,39" fill="${c.camisa}" stroke="${camisaDark}" stroke-width="0.5"/>
+  <polygon points="45,31 52,40 45,39" fill="${c.camisa}" stroke="${camisaDark}" stroke-width="0.5"/>
+  <rect x="43.5" y="38" width="3" height="11" rx="1" fill="${camisaDark}" opacity="0.25"/>
+  <circle cx="45" cy="41" r="0.8" fill="${camisaDark}" opacity="0.6"/>
+  <circle cx="45" cy="46" r="0.8" fill="${camisaDark}" opacity="0.6"/>` : ''}
 
   <!-- Neck -->
   <rect x="40" y="30" width="10" height="14" rx="3" fill="${skin}"/>
@@ -3645,12 +3847,14 @@
                     if (rule.keywords.some(kw => text.includes(kw)) && !found.find(f => f.color === rule.color)) {
                         // Detect stripe type
                         let stripeColor = null;
-                        if (text.includes('rayas azul') || text.includes('azul/blanco'))
+                        if (text.includes('rayas azul') || text.includes('azul/blanco') || text.includes('navy/blanco') || text.includes('rayas navy'))
                             stripeColor = '#7BAFD4';
                         else if (text.includes('celeste/blanco') || text.includes('rayas celeste'))
                             stripeColor = '#7BAFD4';
                         else if (text.includes('celeste líneas') || text.includes('celeste lineas'))
                             stripeColor = '#ffffff';
+                        else if (text.includes('lino rayas'))
+                            stripeColor = '#C9A876';
                         found.push({ color: rule.color, stripeColor });
                         break;
                     }
