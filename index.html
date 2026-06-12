@@ -2234,6 +2234,22 @@
             transition: background 0.15s;
         }
         .train-close:hover { background: #f5f5f5; color: #333; }
+        .train-night-toggle {
+            background: none;
+            border: 1px solid #e0e0e0;
+            font-size: 0.95em;
+            cursor: pointer;
+            padding: 4px 9px;
+            border-radius: 18px;
+            transition: all 0.18s;
+            line-height: 1;
+        }
+        .train-night-toggle:hover { background: #f0f0f5; }
+        .train-night-toggle.active {
+            background: linear-gradient(135deg, #1a2e52, #2d3a6a);
+            border-color: #1a2e52;
+            box-shadow: 0 2px 8px rgba(26,46,82,0.3);
+        }
         .train-list {
             display: flex;
             flex-direction: column;
@@ -2607,7 +2623,10 @@
                         <div class="train-dialog-title">🚆 Haarlem → Utrecht</div>
                         <div class="train-dialog-sub" id="trainModalSub">Próximas salidas</div>
                     </div>
-                    <button class="train-close" onclick="closeTrainModal()">✕</button>
+                    <div style="display:flex;align-items:center;gap:6px;">
+                        <button class="train-night-toggle" id="trainNightToggle" onclick="toggleNightMode()" title="Modo noche: trenes de mañana 8:30–9:05">🌙</button>
+                        <button class="train-close" onclick="closeTrainModal()">✕</button>
+                    </div>
                 </div>
                 <div class="train-list" id="trainList">
                     <div class="train-error">Cargando...</div>
@@ -5696,6 +5715,16 @@
         let trainData = [];
         let trainLastFetch = null;
         let nextDepartureTime = null;
+        let nightMode = false;
+
+        function toggleNightMode() {
+            nightMode = !nightMode;
+            const btn = document.getElementById('trainNightToggle');
+            if (btn) btn.classList.toggle('active', nightMode);
+            const title = document.querySelector('.train-dialog-title');
+            if (title) title.textContent = nightMode ? '🌙 Mañana → Utrecht' : '🚆 Haarlem → Utrecht';
+            fetchTrains();
+        }
 
         function updateCountdownBadge() {
             const badge = document.getElementById('trainCountdown');
@@ -5721,8 +5750,16 @@
 
         async function fetchTrains() {
             const KEY = '27874576009e41a3a0a5301b90355937';
-            const URL = 'https://gateway.apiportal.ns.nl/reisinformatie-api/api/v3/trips'
+            let URL = 'https://gateway.apiportal.ns.nl/reisinformatie-api/api/v3/trips'
                       + '?fromStation=HLM&toStation=UT&excludeHighSpeedTrains=true&passing=false';
+
+            // En modo noche, pedimos los trenes de mañana alrededor de las 8am
+            if (nightMode) {
+                const tomorrow = new Date();
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                tomorrow.setHours(8, 0, 0, 0);
+                URL += '&dateTime=' + encodeURIComponent(tomorrow.toISOString()) + '&searchForArrival=false';
+            }
 
             document.getElementById('trainList').innerHTML = '<div class="train-error">Cargando...</div>';
 
@@ -5735,27 +5772,32 @@
 
                 const trips = json.trips || [];
 
-                // Keep only trips with exactly 2 transit legs AND departing in 15+ minutes
                 const BIKE_BUFFER = 15;
-                // Log all trips so we can see their leg structure
-                trips.forEach((trip, i) => {
-                    const allLegs      = trip.legs || [];
-                    const transitLegs  = allLegs.filter(l => l.travelType === 'PUBLIC_TRANSIT');
-                    const depActual    = transitLegs[0]?.origin?.actualDateTime || transitLegs[0]?.origin?.plannedDateTime;
-                    const minsAway     = depActual ? minutesUntil(depActual) : '?';
-                    const products     = transitLegs.map(l => l.product?.shortCategoryName || l.product?.categoryCode || '?').join(' + ');
-                    const destinations = transitLegs.map(l => l.destination?.name || '?').join(' → ');
-                    console.log(`[Train ${i}] ${transitLegs.length} transit leg(s) | ${products} | → ${destinations} | dep in ${minsAway}min | status: ${trip.status || 'OK'}`);
-                });
 
-                const filtered = trips.filter(trip => {
-                    const transitLegs = (trip.legs || []).filter(l => l.travelType === 'PUBLIC_TRANSIT');
-                    if (transitLegs.length < 1 || transitLegs.length > 2) return false;
-                    const depActual = transitLegs[0].origin?.actualDateTime || transitLegs[0].origin?.plannedDateTime;
-                    if (!depActual) return false;
-                    const mins = minutesUntil(depActual);
-                    return mins >= BIKE_BUFFER && mins <= 60;
-                });
+                let filtered;
+                if (nightMode) {
+                    // Trenes de mañana que LLEGAN a Utrecht entre 8:30 y 9:05
+                    filtered = trips.filter(trip => {
+                        const transitLegs = (trip.legs || []).filter(l => l.travelType === 'PUBLIC_TRANSIT');
+                        if (transitLegs.length < 1 || transitLegs.length > 2) return false;
+                        const last = transitLegs[transitLegs.length - 1];
+                        const arr = last.destination?.actualDateTime || last.destination?.plannedDateTime;
+                        if (!arr) return false;
+                        const d = new Date(arr);
+                        const mins = d.getHours() * 60 + d.getMinutes();
+                        return mins >= (8 * 60 + 30) && mins <= (9 * 60 + 5);
+                    });
+                } else {
+                    // Próximos trenes: salen en 15+ min, dentro de la próxima hora
+                    filtered = trips.filter(trip => {
+                        const transitLegs = (trip.legs || []).filter(l => l.travelType === 'PUBLIC_TRANSIT');
+                        if (transitLegs.length < 1 || transitLegs.length > 2) return false;
+                        const depActual = transitLegs[0].origin?.actualDateTime || transitLegs[0].origin?.plannedDateTime;
+                        if (!depActual) return false;
+                        const mins = minutesUntil(depActual);
+                        return mins >= BIKE_BUFFER && mins <= 60;
+                    });
+                }
 
                 trainData = filtered;
                 trainLastFetch = new Date();
@@ -5805,6 +5847,9 @@
         }
 
         function renderTrainFab(trips) {
+            // En modo noche no tocamos el FAB ni el countdown (son trenes de mañana)
+            if (nightMode) return;
+
             const fabNext   = document.getElementById('trainFabNext');
             const fabDetail = document.getElementById('trainFabDetail');
             if (!trips.length) {
@@ -5856,20 +5901,24 @@
                 return;
             }
 
-            sub.textContent = `${trips.length} próximos viajes`;
+            sub.textContent = nightMode
+                ? `Mañana · llegada 8:30–9:05 · ${trips.length} opciones`
+                : `${trips.length} próximos viajes`;
 
-            // Find sweet spot: first trip with total arrival (incl. 10min walk) between 8:50 and 9:00
+            // Sweet spot solo aplica al modo normal (hoy)
             let sweetSpotIndex = -1;
-            trips.forEach((trip, i) => {
-                if (sweetSpotIndex !== -1) return;
-                const t = parseTripTimes(trip);
-                if (!t || t.cancelled) return;
-                const arrWithWalk = new Date(new Date(t.arrActual).getTime() + 10 * 60000);
-                const h = arrWithWalk.getHours();
-                const m = arrWithWalk.getMinutes();
-                const totalMins = h * 60 + m;
-                if (totalMins >= 8 * 60 + 50 && totalMins <= 9 * 60) sweetSpotIndex = i;
-            });
+            if (!nightMode) {
+                trips.forEach((trip, i) => {
+                    if (sweetSpotIndex !== -1) return;
+                    const t = parseTripTimes(trip);
+                    if (!t || t.cancelled) return;
+                    const arrWithWalk = new Date(new Date(t.arrActual).getTime() + 10 * 60000);
+                    const h = arrWithWalk.getHours();
+                    const m = arrWithWalk.getMinutes();
+                    const totalMins = h * 60 + m;
+                    if (totalMins >= 8 * 60 + 50 && totalMins <= 9 * 60) sweetSpotIndex = i;
+                });
+            }
 
             list.innerHTML = trips.map((trip, i) => {
                 const t = parseTripTimes(trip);
@@ -5879,7 +5928,10 @@
                 const depTime  = formatTime(t.depActual);
                 const arrTime  = formatArrival(t.arrActual);
                 const mins     = minutesUntil(t.depActual);
-                const minsLabel = mins <= 0 ? 'Ya' : mins === 1 ? '1 min' : `${mins} min`;
+                // En modo noche mostramos hora de salida en vez de "X min"
+                const minsLabel = nightMode
+                    ? `sale ${depTime}`
+                    : (mins <= 0 ? 'Ya' : mins === 1 ? '1 min' : `${mins} min`);
                 const rowClass  = t.cancelled ? 'cancelled' : t.delay > 0 ? 'delayed' : isSweetSpot ? 'sweet-spot' : '';
                 const timeClass = t.cancelled ? 'cancelled' : t.delay > 0 ? 'delayed' : '';
                 const delayLabel = t.delay > 0 && !t.cancelled ? ` <span style="color:#e65100">+${t.delay}'</span>` : '';
@@ -5929,6 +5981,15 @@
         function closeTrainModal(e) {
             if (e && e.target !== document.getElementById('trainOverlay')) return;
             document.getElementById('trainOverlay').classList.remove('open');
+            // Resetear modo noche al cerrar, para que el FAB vuelva a los trenes de hoy
+            if (nightMode) {
+                nightMode = false;
+                const btn = document.getElementById('trainNightToggle');
+                if (btn) btn.classList.remove('active');
+                const title = document.querySelector('.train-dialog-title');
+                if (title) title.textContent = '🚆 Haarlem → Utrecht';
+                fetchTrains();
+            }
         }
 
         function debugStorage() {
@@ -6032,6 +6093,20 @@
                 check: (s) => s.vestCount >= 1,
                 progress: (s) => ({ val: Math.min(s.vestCount, 1), max: 1 }),
             },
+            {
+                id: 'oxford_debut', tier: 'Bronce', name: 'Oxford Debut',
+                desc: 'Usá una camisa Oxford (TH u Original) por primera vez.',
+                medal: '🥉', svgColor: '#cd7f32',
+                check: (s) => s.oxfordCount >= 1,
+                progress: (s) => ({ val: Math.min(s.oxfordCount, 1), max: 1 }),
+            },
+            {
+                id: 'chomba_casual', tier: 'Bronce', name: 'Modo Chomba',
+                desc: 'Usá una chomba por primera vez.',
+                medal: '🥉', svgColor: '#cd7f32',
+                check: (s) => s.chombaCount >= 1,
+                progress: (s) => ({ val: Math.min(s.chombaCount, 1), max: 1 }),
+            },
             // ── PLATA ────────────────────────────────
             {
                 id: 'workstreak_5', tier: 'Plata', name: 'En Racha',
@@ -6082,6 +6157,20 @@
                 check: (s) => s.vestCount >= 8,
                 progress: (s) => ({ val: Math.min(s.vestCount, 8), max: 8 }),
             },
+            {
+                id: 'old_money_quilted', tier: 'Plata', name: 'Old Money',
+                desc: 'Usá la quilted jacket Polo RL navy 3 veces.',
+                medal: '🥈', svgColor: '#aaa9ad',
+                check: (s) => s.quiltedCount >= 3,
+                progress: (s) => ({ val: Math.min(s.quiltedCount, 3), max: 3 }),
+            },
+            {
+                id: 'mocasin_style', tier: 'Plata', name: 'Mocasín Style',
+                desc: 'Usá los mocasines de gamuza arena 3 veces.',
+                medal: '🥈', svgColor: '#aaa9ad',
+                check: (s) => s.mocasinCount >= 3,
+                progress: (s) => ({ val: Math.min(s.mocasinCount, 3), max: 3 }),
+            },
             // ── ORO ──────────────────────────────────
             {
                 id: 'full_formal_week', tier: 'Oro', name: 'Wall Street Week',
@@ -6117,6 +6206,13 @@
                 medal: '🥇', svgColor: '#ffd700',
                 check: (s) => s.monochromeCount >= 3,
                 progress: (s) => ({ val: Math.min(s.monochromeCount, 3), max: 3 }),
+            },
+            {
+                id: 'spezial_collection', tier: 'Oro', name: 'Spezial Collection',
+                desc: 'Usá las Adidas Spezial beige y marrón, al menos una vez cada una.',
+                medal: '🥇', svgColor: '#ffd700',
+                check: (s) => s.spezialBeige >= 1 && s.spezialMarron >= 1,
+                progress: (s) => ({ val: (s.spezialBeige >= 1 ? 1 : 0) + (s.spezialMarron >= 1 ? 1 : 0), max: 2 }),
             },
             // ── PLATINO ──────────────────────────────
             {
@@ -6188,6 +6284,7 @@
             // formalidad usage
             const usedFormalidad = { formal: 0, 'elegante-sport': 0, casual: 0 };
             let patagoniaCount = 0, bordeauxTotal = 0, monochromeCount = 0;
+            let oxfordCount = 0, chombaCount = 0, quiltedCount = 0, mocasinCount = 0, spezialBeige = 0, spezialMarron = 0;
             const usedIds = new Set();
             const monthsLogged = new Set();
 
@@ -6197,6 +6294,17 @@
                 usedFormalidad[o.formalidad] = (usedFormalidad[o.formalidad] || 0) + 1;
                 usedIds.add(String(o.id));
                 if (o.prendas.abrigo && o.prendas.abrigo.toLowerCase().includes('patagonia')) patagoniaCount++;
+
+                // nuevas prendas
+                const camisaL = (o.prendas.camisa || '').toLowerCase();
+                const abrigoL = (o.prendas.abrigo || '').toLowerCase();
+                const zapatosL = (o.prendas.zapatos || '').toLowerCase();
+                if (camisaL.includes('oxford')) oxfordCount++;
+                if (camisaL.includes('chomba')) chombaCount++;
+                if (abrigoL.includes('quilted')) quiltedCount++;
+                if (zapatosL.includes('mocas')) mocasinCount++;
+                if (zapatosL.includes('spezial') && zapatosL.includes('beige')) spezialBeige++;
+                if (zapatosL.includes('spezial') && (zapatosL.includes('marrón') || zapatosL.includes('marron'))) spezialMarron++;
 
                 // bordeau
                 const allPrendas = Object.values(o.prendas).join(' ').toLowerCase();
@@ -6325,6 +6433,7 @@
 
             return {
                 totalLogs, usedFormalidad, patagoniaCount, bordeauxTotal, monochromeCount, vestCount, vestGris, vestAzul,
+                oxfordCount, chombaCount, quiltedCount, mocasinCount, spezialBeige, spezialMarron,
                 favCount: favorites.length,
                 maxWorkStreak, maxUniqueWorkStreak,
                 bestWorkweekDays, fullWorkweek,
@@ -6913,6 +7022,77 @@ elegante_sport_domination: `<svg viewBox="0 0 120 140" xmlns="http://www.w3.org/
 <text x="60" y="76" text-anchor="middle" font-size="8" fill="#ffd700" opacity="0.9">⚡</text>
 </svg>`,
 
+oxford_debut: `<svg viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="ft_paper" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#F7D9C4"/><stop offset="50%" stop-color="#FCE8D8"/><stop offset="100%" stop-color="#EFC4A8"/></linearGradient></defs>
+<ellipse cx="60" cy="128" rx="40" ry="7" fill="#1a1208" opacity="0.1"/>
+<rect x="20" y="40" width="80" height="78" rx="12" fill="url(#ft_paper)" stroke="#D8AE94" stroke-width="1"/>
+<ellipse cx="60" cy="40" rx="40" ry="8" fill="#FCE8D8" stroke="#D8AE94" stroke-width="1"/>
+<path d="M22,55 Q60,48 98,55" stroke="#D8AE94" stroke-width="0.8" fill="none" opacity="0.5"/>
+<path d="M22,70 Q60,63 98,70" stroke="#D8AE94" stroke-width="0.8" fill="none" opacity="0.5"/>
+<path d="M22,85 Q60,78 98,85" stroke="#D8AE94" stroke-width="0.8" fill="none" opacity="0.5"/>
+<text x="60" y="62" text-anchor="middle" font-size="22" font-weight="900" fill="#222" font-family="Georgia,serif">FT</text>
+<line x1="32" y1="72" x2="88" y2="72" stroke="#222" stroke-width="1" opacity="0.6"/>
+<line x1="32" y1="82" x2="88" y2="82" stroke="#a08878" stroke-width="1.5" opacity="0.4"/>
+<line x1="32" y1="90" x2="78" y2="90" stroke="#a08878" stroke-width="1.5" opacity="0.4"/>
+<line x1="32" y1="98" x2="84" y2="98" stroke="#a08878" stroke-width="1.5" opacity="0.4"/>
+<rect x="18" y="96" width="84" height="6" rx="3" fill="#c0392b" opacity="0.65"/>
+</svg>`,
+
+chomba_casual: `<svg viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg">
+<defs><radialGradient id="golf_ball" cx="35%" cy="30%" r="70%"><stop offset="0%" stop-color="#ffffff"/><stop offset="100%" stop-color="#d8d8d8"/></radialGradient></defs>
+<ellipse cx="60" cy="128" rx="40" ry="7" fill="#1a1208" opacity="0.1"/>
+<rect x="10" y="100" width="100" height="22" rx="6" fill="#3a7d44"/>
+<rect x="10" y="100" width="100" height="22" rx="6" fill="none" stroke="#2e6336" stroke-width="1"/>
+<circle cx="60" cy="92" r="18" fill="url(#golf_ball)" stroke="#c8c8c8" stroke-width="1"/>
+<circle cx="52" cy="86" r="1.2" fill="#ccc"/>
+<circle cx="60" cy="84" r="1.2" fill="#ccc"/>
+<circle cx="68" cy="88" r="1.2" fill="#ccc"/>
+<circle cx="56" cy="94" r="1.2" fill="#ccc"/>
+<circle cx="66" cy="96" r="1.2" fill="#ccc"/>
+<rect x="92" y="60" width="2" height="40" fill="#888"/>
+<polygon points="94,60 114,66 94,72" fill="#c0392b"/>
+<text x="60" y="135" text-anchor="middle" font-size="6" fill="#888" font-family="Arial" letter-spacing="1">CASUAL FRIDAY</text>
+</svg>`,
+
+old_money_quilted: `<svg viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="cert_bg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#FBF6E8"/><stop offset="100%" stop-color="#F0E6CC"/></linearGradient><linearGradient id="cert_frame" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#D4AF37"/><stop offset="100%" stop-color="#A8842C"/></linearGradient></defs>
+<ellipse cx="60" cy="130" rx="44" ry="7" fill="#1a1208" opacity="0.1"/>
+<rect x="14" y="14" width="92" height="108" rx="2" fill="url(#cert_frame)"/>
+<rect x="20" y="20" width="80" height="96" rx="1" fill="url(#cert_bg)" stroke="#cbb87a" stroke-width="1"/>
+<rect x="25" y="25" width="70" height="86" fill="none" stroke="#c8a020" stroke-width="0.8" stroke-dasharray="2,2" opacity="0.6"/>
+<text x="60" y="42" text-anchor="middle" font-size="7" font-weight="700" fill="#8B6914" font-family="Georgia,serif" letter-spacing="2">CERTIFICATE</text>
+<text x="60" y="52" text-anchor="middle" font-size="5" fill="#a08840" font-family="Georgia,serif">OF SHARES</text>
+<circle cx="60" cy="80" r="16" fill="none" stroke="#c8a020" stroke-width="1.5"/>
+<circle cx="60" cy="80" r="11" fill="#c8a020" opacity="0.15"/>
+<text x="60" y="84" text-anchor="middle" font-size="10" fill="#a8842c" font-family="Georgia,serif">★</text>
+<line x1="32" y1="100" x2="88" y2="100" stroke="#cbb87a" stroke-width="0.8"/>
+<text x="60" y="108" text-anchor="middle" font-size="4.5" fill="#a08840" font-family="Georgia,serif" font-style="italic">1,000 shares</text>
+</svg>`,
+
+mocasin_style: `<svg viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="ol_wood" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#C89B6A"/><stop offset="100%" stop-color="#A87C4E"/></linearGradient></defs>
+<ellipse cx="60" cy="130" rx="40" ry="7" fill="#1a1208" opacity="0.1"/>
+<rect x="30" y="100" width="6" height="26" rx="2" fill="#8a6c44"/>
+<rect x="84" y="100" width="6" height="26" rx="2" fill="#8a6c44"/>
+<rect x="14" y="36" width="92" height="68" rx="6" fill="url(#ol_wood)" stroke="#8a6c44" stroke-width="1.5"/>
+<rect x="22" y="44" width="76" height="52" rx="2" fill="#FBF6E8" stroke="#8a6c44" stroke-width="1"/>
+<text x="60" y="64" text-anchor="middle" font-size="9" font-weight="700" fill="#5a4326" font-family="Georgia,serif">OUT TO</text>
+<text x="60" y="78" text-anchor="middle" font-size="9" font-weight="700" fill="#5a4326" font-family="Georgia,serif">LUNCH</text>
+<text x="60" y="90" text-anchor="middle" font-size="5" fill="#8a6c44" font-family="Georgia,serif" font-style="italic">back at 2pm</text>
+</svg>`,
+
+spezial_collection: `<svg viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="ss_binder" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#27466E"/><stop offset="100%" stop-color="#1A3052"/></linearGradient></defs>
+<ellipse cx="60" cy="130" rx="42" ry="7" fill="#1a1208" opacity="0.1"/>
+<path d="M22,16 L98,16 L92,124 L28,124 Z" fill="url(#ss_binder)" stroke="#12233c" stroke-width="1"/>
+<rect x="44" y="16" width="6" height="108" fill="#12233c" opacity="0.5"/>
+<rect x="38" y="24" width="20" height="8" rx="3" fill="#c8c8c8" stroke="#999" stroke-width="0.8"/>
+<rect x="38" y="70" width="20" height="8" rx="3" fill="#c8c8c8" stroke="#999" stroke-width="0.8"/>
+<rect x="34" y="42" width="56" height="24" rx="1" fill="#f0e6cc" stroke="#c8a020" stroke-width="1"/>
+<text x="62" y="52" text-anchor="middle" font-size="6" font-weight="700" fill="#1A3052" font-family="Arial" letter-spacing="0.5">SPECIAL</text>
+<text x="62" y="61" text-anchor="middle" font-size="6" font-weight="700" fill="#1A3052" font-family="Arial" letter-spacing="0.5">SITUATIONS</text>
+</svg>`,
+
         };
 
         const ACHIEVEMENT_ITEMS = {
@@ -6921,6 +7101,8 @@ elegante_sport_domination: `<svg viewBox="0 0 120 140" xmlns="http://www.w3.org/
             used_all_formalities:     { name: 'Stress Ball del banco',       emoji: '🟠' },
             workweek_logged:          { name: 'Planta "Growth"',             emoji: '🌿' },
             vest_debut:               { name: 'Perchero (primer chaleco)',    emoji: '🪝' },
+            oxford_debut:             { name: 'Financial Times enrollado',   emoji: '📰' },
+            chomba_casual:            { name: 'Golf "Casual Friday"',        emoji: '⛳' },
             workstreak_5:             { name: 'Silla Ergonómica',            emoji: '🪑' },
             bordeaux_week:            { name: 'Botella de Moët',             emoji: '🍾' },
             no_repeat_7:              { name: 'Whiteboard con DCF',          emoji: '📊' },
@@ -6928,11 +7110,14 @@ elegante_sport_domination: `<svg viewBox="0 0 120 140" xmlns="http://www.w3.org/
             all_formalities_week:     { name: 'WSJ enmarcado',               emoji: '📰' },
             vest_both:                { name: 'Alfombra persa',              emoji: '🟫' },
             vest_regular:             { name: 'Lámpara de escritorio',       emoji: '💡' },
+            old_money_quilted:        { name: 'Certificado de Acciones',     emoji: '📜' },
+            mocasin_style:            { name: 'Cartel "Out to Lunch"',       emoji: '🍽️' },
             full_formal_week:         { name: 'Bloomberg Terminal',          emoji: '💻' },
             full_casual_week_unique:  { name: 'Modelo financiero A3',        emoji: '📈' },
             workstreak_10:            { name: 'Cuadro "Buy Low Sell High"',  emoji: '🖼️' },
             all_outfits_used:         { name: 'Vista skyline ventana',       emoji: '🌆' },
             monochrome_master:        { name: 'Whisky en el bar',            emoji: '🥃' },
+            spezial_collection:       { name: 'Carpeta "Special Situations"', emoji: '📁' },
             workstreak_20:            { name: 'Nameplate dorado',            emoji: '🥇' },
             bordeaux_loyalist:        { name: 'Reloj NYSE Ticker',           emoji: '🕐' },
             four_seasons:             { name: 'Diploma Managing Director',   emoji: '📜' },
