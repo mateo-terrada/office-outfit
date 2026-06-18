@@ -4136,6 +4136,25 @@
             return card;
         }
 
+        function getAbrigoColor(outfit) {
+            if (!outfit) return '#1a3a52';
+            const abrigo = (outfit.prendas.abrigo || '').toLowerCase();
+            const esSinAbrigo = !abrigo || abrigo.includes('sin abrigo');
+            // Si no hay abrigo, el color representativo es el de la camisa
+            const tela = esSinAbrigo ? (outfit.prendas.camisa || '').toLowerCase() : abrigo;
+
+            if (tela.includes('bordeau') || tela.includes('bordeaux')) return '#7B2D42';
+            if (tela.includes('navy') || tela.includes('azul') || tela.includes('marino')) return '#1a3a72';
+            if (tela.includes('celeste')) return '#4a90b8';
+            if (tela.includes('gris') || tela.includes('jaspe')) return '#707078';
+            if (tela.includes('verde')) return '#2d6e2d';
+            if (tela.includes('beige') || tela.includes('crema')) return '#c8a878';
+            if (tela.includes('negro') || tela.includes('black')) return '#222222';
+            if (tela.includes('marrón') || tela.includes('marron') || tela.includes('camel')) return '#8B5e2a';
+            if (tela.includes('blanco') || tela.includes('blanca')) return '#9ba3ab';
+            return '#1a3a52';
+        }
+
         function woreItToday(event, outfitId) {
             event.stopPropagation();
             const data = JSON.parse(localStorage.getItem('calendarOutfits')) || {};
@@ -4153,18 +4172,7 @@
                 const allOutfits = [...applyOverrides([...outfits]), ...customOutfits];
                 const outfit = allOutfits.find(o => String(o.id) === String(outfitId));
 
-                let abrigoColor = '#1a3a52';
-                if (outfit) {
-                    const abrigo = (outfit.prendas.abrigo || '').toLowerCase();
-                    if (abrigo.includes('bordeau') || abrigo.includes('bordeaux')) abrigoColor = '#7B2D42';
-                    else if (abrigo.includes('azul') || abrigo.includes('navy') || abrigo.includes('marino')) abrigoColor = '#1a3a72';
-                    else if (abrigo.includes('celeste')) abrigoColor = '#4a90b8';
-                    else if (abrigo.includes('gris') || abrigo.includes('jaspe')) abrigoColor = '#707078';
-                    else if (abrigo.includes('verde')) abrigoColor = '#2d6e2d';
-                    else if (abrigo.includes('beige') || abrigo.includes('crema')) abrigoColor = '#c8a878';
-                    else if (abrigo.includes('negro') || abrigo.includes('black')) abrigoColor = '#222222';
-                    else if (abrigo.includes('marrón') || abrigo.includes('marron') || abrigo.includes('camel')) abrigoColor = '#8B5e2a';
-                }
+                let abrigoColor = getAbrigoColor(outfit);
 
                 data[key] = { id: outfitId, abrigoColor };
                 localStorage.setItem('calendarOutfits', JSON.stringify(data));
@@ -5647,7 +5655,7 @@
             const outfit = allOutfits.find(o => o.id == outfitId);
             if (!outfit) return;
 
-            data[calSelectedDate] = { id: outfit.id };
+            data[calSelectedDate] = { id: outfit.id, abrigoColor: getAbrigoColor(outfit) };
             calSaveData(data);
 
             document.getElementById('calDetailCurrent').textContent = `Outfit registrado: ${outfit.nombre}`;
