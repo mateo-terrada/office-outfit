@@ -1,0 +1,28 @@
+name: NS Train Alert
+
+on:
+  schedule:
+    # GitHub cron is always UTC. Both summer and winter slots are scheduled;
+    # the script only runs the check when it is 7:xx Dutch time.
+    # Summer (CEST, UTC+2): 5:00 and 5:30 UTC = 7:00 and 7:30 NL
+    - cron: '0 5 * * 1-5'
+    - cron: '30 5 * * 1-5'
+    # Winter (CET, UTC+1): 6:00 and 6:30 UTC = 7:00 and 7:30 NL
+    - cron: '0 6 * * 1-5'
+    - cron: '30 6 * * 1-5'
+  workflow_dispatch:
+
+jobs:
+  check-trains:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install requests
+      - name: Check trains
+        env:
+          NS_API_KEY: ${{ secrets.NS_API_KEY }}
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+        run: python .github/scripts/check_trains.py
